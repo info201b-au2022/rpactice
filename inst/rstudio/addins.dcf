@@ -1,0 +1,19 @@
+Name: Begin Practice
+Description: Select your practice set
+Binding: ui_begin
+Interactive: true
+
+Name: Practice Questions
+Description: Show the practice questions
+Binding: practice.questions
+Interactive: false
+
+Name: Practice Check
+Description: Show the practice questions
+Binding: practice.check
+Interactive: false
+
+Name: Practice Answers
+Description: Show the practice questions
+Binding: practice.answers
+Interactive: false
