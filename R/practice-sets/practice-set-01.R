@@ -13,7 +13,7 @@ ps01 <- list(
   ps_id = 1,
   ps_title = "Basic Arithmatic Operators",
   ps_short = "P01",
-  ps_descr = "Practice using basic mathematical operators.",
+  ps_descr = "Practice using basic mathematical operators: +, -, */ ,^, (, ), %%, %/%.",
   ps_instructions = "",
 
   ## Initial variables ----
@@ -62,7 +62,7 @@ ps01 <- list(
 
     task = list(
       prompt_id = "d",
-      prompt_msg = "What is the average of these temperatures: -5C, -10C, -12C",
+      prompt_msg = "What is the average of these Celcius temperatures: -5C, -10C, -12C",
       assignment_var = "t_04",
       expected_answer = "(-5 + -10 + -12) / 3",
       learner_answer = "",
@@ -93,7 +93,7 @@ ps01 <- list(
 
     task = list(
       prompt_id = "g",
-      prompt_msg = "Compute 2 to -8th power (or 1 / 2^8).",
+      prompt_msg = "Compute the reciprocal 2 to 8th power (2^(-8) or 1 / 2^8).",
       assignment_var = "t_07",
       expected_answer = "2 ** -8",
       learner_answer = "",
@@ -120,7 +120,7 @@ ps01 <- list(
 
     task = list(
       prompt_id = "j",
-      prompt_msg = "pi is a built-in constant (3.141593). What is the area (A)\nof circle of radius (r) 4? (Recall: A = pi*r^2)",
+      prompt_msg = "pi is a built-in constant (3.141593). Given a circle with radius 4 (r),\n what is its area? (Recall: A = pi*r^2)",
       assignment_var = "A",
       expected_answer = "pi*4^2",
       learner_answer = "",

@@ -21,6 +21,7 @@ ui_begin <- function() {
 
     observeEvent(input$begin, {
       id <- input$select
+      print(id)
       t <- practice.begin(id)
       file_header <- str_replace(ps_heading(), "\n", "\n# ")
       rstudioapi::documentNew(paste0("# ", file_header ))

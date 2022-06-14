@@ -67,7 +67,7 @@ ps_ui_get_titles <- function() {
   for (ps in gPRACTICE_SETS) {
     s <- paste0(ps$ps_short, ":", ps$ps_title)
     items <- append(items, s)
-    ids <- append(ids, k)
+    ids <- append(ids, ps$ps_short)
     k <- k + 1
   }
   t <- as.list(setNames(ids, items))
@@ -255,7 +255,7 @@ format_tasks <- function() {
   }
 
   t <- paste0(
-    ps$ps_title, "\n",
+    ps$ps_title, "(", ps$ps_short, ")\n",
     ps$ps_descr, "\n",
     "--------\n",
     t
