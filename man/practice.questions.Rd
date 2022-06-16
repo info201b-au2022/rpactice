@@ -4,7 +4,7 @@
 \alias{practice.questions}
 \title{Show all the questions for a practice set.}
 \usage{
-practice.questions()
+practice.questions(do_not_show = NULL)
 }
 \value{
 `TRUE` if all goes well.

@@ -55,7 +55,7 @@ ps_set_current <- function(id) {
   pkg.globals$gPRACTICE_SET_ID <- id
 }
 
-ps_get_current <- function(id=NULL) {
+ps_get_current <- function(id = NULL) {
   if (is.null(id)) {
     id <- pkg.globals$gPRACTICE_SET_ID
   }
@@ -99,7 +99,7 @@ ps_ui_get_titles <- function() {
     ids <- append(ids, ps$ps_short)
   }
   t <- as.list(stats::setNames(ids, items))
- # t <- list("P01: xxx" = "P01", "P02: xxx" = "P02")
+  # t <- list("P01: xxx" = "P01", "P02: xxx" = "P02")
   return(t)
 }
 
@@ -222,10 +222,15 @@ ps_get_expected_answer <- function(id) {
   return(t)
 }
 
-#' #' Xxx xxx
+#' Evaluate an R expression
 #'
-#' @param id internal id of the prompt
-#' @return xxx
+#' To test a learner's answer, call this function. This function accesses
+#' the learner's code, which is stored in the practice set data structure.
+#'
+#' @param id the internal ID for the prompt
+#' @return returns the result of the evaluation. If the learner's code produces
+#' a function (that is, a "closure") a text string summarizing the function is
+#' returned
 #' @export
 eval_expr <- function(id) {
   answer <- ps_get_expected_answer(id)
@@ -298,11 +303,19 @@ format_practice_script <- function(short) {
   return(t)
 }
 
-format_prompts <- function() {
+format_prompts <- function(do_not_show = NULL) {
   ps <- ps_get_current()
   t <- ""
+  id <- 0
   for (task in ps$task_list) {
-    t <- paste0(t, ps$ps_short, ".", task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
+    id <- id + 1
+    if (is.null(do_not_show)) {
+      t <- paste0(t, ps$ps_short, ".", task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
+    } else {
+      if ((id %in% do_not_show) == FALSE) {
+        t <- paste0(t, ps$ps_short, ".", task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
+      }
+    }
   }
 
   t <- paste0(
@@ -338,170 +351,6 @@ format_answers <- function() {
   return(t)
 }
 
-
-# Formatting results ----
-#----------------------------------------------------------------------------#
-# Functions for formatting and outputting feedback on practice sets
-#----------------------------------------------------------------------------#
-format_code <- function(code_text, indent = cTAB_IN_SPACES) {
-  t <- styler::style_text(code_text)
-  t <- paste0(indent, t)
-  t <- paste0(t, collapse = "\n")
-  return(t)
-}
-
-#' #' Xxx xxx
-#'
-#' @param id Internal prompt ID
-#' @param is_correct boolean indicating if the learner's answer is correct
-#' @param show_hints to show or not show the hints
-#' @return xxx
-#' @export
-result_msg <- function(id, is_correct, show_hints = TRUE) {
-  if (is_correct == TRUE) {
-    t <- result_good_msg(id)
-  } else {
-    t <- result_error_msg(id, show_hints)
-  }
-}
-
-#' #' Xxx xxx
-#'
-#' @param id Internal prompt ID
-#' @return xxx
-#' @export
-result_good_msg <- function(id) {
-  expected <- ps_get_expected_answer(id)
-  answer <- eval_expr(id)
-  t <- answer
-  t <- paste0(
-    "<span style='color:green'>&#10004;</span> Expected: \n",
-    "", format_code(expected),
-    "\n<span style='color:purple'>   > ", t,
-    "</span>"
-  )
-  return(t)
-}
-
-#' #' Xxx xxx
-#'
-#' @param id Internal prompt ID
-#' @param show_hints to show or not show the hints
-#' @return xxx
-#' @export
-result_error_msg <- function(id, show_hints = TRUE) {
-  t <- paste0("Try again. Prompt: \"", ps_get_prompt(id), "\"")
-  if (ps_num_hints(id) > 0) {
-    t <- paste0(t, "\nCheck:")
-    t <- paste0(t, ps_get_formatted_hints(id))
-  }
-  return(t)
-}
-
-#' #' Xxx xxx
-#'
-#' @param main_message a main message
-#' @return xxx
-#' @export
-result_main_message <- function(main_message) {
-  return(main_message)
-}
-
-#' #' Xxx xxx
-#'
-#' @param message the current message
-#' @param sub_message the sub-message to be added
-#' @return xxx
-#' @export
-result_sub_message <- function(message, sub_message) {
-  t <- paste0(message, "\n", cTAB_IN_SPACES, sub_message)
-  return(t)
-}
-
-#' #' Xxx xxx
-#'
-#' @param result a list of the results
-#' @param id internal id of the prompt
-#' @param is_correct indicating whether the answer is correct or not
-#' @param text a message
-#' @return xxx
-#' @export
-result_update <- function(result, id, is_correct, text) {
-  if (is_correct == TRUE) {
-    result$num_correct <- result$num_correct + 1
-  } else {
-    result$num_incorrect <- result$num_incorrect + 1
-  }
-
-  result$message_list <- append(
-    result$message_list,
-    list(message = list(prompt_id = ps_get_prompt_id(id), msg_text = text))
-  )
-  return(result)
-}
-
-format_result <- function(result) {
-  total <- number_of_prompts()
-  num_attempted <- result$num_correct + result$num_incorrect
-  num_correct <- result$num_correct
-
-  if (cDEBUG) {
-    print("--- begin: format_result --- ")
-    print(result)
-    print("--- end: format_result ---")
-  }
-
-  ps <- ps_get_current()
-
-  t <- ""
-  t <- paste0(t,  ps$ps_title, "\n", ps$ps_descr, "\n")
-  t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
-  if (total == num_correct) {
-    t <- paste0(t, " Good work!\n")
-  } else {
-    t <- paste0(t, " More work to do.\n")
-  }
-
-  for (m in result$message_list) {
-    t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
-  }
-  return(t)
-}
-
-# Output ----
-#----------------------------------------------------------------------------#
-# Functions for sending output to Console or Viewer
-#----------------------------------------------------------------------------#
-print_to_console <- function(text) {
-  t <- text
-  if (cDEBUG == FALSE) {
-    t <- paste0("\014", t) # Clear the console
-  }
-  cat(t)
-}
-
-print_to_viewer <- function(text, fn) {
-  dir <- tempfile()
-  dir.create(dir)
-  html_file <- file.path(dir, paste0(fn, ".html"))
-
-  t <- "<head></head><body><pre>"
-  t <- paste0(t, text)
-  t <- paste0(t, "</pre></body>")
-
-  write(t, html_file)
-  rstudioapi::viewer(html_file, height = 400)
-}
-
-print_output <- function(text, fn) {
-  if (pkg.globals$gTO_CONSOLE) {
-    print_to_console(text)
-  } else {
-    print_to_viewer(text, fn)
-  }
-}
-
-
 #----------------------------------------------------------------------------#
 # This function checks if the practice prompts are correct or incorrect and
 # collects student feedback for each of the practice prompts. It does the
@@ -511,7 +360,7 @@ print_output <- function(text, fn) {
 #           <var_name>_Check(internal_id, val, practice_result)
 #   3. Collect collect all the feedback.
 #----------------------------------------------------------------------------#
-practice.check_format <- function() {
+check_answers <- function() {
 
   # This structure is used hold feedback on the practice coding prompts.
   practice_result <- list(
@@ -562,6 +411,176 @@ practice.check_format <- function() {
   t <- format_result(practice_result)
   return(t)
 }
+
+
+# Formatting results ----
+#----------------------------------------------------------------------------#
+# Functions for formatting and outputting feedback on practice sets
+#----------------------------------------------------------------------------#
+format_code <- function(code_text, indent = cTAB_IN_SPACES) {
+  t <- styler::style_text(code_text)
+  t <- paste0(indent, t)
+  t <- paste0(t, collapse = "\n")
+  return(t)
+}
+
+#' Formats a "good" message
+#'
+#' This should be called when a learner's answer is correct.
+#'
+#' @param id the internal ID for the prompt
+#' @return a formatted string that can be concatenated to a full output string
+#' @export
+result_good_msg <- function(id) {
+  expected <- ps_get_expected_answer(id)
+  answer <- eval_expr(id)
+  t <- answer
+  t <- paste0(
+    "<span style='color:green'>&#10004;</span> Expected: \n",
+    "", format_code(expected),
+    "\n<span style='color:purple'>   > ", t,
+    "</span>"
+  )
+  return(t)
+}
+
+#' Formats a "try again" message
+#'
+#' This should be called when a learner's answer is incorrect.
+#'
+#' @param id the internal ID for the prompt
+#' @param show_hints to show or not show the hints for incorrect answers
+#' @return a formatted string that can be concatenated to a full output string
+#' @export
+result_error_msg <- function(id, show_hints = TRUE) {
+  t <- paste0("Try again. Prompt: \"", ps_get_prompt(id), "\"")
+  if (ps_num_hints(id) > 0) {
+    t <- paste0(t, "\nCheck:")
+    t <- paste0(t, ps_get_formatted_hints(id))
+  }
+  return(t)
+}
+
+#' Formats a message
+#'
+#' Currently, no formatting is done.
+#'
+#' @param main_message the text of the message
+#' @return a formatted string that can be concatenated to a full output string
+#' @export
+result_main_message <- function(main_message) {
+  return(main_message)
+}
+
+#' Format a sub-message
+#'
+#' Currently, sub-messages are simply intended
+#'
+#' @param message the formatted text of the current message
+#' @param sub_message the sub-message to be added
+#' @return a formatted string that can be concatenated to a full output string
+#' @export
+result_sub_message <- function(message, sub_message) {
+  t <- paste0(message, "\n", cTAB_IN_SPACES, sub_message)
+  return(t)
+}
+
+#' Updates a result data structure
+#'
+#' When implementing checks to prompts in callbacks (\code{<var_name>_CHECK}), this
+#' function is called to update the learner's results. For an example, see
+#' \code{\link{DEFAULT_Check}}.
+#'
+#' @param result a list that holds data related to the correctness of the learners work
+#' @param id the internal ID of a specific prompt
+#' @param is_correct indicating whether the learner's answer is correct or not
+#' @param text a message for the learner about their answer
+#' @return result the updated data structure
+#' @export
+result_update <- function(result, id, is_correct, text) {
+  if (is_correct == TRUE) {
+    result$num_correct <- result$num_correct + 1
+    result$correct_v <- append(result$correct_v, id)
+  } else {
+    result$num_incorrect <- result$num_incorrect + 1
+    result$incorrect_v <- append(result$incorrect_v, id)
+  }
+
+  result$message_list <- append(
+    result$message_list,
+    list(message = list(prompt_id = ps_get_prompt_id(id), msg_text = text))
+  )
+  return(result)
+}
+
+format_result <- function(result) {
+  total <- number_of_prompts()
+  num_attempted <- result$num_correct + result$num_incorrect
+  num_correct <- result$num_correct
+
+  if (cDEBUG) {
+    print("--- begin: format_result --- ")
+    print(result)
+    print("--- end: format_result ---")
+  }
+
+  ps <- ps_get_current()
+
+  t <- ""
+  t <- paste0(t, ps$ps_title, "\n", ps$ps_descr, "\n")
+  t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
+  if (total == num_correct) {
+    t <- paste0(t, " Good work!\n")
+  } else {
+    t <- paste0(t, " More work to do.\n")
+  }
+
+  for (m in result$message_list) {
+    t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
+  }
+
+  correct_list <- paste0(result$correct_v, collapse = " - ")
+  incorrect_list <- paste0(result$incorrect_v, collapse = " - ")
+
+  t <- paste0(t, "\n Correct: ", correct_list)
+  t <- paste0(t, "\n Incorrect: ", incorrect_list)
+
+  return(t)
+}
+
+# Output ----
+#----------------------------------------------------------------------------#
+# Functions for sending output to Console or Viewer
+#----------------------------------------------------------------------------#
+print_to_console <- function(text) {
+  t <- text
+  if (cDEBUG == FALSE) {
+    t <- paste0("\014", t) # Clear the console
+  }
+  cat(t)
+}
+
+print_to_viewer <- function(text, fn) {
+  dir <- tempfile()
+  dir.create(dir)
+  html_file <- file.path(dir, paste0(fn, ".html"))
+
+  t <- "<head></head><body><pre>"
+  t <- paste0(t, text)
+  t <- paste0(t, "</pre></body>")
+
+  write(t, html_file)
+  rstudioapi::viewer(html_file, height = 400)
+}
+
+print_output <- function(text, fn) {
+  if (pkg.globals$gTO_CONSOLE) {
+    print_to_console(text)
+  } else {
+    print_to_viewer(text, fn)
+  }
+}
+
 # Addins ----
 #----------------------------------------------------------------------------#
 # The add-in functions for controlling the presentation of the practice
@@ -604,9 +623,9 @@ practice.begin <- function(short = "P01") {
 #' @return `TRUE` if all goes well.
 #' @seealso [practice.questions]
 #' @export
-practice.questions <- function() {
+practice.questions <- function(do_not_show=NULL) {
   ps <- ps_get_current()
-  t <- format_prompts()
+  t <- format_prompts(do_not_show)
   print_output(t, "questions")
   return(TRUE)
 }
@@ -617,9 +636,9 @@ practice.questions <- function() {
 #' @seealso \code{\link{practice.questions}}
 #' @export
 practice.check <- function() {
-  t <- practice.check_format()
+  t <- check_answers()
   print_output(t, "check")
-  return (TRUE)
+  return(TRUE)
 }
 
 #' Show all the answers for the practice set

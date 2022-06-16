@@ -2,18 +2,18 @@
 % Please edit documentation in R/practice-info201.R
 \name{result_error_msg}
 \alias{result_error_msg}
-\title{#' Xxx xxx}
+\title{Formats a "try again" message}
 \usage{
 result_error_msg(id, show_hints = TRUE)
 }
 \arguments{
-\item{id}{Internal prompt ID}
+\item{id}{the internal ID for the prompt}
 
-\item{show_hints}{to show or not show the hints}
+\item{show_hints}{to show or not show the hints for incorrect answers}
 }
 \value{
-xxx
+a formatted string that can be concatenated to a full output string
 }
 \description{
-#' Xxx xxx
+This should be called when a learner's answer is incorrect.
 }

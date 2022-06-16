@@ -2,16 +2,19 @@
 % Please edit documentation in R/practice-info201.R
 \name{eval_expr}
 \alias{eval_expr}
-\title{#' Xxx xxx}
+\title{Evaluate an R expression}
 \usage{
 eval_expr(id)
 }
 \arguments{
-\item{id}{internal id of the prompt}
+\item{id}{the internal ID for the prompt}
 }
 \value{
-xxx
+returns the result of the evaluation. If the learner's code produces
+a function (that is, a "closure") a text string summarizing the function is
+returned
 }
 \description{
-#' Xxx xxx
+To test a learner's answer, call this function. This function accesses
+the learner's code, which is stored in the practice set data structure.
 }

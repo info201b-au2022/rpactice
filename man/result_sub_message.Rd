@@ -2,18 +2,18 @@
 % Please edit documentation in R/practice-info201.R
 \name{result_sub_message}
 \alias{result_sub_message}
-\title{#' Xxx xxx}
+\title{Format a sub-message}
 \usage{
 result_sub_message(message, sub_message)
 }
 \arguments{
-\item{message}{the current message}
+\item{message}{the formatted text of the current message}
 
 \item{sub_message}{the sub-message to be added}
 }
 \value{
-xxx
+a formatted string that can be concatenated to a full output string
 }
 \description{
-#' Xxx xxx
+Currently, sub-messages are simply intended
 }

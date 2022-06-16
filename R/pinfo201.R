@@ -1,7 +1,6 @@
-#' foo: A package for computating the notorious bar statistic
+#' pinfo201: A package for practicing R coding and auto-testing code
 #'
-#' The foo package provides three categories of important functions:
-#' foo, bar and baz.
+#' Xxx xxx
 #'
 #' @section Foo functions:
 #' The foo functions ...

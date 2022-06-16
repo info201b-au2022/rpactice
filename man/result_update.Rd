@@ -2,22 +2,24 @@
 % Please edit documentation in R/practice-info201.R
 \name{result_update}
 \alias{result_update}
-\title{#' Xxx xxx}
+\title{Updates a result data structure}
 \usage{
 result_update(result, id, is_correct, text)
 }
 \arguments{
-\item{result}{a list of the results}
+\item{result}{a list that holds data related to the correctness of the learners work}
 
-\item{id}{internal id of the prompt}
+\item{id}{the internal ID of a specific prompt}
 
-\item{is_correct}{indicating whether the answer is correct or not}
+\item{is_correct}{indicating whether the learner's answer is correct or not}
 
-\item{text}{a message}
+\item{text}{a message for the learner about their answer}
 }
 \value{
-xxx
+result the updated data structure
 }
 \description{
-#' Xxx xxx
+When implementing checks to prompts in callbacks (\code{<var_name>_CHECK}), this
+function is called to update the learner's results. For an example, see
+\code{\link{DEFAULT_Check}}.
 }

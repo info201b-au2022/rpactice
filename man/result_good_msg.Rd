@@ -2,16 +2,16 @@
 % Please edit documentation in R/practice-info201.R
 \name{result_good_msg}
 \alias{result_good_msg}
-\title{#' Xxx xxx}
+\title{Formats a "good" message}
 \usage{
 result_good_msg(id)
 }
 \arguments{
-\item{id}{Internal prompt ID}
+\item{id}{the internal ID for the prompt}
 }
 \value{
-xxx
+a formatted string that can be concatenated to a full output string
 }
 \description{
-#' Xxx xxx
+This should be called when a learner's answer is correct.
 }

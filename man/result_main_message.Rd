@@ -2,16 +2,16 @@
 % Please edit documentation in R/practice-info201.R
 \name{result_main_message}
 \alias{result_main_message}
-\title{#' Xxx xxx}
+\title{Formats a message}
 \usage{
 result_main_message(main_message)
 }
 \arguments{
-\item{main_message}{a main message}
+\item{main_message}{the text of the message}
 }
 \value{
-xxx
+a formatted string that can be concatenated to a full output string
 }
 \description{
-#' Xxx xxx
+Currently, no formatting is done.
 }
