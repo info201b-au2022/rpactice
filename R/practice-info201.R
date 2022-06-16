@@ -1,15 +1,19 @@
-library("rstudioapi")
-source("./R/ui.R")
-source("./R/code_analysis.R")
-source("./R/practice-sets.R")
+# library("stringr")
+# library("rstudioapi")
+# library(shiny)
+# library(miniUI)
+#
+# source("./R/ui.R")
+# source("./R/code_analysis.R")
+#
+# source("./R/practice-sets/practice-set-01.R")
+# source("./R/practice-sets/practice-set-02.R")
 
-# Global variables ----
-#----------------------------------------------------------------------------#
-# Global variables (see "practice-sets.R")
-# gPRACTICE_SETS is a global variable containing the practice sets
-# gPRACTICE_SET_ID the learner is working on this practice set
-#----------------------------------------------------------------------------#
-gTO_CONSOLE <- FALSE
+pkg.globals <- new.env()
+pkg.globals$gPRACTICE_SETS <- list(pinfo201::ps01, pinfo201::ps02)
+pkg.globals$gPRACTICE_SET_ID <- 1
+pkg.globals$gTO_CONSOLE <- FALSE
+
 
 # Constants ----
 #----------------------------------------------------------------------------#
@@ -23,22 +27,27 @@ cTAB_IN_SPACES <- "   "
 # Functions for accessing practice sets
 #----------------------------------------------------------------------------#
 ps_set_current <- function(id) {
-  if (is.null(gPRACTICE_SETS)) {
+  if (is.null(pkg.globals$gPRACTICE_SETS)) {
     stop("practice-info-201.R: Practice sets are not set.")
   }
-  if (id <= 0 || id > length(gPRACTICE_SETS)) {
-    stop(paste0("practice_inof-201.R: Practice Set ID must be between 1 and ", length(gPRACTICE_SETS), "."))
+  if (id <= 0 || id > length(pkg.globals$gPRACTICE_SETS)) {
+    stop(paste0("practice_inof-201.R: Practice Set ID must be between 1 and ", length(pkg.globals$gPRACTICE_SETS), "."))
   }
 
-  gPRACTICE_SET_ID <- id
+  pkg.globals$gPRACTICE_SET_ID <- id
 }
 
-ps_get_current <- function() {
-  return(gPRACTICE_SETS[[gPRACTICE_SET_ID]])
+ps_get_current <- function(id=NULL) {
+  if (is.null(id)) {
+    id <- pkg.globals$gPRACTICE_SET_ID
+  }
+  ps <- pkg.globals$gPRACTICE_SETS[[id]]
+
+  return(ps)
 }
 
 ps_update_current <- function(ps) {
-  gPRACTICE_SETS[[gPRACTICE_SET_ID]] <- ps
+  pkg.globals$gPRACTICE_SETS[[pkg.globals$gPRACTICE_SET_ID]] <- ps
 }
 
 ps_test_current <- function() {
@@ -47,7 +56,7 @@ ps_test_current <- function() {
 }
 
 ps_get_id_by_short <- function(short_id) {
-  for (ps in gPRACTICE_SETS) {
+  for (ps in pkg.globals$gPRACTICE_SETS) {
     if (ps$ps_short == short_id) {
       return(ps$ps_id)
     }
@@ -55,31 +64,30 @@ ps_get_id_by_short <- function(short_id) {
   return(NULL)
 }
 
+# This returns a list of practice set titles and ids, suited
+# to a Shinny selectInput widget.  The list has this structure:
+#    list("P01: <title>" = "P1", "P2: <title>" = "P01")
 ps_ui_get_titles <- function() {
-  if (is.null(gPRACTICE_SETS)) {
+  if (is.null(pkg.globals$gPRACTICE_SETS)) {
     stop("practice-info-201.R: Practice sets are not set.")
   }
 
   items <- c()
   ids <- c()
-  k <- 1
 
-  for (ps in gPRACTICE_SETS) {
-    s <- paste0(ps$ps_short, ":", ps$ps_title)
+  for (ps in pkg.globals$gPRACTICE_SETS) {
+    s <- paste0(ps$ps_short, ": ", ps$ps_title)
     items <- append(items, s)
     ids <- append(ids, ps$ps_short)
-    k <- k + 1
   }
   t <- as.list(setNames(ids, items))
-
-  # list("P1: <title>" = 1, "P2: <title>" = 2, "P3: <title>" = 3)
   return(t)
 }
 
 # Variables ----
 #----------------------------------------------------------------------------#
 # Functions for setting up the initial variables on which the practice
-# prompts depend
+# prompts can depend
 #----------------------------------------------------------------------------#
 set_initial_vars_doit <- function(expr) {
   eval(parse(text = expr))
@@ -108,21 +116,26 @@ DEFAULT_Check <- function(internal_id, val, result) {
     print("---")
   }
 
-  if (val == eval_expr(internal_id)) {
+  if (is.nan(val) && is.nan(eval_expr(internal_id))) {
+    result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+  } else if (val == eval_expr(internal_id)) {
     result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
   } else {
     result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
   }
+
   return(result)
 }
 
-# Checks if a callback function has been loaded
+# Checks if a callback function for checking a learner's answer
+# has been implemented
 is_callback_loaded <- function(funct_name) {
   f_pattern <- paste0("^", funct_name, "$")
   t <- (length(ls(envir = globalenv(), pattern = f_pattern)) == 1)
   return(t)
 }
 
+# practice set ----
 #----------------------------------------------------------------------------#
 # Functions for accessing information about the practice set
 # Note: id is an internal index
@@ -141,7 +154,7 @@ practice_get_all_assignment_vars <- function() {
   return(vars)
 }
 
-# Determine which assignment variables that have been initialized
+# Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
 get_var_names <- function() {
   expected <- practice_get_all_assignment_vars()
@@ -195,18 +208,9 @@ eval_expr <- function(id) {
   if (typeof(t) == "closure") {
     args <- formals(t)
     v <- names(args)
-    t <- paste0(v,collapse=", ")
+    t <- paste0(v, collapse = ", ")
     t <- paste0("function(", t, ") {...}")
   }
-  return(t)
-}
-
-ps_heading <- function() {
-  ps <- ps_get_current()
-  t <- paste0(
-    ps$ps_title, " (", ps$ps_short, ")", "\n",
-    ps$ps_descr, "\n"
-  )
   return(t)
 }
 
@@ -238,6 +242,7 @@ ps_get_learner_answer <- function(id) {
   return(t)
 }
 
+## Prompts ----
 #----------------------------------------------------------------------------#
 # Functions for presenting the prompts
 #----------------------------------------------------------------------------#
@@ -247,7 +252,28 @@ number_of_tasks <- function() {
   return(t)
 }
 
-format_tasks <- function() {
+# Format the practice set as an R script
+ps_ui_practice_script <- function(short) {
+  ps <- ps_get_current(ps_get_id_by_short(short))
+
+  t <- ""
+  for (task in ps$task_list) {
+    msg <- str_replace_all(task$prompt_msg, "\n", "\n#   ")
+    t <- paste0(t, "# ", task$prompt_id, ": ", msg, " (", task$assignment_var, ")", "\n\n")
+  }
+
+  t <- paste0(
+    "# ", ps$ps_title, "(", ps$ps_short, ")\n",
+    "# ", str_replace_all(ps$ps_descr, "\n", "\n# "), "\n",
+    "# --------\n",
+    "practice.begin(\"", ps$ps_short, "\")\n",
+    t,
+    "practice.check()\n"
+  )
+  return(t)
+}
+
+format_prompts <- function() {
   ps <- ps_get_current()
   t <- ""
   for (task in ps$task_list) {
@@ -264,27 +290,27 @@ format_tasks <- function() {
   return(t)
 }
 
-#' Show the questions for a practice set.
+#' Show all the questions for a practice set.
 #'
 #' @return `TRUE` if all goes well.
 #' @seealso [practice.questions]
 #' @export
 #' @examples
-#' # Show practice questions for default practice set
+#' # Show all questions for the default practice set
 #' practice.begin()
 #' practice.questions()
 #'
-#' # Show practice questions for practice set "P02"
+#' # Show all questions for practice set "P02"
 #' practice.begin("P02")
 #' practice.questions()
-
 practice.questions <- function() {
   ps <- ps_get_current()
-  t <- format_tasks()
+  t <- format_prompts()
   print_output(t, "questions")
   return(TRUE)
 }
 
+## Answers ----
 #----------------------------------------------------------------------------#
 # Functions for presenting answers
 # styler::style_text("t <-function(a) {return (a+1)}")
@@ -294,18 +320,24 @@ format_answers <- function() {
   short <- ps$ps_short
   t <- ""
   for (task in ps$task_list) {
-    t <- paste0(t, short, ".", task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
+    t <- paste0(t, task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
 
     expected <- format_code(paste0(task$assignment_var, " <- ", task$expected_answer))
-    expected_t <- paste0(expected, "\n", collapse="")
+    expected_t <- paste0(expected, "\n", collapse = "")
 
     t <- paste0(t, expected_t)
 
     task_id <- ps_get_internal_id_from_prompt_id(task$prompt_id)
-    t <- paste0(t, cTAB_IN_SPACES, "> ", eval_expr(task_id), "\n")
+    t <- paste0(t, cTAB_IN_SPACES, "<span style='color:purple'>> ", eval_expr(task_id), "</span>\n")
   }
   return(t)
 }
+
+#' Show all the answers for the practice set
+#'
+#' @return `TRUE` if all goes well.
+#' @seealso \code{\link{practice.questions}}
+#' @export
 practice.answers <- function() {
   ps <- ps_get_current()
   t <- format_answers()
@@ -317,15 +349,17 @@ practice.answers <- function() {
     t
   )
   print_output(t, "anwers")
+  return(TRUE)
 }
 
+## Formatting results ----
 #----------------------------------------------------------------------------#
 # Functions for formatting and outputting feedback on practice sets
 #----------------------------------------------------------------------------#
-format_code <- function(code_text, indent=cTAB_IN_SPACES) {
+format_code <- function(code_text, indent = cTAB_IN_SPACES) {
   t <- styler::style_text(code_text)
-  t <- paste0(indent,t)
-  t <- paste0(t, collapse="\n")
+  t <- paste0(indent, t)
+  t <- paste0(t, collapse = "\n")
   return(t)
 }
 
@@ -340,15 +374,13 @@ result_msg <- function(id, is_correct, show_hints = TRUE) {
 result_good_msg <- function(id) {
   expected <- ps_get_expected_answer(id)
   answer <- eval_expr(id)
-  if (typeof(answer) == "closure") {
-    t <- body(answer)
-    t <- paste0("\n", t)
-    t <- paste0("Correct. Expected CODE: \n", format_code(expected), "\n   > ",t)
-  }
-  else {
-    t <- answer
-    t <- paste0("Correct. Expected code: \n   ", str_trim(format_code(expected)), "\n   > ",t)
-  }
+  t <- answer
+  t <- paste0(
+    "<span style='color:green'>&#10004;</span> Expected: \n",
+    "", format_code(expected),
+    "\n<span style='color:purple'>   > ", t,
+    "</span>"
+  )
   return(t)
 }
 
@@ -390,28 +422,29 @@ format_result <- function(result) {
   num_correct <- result$num_correct
 
   if (cDEBUG) {
-    print("-----")
+    print("--- begin: format_result --- ")
     print(result)
-    print("-----")
-  } else {
-    t <- ""
-    t <- paste0(t, ps_heading())
-    t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
-    if (total == num_correct) {
-      t <- paste0(t, " Good work!\n")
-    } else {
-      t <- paste0(t, " More work to do.\n")
-    }
-
-    for (m in result$message_list) {
-      t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
-    }
-    return(t)
+    print("--- end: format_result ---")
   }
+
+  t <- ""
+  t <- paste0(t, ps_heading())
+  t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
+  if (total == num_correct) {
+    t <- paste0(t, " Good work!\n")
+  } else {
+    t <- paste0(t, " More work to do.\n")
+  }
+
+  for (m in result$message_list) {
+    t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
+  }
+  return(t)
 }
 
+## Output ----
 #----------------------------------------------------------------------------#
-# Functions for sending output to Console or to Viewer
+# Functions for sending output to Console or Viewer
 #----------------------------------------------------------------------------#
 print_to_console <- function(text) {
   t <- text
@@ -435,7 +468,7 @@ print_to_viewer <- function(text, fn) {
 }
 
 print_output <- function(text, fn) {
-  if (gTO_CONSOLE) {
+  if (pkg.globals$gTO_CONSOLE) {
     print_to_console(text)
   } else {
     print_to_viewer(text, fn)
@@ -447,22 +480,18 @@ print_output <- function(text, fn) {
 #' "P01" and "P02".
 #'
 #' @param short The short ID for this practice set.
-#' @param console Indicates whether output should go to the console.
 #' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
 #' @seealso \code{\link{practice.questions}}
 #' @export
 #' @examples
 #' practice.begin()
 #' practice.begin("P02")
-#' practice.begin("P02",TRUE)
-practice.begin <- function(short = "P01", to_console=FALSE) {
+#' practice.begin("P02", TRUE)
+practice.begin <- function(short = "P01") {
   id <- ps_get_id_by_short(short)
   if (is.null(id)) {
     stop("practice.begin: Can't find practice set named", short)
   }
-
-  # Send output to the Console or to the Viewer
-  gTO_CONSOLE <- to_console
 
   # Set the current practice set ID
   ps_set_current(id)
@@ -542,7 +571,15 @@ practice.check_format <- function() {
   return(t)
 }
 
+#' Check the practice set answers.
+#'
+#' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
+#' @seealso \code{\link{practice.questions}}
+#' @export
+#' @examples
+#' practice.check()
 practice.check <- function() {
   t <- practice.check_format()
   print_output(t, "check")
+  return (TRUE)
 }

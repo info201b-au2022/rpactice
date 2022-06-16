@@ -1,10 +1,5 @@
-library("stringr")
-
-#library(rlang)
-#library(lobstr)
-
 #----------------------------------------------------------------------------#
-# Functions for extracting the learner's code from the script 
+# Functions for extracting the learner's code from the script
 #----------------------------------------------------------------------------#
 
 get_answer <- function(answers, var_name) {

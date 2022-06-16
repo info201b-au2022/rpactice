@@ -2,7 +2,7 @@
 % Please edit documentation in R/practice-info201.R
 \name{practice.questions}
 \alias{practice.questions}
-\title{Show the questions for a practice set.}
+\title{Show all the questions for a practice set.}
 \usage{
 practice.questions()
 }
@@ -10,14 +10,14 @@ practice.questions()
 `TRUE` if all goes well.
 }
 \description{
-Show the questions for a practice set.
+Show all the questions for a practice set.
 }
 \examples{
-# Show practice questions for default practice set
+# Show all questions for the default practice set
 practice.begin()
 practice.questions()
 
-# Show practice questions for practice set "P02"
+# Show all questions for practice set "P02"
 practice.begin("P02")
 practice.questions()
 }

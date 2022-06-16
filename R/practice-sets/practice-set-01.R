@@ -5,6 +5,19 @@
 
 # This structure is used to represent a practice set. Basically, a practice
 # set comprises a set of prompts and corresponding answers.
+
+#' Prices of 50,000 round cut diamonds.
+#'
+#' A dataset containing the prices and other attributes of almost 54,000
+#' diamonds.
+#'
+#' @format A data frame with 53940 rows and 10 variables:
+#' \describe{
+#'   \item{price}{price, in US dollars}
+#'   \item{carat}{weight of the diamond, in carats}
+#'   ...
+#' }
+#' @source \url{http://www.diamondse.info/}
 ps01 <- list(
 
   ## Descriptive info ----
@@ -13,7 +26,7 @@ ps01 <- list(
   ps_id = 1,
   ps_title = "Basic Arithmatic Operators",
   ps_short = "P01",
-  ps_descr = "Practice using basic mathematical operators: +, -, */ ,^, (, ), %%, %/%.",
+  ps_descr = "Practice using basic mathematical operators: +, -, */ ,^, (, ), %%, %/%.\nKnow the meaning of Inf, -Inf, and NaN.",
   ps_instructions = "",
 
   ## Initial variables ----
@@ -120,7 +133,7 @@ ps01 <- list(
 
     task = list(
       prompt_id = "j",
-      prompt_msg = "pi is a built-in constant (3.141593). Given a circle with radius 4 (r),\n what is its area? (Recall: A = pi*r^2)",
+      prompt_msg = "In R, pi is a built-in constant (3.141593). Given a circle with radius 4 (r),\n what is its area? (Recall: A = pi*r^2)",
       assignment_var = "A",
       expected_answer = "pi*4^2",
       learner_answer = "",
@@ -129,6 +142,33 @@ ps01 <- list(
 
     task = list(
       prompt_id = "k",
+      prompt_msg = "In R, Inf means 'positive infinity.' What is 7 / 0?",
+      assignment_var = "t_10",
+      expected_answer = "7/0",
+      learner_answer = "",
+      hints = list()
+    ),
+
+    task = list(
+      prompt_id = "l",
+      prompt_msg = "In R, -Inf means 'negative infinity.' What is -7 / 0?",
+      assignment_var = "t_11",
+      expected_answer = "-7/0",
+      learner_answer = "",
+      hints = list()
+    ),
+
+    task = list(
+      prompt_id = "m",
+      prompt_msg = "In R, NaN means 'Not a Number'. What is 0 / 0?",
+      assignment_var = "t_12",
+      expected_answer = "0/0",
+      learner_answer = "",
+      hints = list()
+    ),
+
+    task = list(
+      prompt_id = "n",
       prompt_msg = "Write a function that takes one parameter, r for radius, and computes the\n the area of a circle. (Recall: A = pi*r^2)",
       assignment_var = "circle_area",
       expected_answer = "function(r) {

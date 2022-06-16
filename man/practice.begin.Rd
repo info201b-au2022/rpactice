@@ -6,12 +6,10 @@
 set and to set things up. Currently, there are two practice sets -
 "P01" and "P02".}
 \usage{
-practice.begin(short = "P01", to_console = FALSE)
+practice.begin(short = "P01")
 }
 \arguments{
 \item{short}{The short ID for this practice set.}
-
-\item{console}{Indicates whether output should go to the console.}
 }
 \value{
 `TRUE` if all goes well; otherwise, this function will stop with an message.
@@ -24,7 +22,7 @@ set and to set things up. Currently, there are two practice sets -
 \examples{
 practice.begin()
 practice.begin("P02")
-practice.begin("P02",TRUE)
+practice.begin("P02", TRUE)
 }
 \seealso{
 \code{\link{practice.questions}}

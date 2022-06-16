@@ -1,7 +1,8 @@
 # Answers to practice set P01
+library("pinfo201")
 source("./R/practice-info201.R")
 
-practice.begin()
+practice.begin("P02")
 practice.questions()
 t_01 <- 27
 num <- 111 / 9
@@ -12,6 +13,9 @@ t_06 <- 3.4**3
 t_07 <- 2^-8
 t_08 <- 111 %% 4
 t_09 <- 111 %/% 3
+t_10 <- 7 /0
+t_11 <- -7 / 0
+t_12 <- 0 / 0
 A <- pi * 4^2
 circle_area <- function(r) {
   area <- pi * r^2
