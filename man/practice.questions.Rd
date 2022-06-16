@@ -12,15 +12,6 @@ practice.questions()
 \description{
 Show all the questions for a practice set.
 }
-\examples{
-# Show all questions for the default practice set
-practice.begin()
-practice.questions()
-
-# Show all questions for practice set "P02"
-practice.begin("P02")
-practice.questions()
-}
 \seealso{
 [practice.questions]
 }

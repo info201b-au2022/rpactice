@@ -14,7 +14,6 @@
 #'   ...
 #' }
 #' @source \url{http://www.diamondse.info/}
-#' @export
 ps02 <- list(
 
   ## Descriptive info ----

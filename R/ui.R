@@ -17,10 +17,11 @@ ui_begin <- function() {
   server <- function(input, output, session) {
 
     observeEvent(input$begin, {
-      id <- input$select
-      rstudioapi::documentNew(ps_ui_practice_script(id))
+      short <- input$select
+      id <- ps_get_id_by_short(short)
+      ps_set_current(id)
+      rstudioapi::documentNew(format_practice_script(id))
       rstudioapi::setCursorPosition(document_position(3,1))
-      print("here: begin")
       stopApp()
     })
 

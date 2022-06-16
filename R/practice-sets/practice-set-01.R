@@ -18,6 +18,7 @@
 #'   ...
 #' }
 #' @source \url{http://www.diamondse.info/}
+
 ps01 <- list(
 
   ## Descriptive info ----

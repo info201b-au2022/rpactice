@@ -12,9 +12,6 @@ practice.check()
 \description{
 Check the practice set answers.
 }
-\examples{
-practice.check()
-}
 \seealso{
 \code{\link{practice.questions}}
 }

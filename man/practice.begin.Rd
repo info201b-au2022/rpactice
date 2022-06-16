@@ -19,11 +19,6 @@ Begin a practice set. Call this function to install a specific practice
 set and to set things up. Currently, there are two practice sets -
 "P01" and "P02".
 }
-\examples{
-practice.begin()
-practice.begin("P02")
-practice.begin("P02", TRUE)
-}
 \seealso{
 \code{\link{practice.questions}}
 }

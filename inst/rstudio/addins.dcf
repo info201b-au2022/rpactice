@@ -2,3 +2,22 @@ Name: Begin Practice
 Description: Select your practice set
 Binding: ui_begin
 Interactive: true
+
+Name: Show Questions
+Description: The questions
+Binding: practice.questions
+Interactive: false
+
+Name: Check Answers
+Description: The questions
+Binding: practice.check
+Interactive: false
+
+Name: Show Answers
+Description: The questions
+Binding: practice.answers
+Interactive: false
+
+
+
+
