@@ -45,7 +45,7 @@ ps01 <- list(
   task_list = list(
     task = list(
       prompt_id = "a",
-      prompt_msg = "Add ten, nine, and eight together?",
+      prompt_msg = "Add ten, nine, and eight together.",
       assignment_var = "t_01",
       expected_answer = "10 + 9 + 8",
       learner_answer = "",
@@ -228,7 +228,7 @@ num_Check <- function(internal_id, val, result) {
 
 circle_area_Check <- function(internal_id, val, result) {
 
-  funct1_str <- paste0(".circle_area_f_expected <-", ps_get_expected_answer_rs(internal_id))
+  funct1_str <- paste0(".circle_area_f_expected <-", ps_get_expected_answer(internal_id))
   funct1 <- eval(parse(text=funct1_str))
 
 # Check if the variable, circle_area, is a function

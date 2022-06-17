@@ -3,10 +3,9 @@
 \docType{package}
 \name{pinfo201}
 \alias{pinfo201}
-\title{foo: A package for computating the notorious bar statistic}
+\title{pinfo201: A package for practicing R coding and auto-testing code}
 \description{
-The foo package provides three categories of important functions:
-foo, bar and baz.
+Xxx xxx
 }
 \section{Foo functions}{
 

@@ -29,6 +29,7 @@ NULL
 #----------------------------------------------------------------------------#
 source("./R/practice-sets/practice-set-01.R")
 source("./R/practice-sets/practice-set-02.R")
+#source("./R/practice-sets/practice-set-03.R")
 
 # Global Variables ----
 pkg.globals <- new.env()
@@ -124,6 +125,13 @@ set_env_vars <- function() {
 
 # The default callback, which checks for correctness - yes or no
 # NOTE: Investigate identical()
+
+#' Default function for checking learner's code
+#'
+#' @param internal_id the internal ID of the prompt from the practice set
+#' @param val the value of the prompt variable
+#' @param result the result, which grows upon each call to a <var>_Check function
+#'
 DEFAULT_Check <- function(internal_id, val, result) {
   if (cDEBUG) {
     print("--- DEFAULT_Check")
@@ -216,9 +224,25 @@ ps_get_expected_answer_rs <- function(id) {
   return(t)
 }
 
+#' Get the expected answer
+#'
+#' Xxx xxx xxx
+#'
+#' @param id the internal ID for the prompt
+#' @return formatted code
+#' @export
 ps_get_expected_answer <- function(id) {
   ps <- ps_get_current()
-  t <- paste0(ps_get_assignment_var(id), " <- ", ps$task_list[[id]]$expected_answer)
+  a <- ps$task_list[[id]]$expected_answer
+  if (length(a) == 1) {
+    if (str_detect(a, "<-") == TRUE) {
+      t <- a
+    } else {
+      t <- paste0(ps_get_assignment_var(id), " <- ", a)
+    }
+  } else {
+    t <- a
+  }
   return(t)
 }
 
@@ -337,16 +361,17 @@ format_answers <- function() {
   ps <- ps_get_current()
   short <- ps$ps_short
   t <- ""
+  id <- 0
   for (task in ps$task_list) {
-    t <- paste0(t, task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
+    id <- ps_get_internal_id_from_prompt_id(task$prompt_id)
 
-    expected <- format_code(paste0(task$assignment_var, " <- ", task$expected_answer))
+    t <- paste0(t, task$prompt_id, ": ", ps_get_prompt(id), " (", ps_get_assignment_var(id), ")", "\n")
+
+    expected <- format_code(ps_get_expected_answer(id))
     expected_t <- paste0(expected, "\n", collapse = "")
 
     t <- paste0(t, expected_t)
-
-    task_id <- ps_get_internal_id_from_prompt_id(task$prompt_id)
-    t <- paste0(t, cTAB_IN_SPACES, "<span style='color:purple'>> ", eval_expr(task_id), "</span>\n")
+    t <- paste0(t, cTAB_IN_SPACES, "<span style='color:purple'>> ", eval_expr(id), "</span>\n")
   }
   return(t)
 }
@@ -620,6 +645,7 @@ practice.begin <- function(short = "P01") {
 
 #' Show all the questions for a practice set.
 #'
+#' @param do_not_show optional list of internal IDs of questions to not show
 #' @return `TRUE` if all goes well.
 #' @seealso [practice.questions]
 #' @export

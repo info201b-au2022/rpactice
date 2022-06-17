@@ -1,0 +1,46 @@
+# Practice Set Example
+# For demonstration and testing
+<ps_id>3
+
+# Test 1
+<id>a
+<msg>Add ten, nine, and eight together.
+<var>t_01
+<code>
+10 + 9 + 8
+</code>
+<hints>
+Do you use the math plus operator (+)?
+Do you use the assignment operator (<-)?"
+Is the variable name correct (t_01)?
+</hints>
+
+# Test 2
+<id>a
+<msg>Add ten, nine, and eight together.
+<var>t_02
+<code>
+t_02 <- 10 + 9 + 8
+</code>
+<hints>
+Do you use the math plus operator (+)?
+Do you use the assignment operator (<-)?"
+Is the variable name correct (t_01)?
+</hints>
+
+# Test 3
+<id>b
+<msg>Create a function
+<var>t_03
+<code>
+# This function t_02
+t_03 <- function(a,b) {
+  a <- 10  # important variable
+  b <- 20
+  # The key piece of code
+  t <- a + b
+  return(t)
+}
+</code>
+<hints>
+</hints>
