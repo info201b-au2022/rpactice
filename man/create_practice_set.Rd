@@ -4,7 +4,7 @@
 \alias{create_practice_set}
 \title{Create practice set from a coded text file}
 \usage{
-create_practice_set(ps, fn)
+create_practice_set(fn)
 }
 \arguments{
 \item{ps}{a practice set}

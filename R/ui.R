@@ -1,5 +1,3 @@
-# We'll wrap our Shiny Gadget in an addin.
-# Let's call it 'clockAddin()'.
 ui_begin <- function() {
 
   ui <- miniPage(
@@ -29,12 +27,8 @@ ui_begin <- function() {
       stopApp()
     })
   }
-
-  # We'll use a pane viewer, and set the minimum height at
-  # 300px to ensure we get enough screen space to display the clock.
   viewer <- paneViewer(100)
   runGadget(ui, server, viewer = viewer)
-
 }
 
 # Try running the ui

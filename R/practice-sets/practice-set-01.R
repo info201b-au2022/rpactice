@@ -19,172 +19,172 @@
 #' }
 #' @source \url{http://www.diamondse.info/}
 
-ps01 <- list(
-
-  ## Descriptive info ----
-  # Descriptive information about the problem set.
-  # Notes: problem_set_id MUST be unique
-  ps_id = 1,
-  ps_title = "Basic Arithmatic Operators",
-  ps_short = "P01",
-  ps_descr = "Practice using basic mathematical operators: +, -, */ ,^, (, ), %%, %/%.\nKnow the meaning of Inf, -Inf, and NaN.",
-  ps_instructions = "",
-
-  ## Initial variables ----
-  # A set of pre-initialized variables can be set with a list of expressions.
-  # In this way, learner prompts can refer to these variables.
-  initial_vars = list(
-    "X<<-10",
-    "Y<<-c(1,2,3)",
-    "Z<<-data.frame(c(1,2,3),c('A','B','C'))"
-  ),
-
-  ## Tasks ----
-  # Practice set prompts and answers are represented in this structure
-  # Tasks have an internal ID, namely their position within the task_list
-  task_list = list(
-    task = list(
-      prompt_id = "a",
-      prompt_msg = "Add ten, nine, and eight together.",
-      assignment_var = "t_01",
-      expected_answer = "10 + 9 + 8",
-      learner_answer = "",
-      hints = list(
-        "Do you use the math plus operator (+)?",
-        "Do you use the assignment operator (<-)?",
-        "Is the variable name correct (t_01)?"
-      )
-    ),
-
-    task = list(
-      prompt_id = "b",
-      prompt_msg = "What is 111 divided by 9?",
-      assignment_var = "num",
-      expected_answer = "111/9",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "c",
-      prompt_msg = "What is the average of 1, 17, 19, and 31?",
-      assignment_var = "t_03",
-      expected_answer = "(1 + 17 + 19 + 31) / 4",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "d",
-      prompt_msg = "What is the average of these Celcius temperatures: -5C, -10C, -12C",
-      assignment_var = "t_04",
-      expected_answer = "(-5 + -10 + -12) / 3",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "e",
-      prompt_msg = "Use the exponent operator (^ or **) to compute 2 to the 20th power.",
-      assignment_var = "t_05",
-      expected_answer = "2^20",
-      learner_answer = "",
-      hints = list(
-        "Check the exponent. Is it 20?",
-        "Check the base number. Is it 2?",
-        "Is the variable name correct (t_04)?"
-      )
-    ),
-
-    task = list(
-      prompt_id = "f",
-      prompt_msg = "What is 3.4 cubed?",
-      assignment_var = "t_06",
-      expected_answer = "3.4**3",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "g",
-      prompt_msg = "Compute the reciprocal 2 to 8th power (2^(-8) or 1 / 2^8).",
-      assignment_var = "t_07",
-      expected_answer = "2 ** -8",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "h",
-      prompt_msg = "Use the modulus operator (%%) to compute the remainder of 111 divided by 4.",
-      assignment_var = "t_08",
-      expected_answer = "111%%4",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "i",
-      prompt_msg = "Use integer division (%/%) to compute the quotient of 111 divided by 3.",
-      assignment_var = "t_09",
-      expected_answer = "111%/%3",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "j",
-      prompt_msg = "In R, pi is a built-in constant (3.141593). Given a circle with radius 4 (r),\n what is its area? (Recall: A = pi*r^2)",
-      assignment_var = "A",
-      expected_answer = "pi*4^2",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "k",
-      prompt_msg = "In R, Inf means 'positive infinity.' What is 7 / 0?",
-      assignment_var = "t_10",
-      expected_answer = "7/0",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "l",
-      prompt_msg = "In R, -Inf means 'negative infinity.' What is -7 / 0?",
-      assignment_var = "t_11",
-      expected_answer = "-7/0",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "m",
-      prompt_msg = "In R, NaN means 'Not a Number'. What is 0 / 0?",
-      assignment_var = "t_12",
-      expected_answer = "0/0",
-      learner_answer = "",
-      hints = list()
-    ),
-
-    task = list(
-      prompt_id = "n",
-      prompt_msg = "Write a function that takes one parameter, r for radius, and computes the\n the area of a circle. (Recall: A = pi*r^2)",
-      assignment_var = "circle_area",
-      expected_answer = "function(r) {
-  area <- pi*r^2
-  return (area)
-}",
-      learner_answer = "",
-      hints = list()
-    )
-
-    # Task list -- end
-  )
-
-  # Practice set -- end
-)
+# ps01 <- list(
+#
+#   ## Descriptive info ----
+#   # Descriptive information about the problem set.
+#   # Notes: problem_set_id MUST be unique
+#   ps_id = 1,
+#   ps_title = "Basic Arithmatic Operators",
+#   ps_short = "P01",
+#   ps_descr = "Practice using basic mathematical operators: +, -, */ ,^, (, ), %%, %/%.\nKnow the meaning of Inf, -Inf, and NaN.",
+#   ps_instructions = "",
+#
+#   ## Initial variables ----
+#   # A set of pre-initialized variables can be set with a list of expressions.
+#   # In this way, learner prompts can refer to these variables.
+#   initial_vars = list(
+#     "X<<-10",
+#     "Y<<-c(1,2,3)",
+#     "Z<<-data.frame(c(1,2,3),c('A','B','C'))"
+#   ),
+#
+#   ## Tasks ----
+#   # Practice set prompts and answers are represented in this structure
+#   # Tasks have an internal ID, namely their position within the task_list
+#   task_list = list(
+#     task = list(
+#       prompt_id = "a",
+#       prompt_msg = "Add ten, nine, and eight together.",
+#       assignment_var = "t_01",
+#       expected_answer = "10 + 9 + 8",
+#       learner_answer = "",
+#       hints = list(
+#         "Do you use the math plus operator (+)?",
+#         "Do you use the assignment operator (<-)?",
+#         "Is the variable name correct (t_01)?"
+#       )
+#     ),
+#
+#     task = list(
+#       prompt_id = "b",
+#       prompt_msg = "What is 111 divided by 9?",
+#       assignment_var = "num",
+#       expected_answer = "111/9",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "c",
+#       prompt_msg = "What is the average of 1, 17, 19, and 31?",
+#       assignment_var = "t_03",
+#       expected_answer = "(1 + 17 + 19 + 31) / 4",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "d",
+#       prompt_msg = "What is the average of these Celcius temperatures: -5C, -10C, -12C",
+#       assignment_var = "t_04",
+#       expected_answer = "(-5 + -10 + -12) / 3",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "e",
+#       prompt_msg = "Use the exponent operator (^ or **) to compute 2 to the 20th power.",
+#       assignment_var = "t_05",
+#       expected_answer = "2^20",
+#       learner_answer = "",
+#       hints = list(
+#         "Check the exponent. Is it 20?",
+#         "Check the base number. Is it 2?",
+#         "Is the variable name correct (t_04)?"
+#       )
+#     ),
+#
+#     task = list(
+#       prompt_id = "f",
+#       prompt_msg = "What is 3.4 cubed?",
+#       assignment_var = "t_06",
+#       expected_answer = "3.4**3",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "g",
+#       prompt_msg = "Compute the reciprocal 2 to 8th power (2^(-8) or 1 / 2^8).",
+#       assignment_var = "t_07",
+#       expected_answer = "2 ** -8",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "h",
+#       prompt_msg = "Use the modulus operator (%%) to compute the remainder of 111 divided by 4.",
+#       assignment_var = "t_08",
+#       expected_answer = "111%%4",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "i",
+#       prompt_msg = "Use integer division (%/%) to compute the quotient of 111 divided by 3.",
+#       assignment_var = "t_09",
+#       expected_answer = "111%/%3",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "j",
+#       prompt_msg = "In R, pi is a built-in constant (3.141593). Given a circle with radius 4 (r),\n what is its area? (Recall: A = pi*r^2)",
+#       assignment_var = "A",
+#       expected_answer = "pi*4^2",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "k",
+#       prompt_msg = "In R, Inf means 'positive infinity.' What is 7 / 0?",
+#       assignment_var = "t_10",
+#       expected_answer = "7/0",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "l",
+#       prompt_msg = "In R, -Inf means 'negative infinity.' What is -7 / 0?",
+#       assignment_var = "t_11",
+#       expected_answer = "-7/0",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "m",
+#       prompt_msg = "In R, NaN means 'Not a Number'. What is 0 / 0?",
+#       assignment_var = "t_12",
+#       expected_answer = "0/0",
+#       learner_answer = "",
+#       hints = list()
+#     ),
+#
+#     task = list(
+#       prompt_id = "n",
+#       prompt_msg = "Write a function that takes one parameter, r for radius, and computes the\n the area of a circle. (Recall: A = pi*r^2)",
+#       assignment_var = "circle_area",
+#       expected_answer = "function(r) {
+#   area <- pi*r^2
+#   return (area)
+# }",
+#       learner_answer = "",
+#       hints = list()
+#     )
+#
+#     # Task list -- end
+#   )
+#
+#   # Practice set -- end
+# )
 
 ## Callbacks ----
 #----------------------------------------------------------------------------#

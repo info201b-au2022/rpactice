@@ -5,7 +5,10 @@
 #
 # source("./R/ui.R")
 # source("./R/code_analysis.R")
-#
+# source("./R/practice-sets/practice-set-01.R")
+# source("./R/practice-sets/practice-set-02.R")
+#source("./R/practice-sets/practice-set-03.R")
+
 
 # Imports ----
 #----------------------------------------------------------------------------#
@@ -27,13 +30,10 @@ NULL
 #----------------------------------------------------------------------------#
 # The prompts and answers are specified in these files
 #----------------------------------------------------------------------------#
-source("./R/practice-sets/practice-set-01.R")
-source("./R/practice-sets/practice-set-02.R")
-#source("./R/practice-sets/practice-set-03.R")
+
 
 # Global Variables ----
 pkg.globals <- new.env()
-pkg.globals$gPRACTICE_SETS <- list(ps01, ps02)
 pkg.globals$gPRACTICE_SET_ID <- 1
 pkg.globals$gTO_CONSOLE <- FALSE
 
@@ -45,6 +45,14 @@ cTAB_IN_SPACES <- "   "
 #----------------------------------------------------------------------------#
 # Functions for setting and accessing practice sets
 #----------------------------------------------------------------------------#
+ps_load_internal_ps <- function() {
+  pkg.globals$gPRACTICE_SETS <- list(ps01, ps02, ps03)
+}
+
+ps_load_ps <- function(filename) {
+
+}
+
 ps_set_current <- function(id) {
   if (is.null(pkg.globals$gPRACTICE_SETS)) {
     stop("practice-info-201.R: Practice sets are not set.")
@@ -56,10 +64,13 @@ ps_set_current <- function(id) {
   pkg.globals$gPRACTICE_SET_ID <- id
 }
 
-ps_get_current <- function(id = NULL) {
-  if (is.null(id)) {
-    id <- pkg.globals$gPRACTICE_SET_ID
-  }
+#'
+#' @export
+ps_get_current <- function() {
+    id <- as.numeric(pkg.globals$gPRACTICE_SET_ID)
+    if (is.null(id) == TRUE || id < 1) {
+      stop("Error: Bad gPRACTICE_SET_ID")
+    }
   ps <- pkg.globals$gPRACTICE_SETS[[id]]
 
   return(ps)
@@ -101,6 +112,7 @@ ps_ui_get_titles <- function() {
   }
   t <- as.list(stats::setNames(ids, items))
   # t <- list("P01: xxx" = "P01", "P02: xxx" = "P02")
+  print(t)
   return(t)
 }
 
@@ -307,8 +319,9 @@ number_of_prompts <- function() {
 }
 
 # Format the practice set as an R script
-format_practice_script <- function(short) {
-  ps <- ps_get_current(ps_get_id_by_short(short))
+#' @export
+format_practice_script <- function(id) {
+  ps <- ps_get_current()
 
   t <- ""
   for (task in ps$task_list) {
@@ -623,7 +636,7 @@ print_output <- function(text, fn) {
 practice.begin <- function(short = "P01") {
   id <- ps_get_id_by_short(short)
   if (is.null(id)) {
-    stop("practice.begin: Can't find practice set named", short)
+    stop("practice.begin: Can't find practice set named ", short)
   }
 
   # Set the current practice set ID
