@@ -19,34 +19,72 @@ create_practice_set <- function(fn) {
   filename <- paste0(wdir, cPRACTICE_SET_DIR, fn)
   ps <- process_practice_set_doc2(filename)
   ps <- check_practice_set(ps)
+  print(ps)
   return(ps)
 }
 
 check_practice_set <- function(ps) {
+
+  # Check that the ps_id is a number
+  # TODO: Is this variable needed? Probably not. Remove it.
   if (is.numeric(as.numeric(ps$ps_id)) == FALSE) {
     stop("check_practice_set: ps_id must be a number.")
   }
 
+  # Check that all messages have been assigned something
+  for (k in 1: length(ps$task_list)) {
+    if (is.null(ps$task_list[[k]]$prompt_msg) || ps$task_list[[k]]$prompt_msg == "") {
+      ps$task_list[[k]]$prompt_msg <- "<no prompt assigned>"
+    }
+  }
+
+  # Check that the expected answer has some code
+  for (k in 1: length(ps$task_list)) {
+    if (is.null(ps$task_list[[k]]$expected_answer) || ps$task_list[[k]]$expected_answer == "") {
+      ps$task_list[[k]]$expected_answer <- "1 == 1"
+    }
+  }
+
+  # Check that a variable name has been assigned
+  for (task in ps$task_list) {
+    if (is.null(task$assignment_var) || task$assignment_var == "") {
+      stop("check_practice_set: assignment_var has not been assigned.")
+    }
+  }
+
+  # Check that a all variable names are unique
+  var_list <- c()
+  for (task in ps$task_list) {
+    v <- task$assignment_var
+    if (v %in% var_list) {
+      stop(paste0("check_practice_set: duplicate variable name (", v, ")"))
+    }
+    var_list <- append(var_list, v)
+  }
+
+
+  # Check if a task ID has not been assigned
   renumber <- FALSE
   for (task in ps$task_list) {
-    if (task$id == "?" || task$id == "" || is.null(task$id)) {
+    if (task$prompt_id == "?" || task$prompt_id == "" || is.null(task$prompt_id)) {
       renumber <- TRUE
       break;
     }
   }
 
+  # If an assignment ID has not been assigned make them up
   if (renumber) {
     IDs <- "abcdefghijklmnopqrstuvwxyz"
-    k <- 1
-    for (task in ps$task_list) {
-      if (length(ps$task_list <= 26)) {
-        task$id <- str_sub(IDs,k,k)
+    for (k in 1: length(ps$task_list)) {
+      if (length(ps$task_list) <= 26) {
+        ps$task_list[[k]]$prompt_id <- str_sub(IDs,k,k)
       }
       else {
-        task$id <- as.character(k)
+        ps$task_list[[k]]$prompt_id <- as.character(k)
       }
     }
   }
+
   return(ps)
 }
 
