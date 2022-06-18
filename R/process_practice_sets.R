@@ -18,6 +18,35 @@ create_practice_set <- function(fn) {
   wdir <- getwd()
   filename <- paste0(wdir, cPRACTICE_SET_DIR, fn)
   ps <- process_practice_set_doc2(filename)
+  ps <- check_practice_set(ps)
+  return(ps)
+}
+
+check_practice_set <- function(ps) {
+  if (is.numeric(as.numeric(ps$ps_id)) == FALSE) {
+    stop("check_practice_set: ps_id must be a number.")
+  }
+
+  renumber <- FALSE
+  for (task in ps$task_list) {
+    if (task$id == "?" || task$id == "" || is.null(task$id)) {
+      renumber <- TRUE
+      break;
+    }
+  }
+
+  if (renumber) {
+    IDs <- "abcdefghijklmnopqrstuvwxyz"
+    k <- 1
+    for (task in ps$task_list) {
+      if (length(ps$task_list <= 26)) {
+        task$id <- str_sub(IDs,k,k)
+      }
+      else {
+        task$id <- as.character(k)
+      }
+    }
+  }
   return(ps)
 }
 
