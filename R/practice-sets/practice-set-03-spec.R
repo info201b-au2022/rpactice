@@ -1,15 +1,14 @@
 #' Practice Set Example
-#' @ps_id 3
-#' @ps_title This is a title
 #' @ps_short P03
+#' @ps_title This is a title
 #' @ps_descr
-#' Xxx xxx xxx
-#' xxxx xxxx
-#' xxxxxxx
+#' * Xxx xxx xxx
+#' * xxxx xxxx
+#' * xxxxxxx
 #' @end
 #' @ps_initial_vars
-X <-- c(1,2,3,4)
-Y <-- c("a", "b", "c", "d")
+X <<- c(1,2,3,4)
+Y <<- c('a', 'b', 'c', 'd')
 #' @end
 
 #' @id a
@@ -24,12 +23,18 @@ Y <-- c("a", "b", "c", "d")
 #' Is the variable name correct (t_01)?
 #' @end
 
+#' #' Test
+#' @msg Add ten, nine, and eight together.
+#' @code
+t_02 <- 10 + 9 + 8
+#' @end
+
 #' Test
 #' @id ?
 #' @msg Add ten, nine, and eight together.
-#' @var t_02
+#' @var t_04
 #' @code
-t_02 <- 10 + 9 + 8
+t_04 <- 10 + 9 + 8
 #' @end
 #' @hints
 #' Do you use the math plus operator (+)?

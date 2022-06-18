@@ -46,7 +46,9 @@ cTAB_IN_SPACES <- "   "
 # Functions for setting and accessing practice sets
 #----------------------------------------------------------------------------#
 ps_load_internal_ps <- function() {
-  pkg.globals$gPRACTICE_SETS <- list(ps01, ps02, ps03)
+  ps <- create_practice_set("practice-set-03-spec.R")
+  pkg.globals$gPRACTICE_SETS <- list(ps01, ps02, ps)
+  ps_set_current(1)
 }
 
 ps_load_ps <- function(filename) {
@@ -64,8 +66,6 @@ ps_set_current <- function(id) {
   pkg.globals$gPRACTICE_SET_ID <- id
 }
 
-#'
-#' @export
 ps_get_current <- function() {
     id <- as.numeric(pkg.globals$gPRACTICE_SET_ID)
     if (is.null(id) == TRUE || id < 1) {
@@ -86,10 +86,12 @@ ps_test_current <- function() {
 }
 
 ps_get_id_by_short <- function(short_id) {
+  k <- 1
   for (ps in pkg.globals$gPRACTICE_SETS) {
     if (ps$ps_short == short_id) {
-      return(ps$ps_id)
+      return(k)
     }
+    k <- k + 1
   }
   return(NULL)
 }
@@ -127,6 +129,9 @@ set_initial_vars_doit <- function(expr) {
 
 set_env_vars <- function() {
   ps <- ps_get_current()
+
+  print(ps$initial_vars)
+
   t <- lapply(ps$initial_vars, set_initial_vars_doit)
 }
 
@@ -318,8 +323,6 @@ number_of_prompts <- function() {
   return(t)
 }
 
-# Format the practice set as an R script
-#' @export
 format_practice_script <- function(id) {
   ps <- ps_get_current()
 
@@ -342,6 +345,7 @@ format_practice_script <- function(id) {
 
 format_prompts <- function(do_not_show = NULL) {
   ps <- ps_get_current()
+  print(ps)
   t <- ""
   id <- 0
   for (task in ps$task_list) {
@@ -350,7 +354,7 @@ format_prompts <- function(do_not_show = NULL) {
       t <- paste0(t, ps$ps_short, ".", task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
     } else {
       if ((id %in% do_not_show) == FALSE) {
-        t <- paste0(t, ps$ps_short, ".", task$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
+        t <- paste0(t, ps$ps_short, ".", ptask$prompt_id, ": ", task$prompt_msg, " (", task$assignment_var, ")", "\n")
       }
     }
   }
@@ -697,4 +701,13 @@ practice.answers <- function() {
   )
   print_output(t, "anwers")
   return(TRUE)
+}
+
+#' Read a practice set
+#'
+#' @param fn filename
+#' @export
+practice.read_ps <- function (fn) {
+  ps <- create_practice_set(fn)
+  print(ps)
 }

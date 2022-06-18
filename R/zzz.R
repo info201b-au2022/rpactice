@@ -5,10 +5,10 @@
 #----------------------------------------------------------------------------#
 .onLoad <- function(libname,pkgname) {
   ps_load_internal_ps()
-  cat(paste0("Welcome to ", pkgname,"\n"))
-  cat(paste0("", getwd(),"\n"))
+  packageStartupMessage(paste0("Welcome to ", pkgname))
+  packageStartupMessage(paste0("", getwd()))
 }
 
 .onUnload <- function(libname,pkgname) {
-  NULL
+  NULL  # Not sure if there is any clean up to do
 }
