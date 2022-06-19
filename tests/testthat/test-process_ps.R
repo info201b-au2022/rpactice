@@ -34,9 +34,9 @@ test_that("get_var_lhs - 4", {
 # A practice set with no prompts - a degenerate case: no prompt
 s <-
 "#' Practice Set Example
-#' @ps_short P03
-#' @ps_title This is a title
-#' @ps_descr
+#' @short P03
+#' @title This is a title
+#' @descr
 #' * Line 1: xxx
 #' * Line 2: yyy
 #' * Line 3: zzz
@@ -44,9 +44,9 @@ s <-
 
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
+ps <- parse_ps(t[[1]])
 
-test_that("process_practice_set_vector - 1", {
+test_that("parse_ps - 1", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
   expect_equal(length(ps$ps_descr),1)
@@ -55,12 +55,12 @@ test_that("process_practice_set_vector - 1", {
 # A practice set with no prompts - a degenerate case: very short
 s <-
 "
-#' @ps_short P03
+#' @short P03
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
+ps <- parse_ps(t[[1]])
 
-test_that("process_practice_set_vector - 2", {
+test_that("parse_ps - 2", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "")
   expect_equal(ps$ps_descr, "")
@@ -70,14 +70,14 @@ test_that("process_practice_set_vector - 2", {
 s <-
 "
 #' Practice Set Example
-#' @ps_short P03
-#' @ps_title This is a title
-#' @ps_descr
+#' @short P03
+#' @title This is a title
+#' @descr
 #' * Line 1: xxx
 #' * Line 2: yyy
 #' * Line 3: zzz
 #' @end
-#' @ps_initial_vars
+#' @initial-vars
 X <<- c(1,2,3,4)
 Y <<- c('a', 'b', 'c', 'd')
 X1 <<- c(1,2,3,4)
@@ -101,9 +101,9 @@ Y1 <<- c('a', 'b', 'c', 'd')
 #' @end
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
+ps <- parse_ps(t[[1]])
 
-test_that("process_practice_set_vector - 3", {
+test_that("parse_ps - 3", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
   expect_equal(length(ps$initial_vars),4)
@@ -125,14 +125,14 @@ test_that("process_practice_set_vector - 3", {
 s <-
   "
 #' Practice Set Example
-#' @ps_short P03
-#' @ps_title This is a title
-#' @ps_descr
+#' @short P03
+#' @title This is a title
+#' @descr
 #' * Line 1: xxx
 #' * Line 2: yyy
 #' * Line 3: zzz
 #' @end
-#' @ps_initial_vars
+#' @initial-vars
 X <<- c(1,2,3,4)
 Y <<- c('a', 'b', 'c', 'd')
 X1 <<- c(1,2,3,4)
@@ -160,9 +160,9 @@ Y1 <<- c('a', 'b', 'c', 'd')
 #' @end
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
+ps <- parse_ps(t[[1]])
 
-test_that("process_practice_set_vector - 3", {
+test_that("parse_ps - 3", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
   expect_equal(length(ps$initial_vars),4)
@@ -183,8 +183,8 @@ test_that("process_practice_set_vector - 3", {
 # Test the automatic assignment of prompt IDs - question mark
 s <-
 "
-#' @ps_short P03
-#' @ps_title This is a title
+#' @short P03
+#' @title This is a title
 
 # Prompt #1
 #' @id a
@@ -211,10 +211,10 @@ s <-
 #' @end
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
-ps <- check_practice_set(ps)
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
 
-test_that("process_practice_set_vector - 4", {
+test_that("parse_ps - 4", {
   expect_equal(ps$ps_short, "P03")
 
   expect_equal(length(ps$task_list), 3)
@@ -226,8 +226,8 @@ test_that("process_practice_set_vector - 4", {
 # Test the automatic assignment of variable names
 s <-
   "
-#' @ps_short P03
-#' @ps_title This is a title
+#' @short P03
+#' @title This is a title
 
 # Prompt #1
 #' @id ?
@@ -252,10 +252,10 @@ print(t_03)
 #' @end
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
-ps <- check_practice_set(ps)
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
 
-test_that("process_practice_set_vector - 4", {
+test_that("parse_ps - 4", {
   expect_equal(ps$ps_short, "P03")
 
   expect_equal(length(ps$task_list), 3)
@@ -271,8 +271,8 @@ test_that("process_practice_set_vector - 4", {
 
 s <-
   "
-#' @ps_short P03
-#' @ps_title This is a title
+#' @short P03
+#' @title This is a title
 
 # Prompt #1
 #' @id ?
@@ -456,10 +456,10 @@ t_30 <- 10 + 9 + 8 + 7 + 6 + 5
 "
 
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
-ps <- check_practice_set(ps)
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
 
-test_that("process_practice_set_vector - 5", {
+test_that("parse_ps - 5", {
   expect_equal(ps$ps_short, "P03")
 
   expect_equal(length(ps$task_list), 30)
@@ -477,14 +477,14 @@ test_that("process_practice_set_vector - 5", {
 s <-
   "
 #' Practice Set Example
-#' @ps_short P03
-#' @ps_title This is a title
-#' @ps_descr
+#' @short P03
+#' @title This is a title
+#' @descr
 #' * Line 1: xxx
 #' * Line 2: yyy
 #' * Line 3: zzz
 #' @end
-#' @ps_initial_vars
+#' @initial-vars
 X <<- c(1,2,3,4)
 Y <<- c('a', 'b', 'c', 'd')
 #' @end
@@ -510,10 +510,10 @@ t_02 <- 10 + 9 + 8 + 7 + 6 + 5
 #' @end
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
-ps <- check_practice_set(ps)
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
 
-test_that("process_practice_set_vector - note messages", {
+test_that("parse_ps - note messages", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
   expect_equal(length(ps$initial_vars),2)
@@ -542,14 +542,14 @@ test_that("process_practice_set_vector - note messages", {
 s <-
   "
 #' Practice Set Example
-#' @ps_short P03
-#' @ps_title This is a title
-#' @ps_descr
+#' @short P03
+#' @title This is a title
+#' @descr
 #' * Line 1: xxx
 #' * Line 2: yyy
 #' * Line 3: zzz
 #' @end
-#' @ps_initial_vars
+#' @initial-vars
 X <<- c(1,2,3,4)
 Y <<- c('a', 'b', 'c', 'd')
 #' @end
@@ -583,10 +583,10 @@ t_02 <- 10 + 9 + 8 + 7 + 6 + 5
 #' @msg A third message
 "
 t <- str_split(s,"\n")
-ps <- process_practice_set_vector(t[[1]])
-ps <- check_practice_set(ps)
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
 
-test_that("process_practice_set_vector - note messages", {
+test_that("parse_ps - note messages", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
   expect_equal(length(ps$initial_vars),2)

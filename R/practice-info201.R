@@ -1,20 +1,3 @@
-# Imports ----
-#----------------------------------------------------------------------------#
-# TODO: Import selected functions from these libraries
-#----------------------------------------------------------------------------#
-#' #' @import miniUI
-#' NULL
-#'
-#' #' @import stringr
-#' NULL
-#'
-#' #' @import shiny
-#' NULL
-#'
-#' #' @import rstudioapi
-#' NULL
-
-# Problem Set Definitions ----
 #----------------------------------------------------------------------------#
 # The prompts and answers are specified in these files
 #----------------------------------------------------------------------------#
@@ -35,8 +18,8 @@ cTAB_IN_SPACES <- "   "
 # This function is called with the package is loaded. It is used to initialize
 # the "built-in" practice sets.
 ps_load_internal_ps <- function() {
-  ps01 <- startup_create_ps("practice-set-01-spec.R")
-  ps03 <- startup_create_ps("practice-set-03-spec.R")
+  ps01 <- load_ps("practice-set-01-spec.R")
+  ps03 <- load_ps("practice-set-03-spec.R")
   pkg.globals$gPRACTICE_SETS <- list(ps01, ps03)
   ps_set_current(1)
 }
@@ -45,12 +28,14 @@ ps_load_ps <- function(filename) {
 
 }
 
+# Only one practice set is active at a time - A global variable is used
+# to keep track of the currently active practice set
 ps_set_current <- function(id) {
   if (is.null(pkg.globals$gPRACTICE_SETS)) {
-    stop("practice-info-201.R: Practice sets are not set.")
+    stop("Error: Practice sets are not set.")
   }
   if (id <= 0 || id > length(pkg.globals$gPRACTICE_SETS)) {
-    stop(paste0("practice_inof-201.R: Practice Set ID must be between 1 and ", length(pkg.globals$gPRACTICE_SETS), "."))
+    stop(paste0("Error: Practice Set ID must be between 1 and ", length(pkg.globals$gPRACTICE_SETS), "."))
   }
 
   pkg.globals$gPRACTICE_SET_ID <- id
@@ -120,6 +105,36 @@ set_initial_vars_doit <- function(expr) {
 set_env_vars <- function() {
   ps <- ps_get_current()
   t <- lapply(ps$initial_vars, set_initial_vars_doit)
+}
+
+# Expression eval, etc. ----
+
+#' Evaluate an R expression
+#'
+#' To test a learner's answer, call this function. This function accesses
+#' the learner's code, which is stored in the practice set data structure.
+#'
+#' @param id the internal ID for the prompt
+#' @return returns the result of the evaluation. If the learner's code produces
+#' a function (that is, a "closure") a text string summarizing the function is
+#' returned
+#' @export
+eval_expr <- function(id) {
+  answer <- ps_get_expected_answer(id)
+  t <- eval(parse(text = answer))
+  if (typeof(t) == "closure") {
+    args <- formals(t)
+    v <- names(args)
+    t <- paste0(v, collapse = ", ")
+    t <- paste0("function(", t, ") {...}")
+    # Check for vector
+  } else if (length(t) > 1) {
+    t <- paste0(t, collapse = " ")
+    t <- paste0("[1] ", t)
+  } else {
+    t <- paste0("[1] ", t)
+  }
+  return(t)
 }
 
 # Checking Callbacks ----
@@ -197,7 +212,7 @@ ps_get_prompt_id <- function(id) {
   return(ps$task_list[[id]]$prompt_id)
 }
 
-practice_get_all_assignment_vars <- function() {
+ps_get_all_assignment_vars <- function() {
   ps <- ps_get_current()
   vars <- c()
   for (t in ps$task_list) {
@@ -210,8 +225,8 @@ practice_get_all_assignment_vars <- function() {
 
 # Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
-get_var_names <- function() {
-  expected <- practice_get_all_assignment_vars()
+get_live_var_names <- function() {
+  expected <- ps_get_all_assignment_vars()
   all <- ls(envir = globalenv())
   var_names <- expected[expected %in% all]
   return(var_names)
@@ -226,7 +241,7 @@ ps_get_internal_id_from_var_name <- function(var_name) {
   ps <- ps_get_current()
   for (k in 1:length(ps$task_list)) {
     if (ps$task_list[[k]]$assignment_var == var_name) {
-      return (k)
+      return(k)
     }
   }
   return(-1)
@@ -245,13 +260,6 @@ ps_get_internal_id_from_prompt_id <- function(prompt_id) {
 ps_get_prompt <- function(id) {
   ps <- ps_get_current()
   t <- paste0(ps$task_list[[id]]$prompt_msg, " (", ps$task_list[[id]]$assignment_var, ")")
-  return(t)
-}
-
-
-ps_get_expected_answer_rs <- function(id) {
-  ps <- ps_get_current()
-  t <- ps$task_list[[id]]$expected_answer
   return(t)
 }
 
@@ -282,33 +290,7 @@ ps_get_expected_answer <- function(id) {
   return(t)
 }
 
-#' Evaluate an R expression
-#'
-#' To test a learner's answer, call this function. This function accesses
-#' the learner's code, which is stored in the practice set data structure.
-#'
-#' @param id the internal ID for the prompt
-#' @return returns the result of the evaluation. If the learner's code produces
-#' a function (that is, a "closure") a text string summarizing the function is
-#' returned
-#' @export
-eval_expr <- function(id) {
-  answer <- ps_get_expected_answer(id)
-  t <- eval(parse(text = answer))
-  if (typeof(t) == "closure") {
-    args <- formals(t)
-    v <- names(args)
-    t <- paste0(v, collapse = ", ")
-    t <- paste0("function(", t, ") {...}")
-    # Check for vector
-  } else if (length(t) > 1) {
-    t <- paste0(t, collapse = " ")
-    t <- paste0("[1] ", t)
-  } else {
-    t <- paste0("[1] ", t)
-  }
-  return(t)
-}
+# Hints -----
 
 ps_num_hints <- function(id) {
   ps <- ps_get_current()
@@ -325,6 +307,8 @@ ps_get_formatted_hints <- function(id) {
   }
   return(t)
 }
+
+# Answer code ----
 
 ps_update_learner_answer <- function(ps, var_name, answer) {
   id <- ps_get_internal_id_from_var_name(var_name)
@@ -493,7 +477,7 @@ check_answers <- function() {
   )
 
   # Get all of the variable names that need to be checked for correctness
-  var_names <- get_var_names()
+  var_names <- get_Live_var_names()
 
   # No variables initialized - format result and return
   if (length(var_names) == 0) {
@@ -520,7 +504,7 @@ check_answers <- function() {
 
     internal_id <- ps_get_internal_id_from_var_name(var)
     funct_callback <- paste0(var, "_Check") # Construct callback function name
-get
+
     if (is_callback_loaded(funct_callback) == TRUE) {
       print(paste0("CALLBACK: ", funct_callback))
       practice_result <- do.call(funct_callback, list(internal_id, val, practice_result))
@@ -728,7 +712,7 @@ practice.begin <- function(short = "P01") {
   ps_set_current(id)
 
   # Clear all variables in the R global environment
-  var_names <- get_var_names()
+  var_names <- get_live_var_names()
   rm(list = var_names, envir = globalenv())
 
   # Check the basic integrity of the practice set

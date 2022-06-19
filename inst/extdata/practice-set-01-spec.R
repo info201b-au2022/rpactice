@@ -3,9 +3,9 @@
 # Practice Set One
 #----------------------------------------------------------------------------#
 
-#' @ps_title Basic Arithmetic Operators
-#' @ps_short P01
-#' @ps_descr
+#' @title Basic Arithmetic Operators
+#' @short P01
+#' @descr
 #'Practice using the basic arithmetic operators.
 #'     1. You should know how to use these operator: +, -, *, / ,^ , %%, %/%
 #'     2. For order of operations, you should know how to use parenthesis:  (, )
@@ -14,7 +14,6 @@
 #' @initial_vars
 X <<- 10
 Y <<- c(1,2,3)
-Z <<- data.frame(c(1,2,3),c('A','B','C'))
 #' @end
 
 #' @id a
@@ -41,7 +40,7 @@ t_03 <- (1 + 17 + 19 + 31) / 4
 #' @end
 
 #' @id d
-#' @msg What is the average of these Celcius temperatures: -5C, -10C, -12C?
+#' @msg What is the average of these Celsius temperatures: -5C, -10C, -12C?
 #' @code
 t_04 <- (-5 + -10 + -12) / 3
 #' @end

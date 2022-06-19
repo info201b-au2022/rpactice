@@ -1,7 +1,7 @@
 #' Practice Set Example
-#' @ps_short P03
-#' @ps_title Using vectors and basic functions
-#' @ps_descr
+#' @short P03
+#' @title Using vectors and basic functions
+#' @pdescr
 #' Check into length() and sum()
 #' @end
 #' @ps_initial_vars

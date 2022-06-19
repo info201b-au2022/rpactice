@@ -1,33 +1,51 @@
 #----------------------------------------------------------------------------#
 # These functions are used to read and process practice set input files
 #----------------------------------------------------------------------------#
+
+# Loading practice set files ----
 cPRACTICE_SET_DIR <- "/R/practice-sets/"
 
 # Create practice set from a coded text file
-create_practice_set <- function(fn) {
+create_ps <- function(fn) {
   wdir <- getwd()
   filename <- paste0(wdir, cPRACTICE_SET_DIR, fn)
   if (file.exists(filename) == FALSE) {
-    stop(paste0("create_practice_set: File does not exist\n", filename))
+    stop(paste0("create_ps: File does not exist\n", filename))
   }
 
-  ps <- process_practice_set_doc(filename)
+  ps <- read_ps_doc(filename)
   if (is.null(ps)) {
-    stop(paste0("create_practice_set: Practice set not created\n", filename))
+    stop(paste0("create_ps: Practice set not created\n", filename))
   }
 
-  ps <- check_practice_set(ps)
+  ps <- check_ps(ps)
   return(ps)
 }
 
-startup_create_ps <- function(fn) {
+#----------------------------------------------------------------------------#
+# This function loads practice sets that are "internal" to the package. The
+# practice sets are found in the special directory inst/extdata.
+# The calling order for this function is as follows:
+#   .onLoad() - a hook function which runs when the package is loaded
+#      ps_load_internal_ps() - for loading all internal practice sets
+#        load_ps() - for loading a specific practice set
+#
+# NOTE: system.file is the preferred way to do this, so that the files
+#       are available in the package and while developing the package
+#----------------------------------------------------------------------------#
+load_ps <- function(fn) {
   filename <- system.file("extdata", fn, package = "pinfo201", mustWork = TRUE)
-  ps <- process_practice_set_doc(filename)
-  ps <- check_practice_set(ps)
+  ps <- read_ps_doc(filename)
+  ps <- check_ps(ps)
   return(ps)
 }
 
-# Utilities ----
+read_ps_doc <- function(filename) {
+  t <- readLines(filename)
+  return(parse_ps(t))
+}
+
+# Utilities and helpers ----
 #----------------------------------------------------------------------------#
 # Utility to remove comment symbols from the front of a line of text
 #----------------------------------------------------------------------------#
@@ -50,130 +68,6 @@ get_var_lhs <- function(s) {
 }
 
 #----------------------------------------------------------------------------#
-# Check the basic integrity of the practice set. Where possible make
-# corrections
-#----------------------------------------------------------------------------#
-check_practice_set <- function(ps) {
-  cDEBUG <- FALSE
-  N <- length(ps$task_list)
-
-  if (cDEBUG) {
-    print("ONE: messages")
-  }
-  # Check that all messages have been assigned something
-  for (k in 1:N) {
-    if (ps$task_list[[k]]$prompt_msg == "") {
-      ps$task_list[[k]]$prompt_msg <- "<no prompt assigned>"
-    }
-  }
-
-  if (cDEBUG) {
-    print("TWO: answers")
-  }
-  # Check that the expected answer has some code
-  for (k in 1:N) {
-    if (is.null(ps$task_list[[k]]$expected_answer)) {
-      ps$task_list[[k]]$expected_answer <- ""
-    }
-  }
-
-  if (cDEBUG) {
-    print("THREE: message notes")
-  }
-  # Check if a task ID is a dash ("-"), which means it is a note (not a prompt for code)
-  for (k in 1:N) {
-
-    # print("..........")
-    # print(paste0("prompt_id ", ps$task_list[[k]]$prompt_id))
-    # print(paste0("is_note_msg ", ps$task_list[[k]]$is_note_msg))
-    # print("..........")
-
-    if (ps$task_list[[k]]$prompt_id == "-") {
-      ps$task_list[[k]]$is_note_msg <- TRUE
-    } else {
-      ps$task_list[[k]]$is_note_msg <- FALSE
-    }
-  }
-
-  if (cDEBUG) print("FOUR: variable names")
-  # Check that a variable name was assigned; if not, correct
-  for (j in 1:N) {
-    # Check of the prompt is a note (not a coding prompt)
-    if (ps$task_list[[j]]$is_note_msg == TRUE) {
-      next
-    }
-    # Check for a "good" assignment variable
-    var_name <- ps$task_list[[j]]$assignment_var
-    if (var_name == "") {
-      fixed <- FALSE
-      code <- ps$task_list[[j]]$expected_answer
-      for (k in length(code):1) {
-        t <- code[k]
-        v <- get_var_lhs(t)
-        if (!is.null(v)) {
-          ps$task_list[[j]]$assignment_var <- v
-          fixed <- TRUE
-          break
-        }
-      }
-      if (fixed == FALSE) {
-        stop(paste0("check_practice_set: unable to correct variable name"))
-      }
-    }
-  }
-
-  if (cDEBUG) {
-    print("FIVE: variable names are unique?")
-  }
-  # Check that a all variable names are unique
-  var_list <- c()
-  for (task in ps$task_list) {
-    v <- task$assignment_var
-    if (v != "") {
-      if (v %in% var_list) {
-        stop(paste0("check_practice_set: duplicate variable name (", v, ")"))
-      }
-      var_list <- append(var_list, v)
-    }
-  }
-
-  if (cDEBUG) {
-    print("SIX: check for prompt IDs")
-  }
-  # Check if a task ID has not been assigned
-  renumber <- FALSE
-  for (task in ps$task_list) {
-    if (task$prompt_id == "?" || task$prompt_id == "") {
-      renumber <- TRUE
-      break
-    }
-  }
-
-  # If an assignment ID has not been assigned make them up
-  if (renumber) {
-    IDs <- "abcdefghijklmnopqrstuvwxyz"
-    new_id <- 1
-    for (k in 1:N) {
-      # Only assign new IDs to prompts that are NOT message prompts
-      if (ps$task_list[[k]]$is_note_msg == FALSE) {
-        if (N <= 26) {
-          ps$task_list[[k]]$prompt_id <- str_sub(IDs, new_id, new_id)
-        } else {
-          ps$task_list[[k]]$prompt_id <- as.character(new_id)
-        }
-        new_id <- new_id + 1
-      }
-    }
-  }
-
-  if (cDEBUG) {
-    print(ps)
-  }
-
-  return(ps)
-}
-
-#----------------------------------------------------------------------------#
 # Helper function to update the practice set data structure
 #----------------------------------------------------------------------------#
 update_list <- function(prompts, id, msg, var, code, h) {
@@ -190,17 +84,29 @@ update_list <- function(prompts, id, msg, var, code, h) {
   return(prompts)
 }
 
+# Parsing practice sets ----
 #----------------------------------------------------------------------------#
-# A basic parser which produces the practice set data structure
-# TODO: Get rid of "ps" in: ps_title, ps_short, ps_descr
+# Parse the pactice set document and produce the following structure:
+#
+# practice_set <- list (
+#   ps_title = <string>
+#   ps_short = <string>
+#   ps_descr = <string>
+#   initial_vars = c(<string>, <string>, ...)  // lines of code
+#   task_list = list (
+#     task = list (
+#        prompt_id = <string>
+#        is_note_msg = <boolean>
+#        prompt_msg = <string>
+#        assignment_var = <string>
+#        expected_answer = c(<string>, <string>, ...) // lines of code
+#        learner_answer = NULL
+#        hints = c(<string>, <string>, ...)   // list of hints
+#     )
+#   )
+# )
 #----------------------------------------------------------------------------#
-process_practice_set_doc <- function(filename) {
-  t <- readLines(filename)
-  return(process_practice_set_vector(t))
-}
-
-
-process_practice_set_vector <- function(t) {
+parse_ps <- function(t) {
   cDEBUG <- FALSE
 
   if (cDEBUG) {
@@ -230,23 +136,23 @@ process_practice_set_vector <- function(t) {
     }
 
     # Found the practice set title
-    if (str_detect(t[k], "^#' @ps_title")) {
-      ps_title_p <- str_trim(str_sub(t[k], 13, str_length(t[k])))
+    if (str_detect(t[k], "^#' @title")) {
+      ps_title_p <- str_trim(str_sub(t[k], 10, str_length(t[k])))
       if (cDEBUG) {
         print(paste0("ps_title: ", ps_title_p))
       }
     }
 
     # Found the practice set short title
-    else if (str_detect(t[k], "^#' @ps_short")) {
-      ps_short_p <- str_trim(str_sub(t[k], 13, str_length(t[k])))
+    else if (str_detect(t[k], "^#' @short")) {
+      ps_short_p <- str_trim(str_sub(t[k], 10, str_length(t[k])))
       if (cDEBUG) {
         print(paste0("ps_short: ", ps_short_p))
       }
     }
 
     # Found the practice set description, which can be multiple lines
-    else if (str_detect(t[k], "^#' @ps_descr")) {
+    else if (str_detect(t[k], "^#' @descr")) {
       v <- c()
       k <- k + 1
       while (k <= length(t)) {
@@ -263,7 +169,7 @@ process_practice_set_vector <- function(t) {
     }
 
     # Found the list of initial variables
-    else if (str_detect(t[k], "^#' @ps_initial_vars")) {
+    else if (str_detect(t[k], "^#' @initial-vars")) {
       k <- k + 1
       while (k <= length(t)) {
         if (str_detect(t[k], "^#' @")) {
@@ -370,5 +276,129 @@ process_practice_set_vector <- function(t) {
     prompts <- update_list(prompts, id, msg, var, code, hints)
     ps$task_list <- prompts
   }
+  return(ps)
+}
+
+#----------------------------------------------------------------------------#
+# Check the basic integrity of the practice set. Where possible, clean
+# things up and make corrections
+#----------------------------------------------------------------------------#
+check_ps <- function(ps) {
+  cDEBUG <- FALSE
+  N <- length(ps$task_list)
+
+  if (cDEBUG) {
+    print("ONE: messages")
+  }
+  # Check that all messages have been assigned something
+  for (k in 1:N) {
+    if (ps$task_list[[k]]$prompt_msg == "") {
+      ps$task_list[[k]]$prompt_msg <- "<no prompt assigned>"
+    }
+  }
+
+  if (cDEBUG) {
+    print("TWO: answers")
+  }
+  # Check that the expected answer has some code
+  for (k in 1:N) {
+    if (is.null(ps$task_list[[k]]$expected_answer)) {
+      ps$task_list[[k]]$expected_answer <- ""
+    }
+  }
+
+  if (cDEBUG) {
+    print("THREE: message notes")
+  }
+  # Check if a task ID is a dash ("-"), which means it is a note (not a prompt for code)
+  for (k in 1:N) {
+
+    # print("..........")
+    # print(paste0("prompt_id ", ps$task_list[[k]]$prompt_id))
+    # print(paste0("is_note_msg ", ps$task_list[[k]]$is_note_msg))
+    # print("..........")
+
+    if (ps$task_list[[k]]$prompt_id == "-") {
+      ps$task_list[[k]]$is_note_msg <- TRUE
+    } else {
+      ps$task_list[[k]]$is_note_msg <- FALSE
+    }
+  }
+
+  if (cDEBUG) print("FOUR: variable names")
+  # Check that a variable name was assigned; if not, correct
+  for (j in 1:N) {
+    # Check of the prompt is a note (not a coding prompt)
+    if (ps$task_list[[j]]$is_note_msg == TRUE) {
+      next
+    }
+    # Check for a "good" assignment variable
+    var_name <- ps$task_list[[j]]$assignment_var
+    if (var_name == "") {
+      fixed <- FALSE
+      code <- ps$task_list[[j]]$expected_answer
+      for (k in length(code):1) {
+        t <- code[k]
+        v <- get_var_lhs(t)
+        if (!is.null(v)) {
+          ps$task_list[[j]]$assignment_var <- v
+          fixed <- TRUE
+          break
+        }
+      }
+      if (fixed == FALSE) {
+        stop(paste0("check_ps: unable to correct variable name"))
+      }
+    }
+  }
+
+  if (cDEBUG) {
+    print("FIVE: variable names are unique?")
+  }
+  # Check that a all variable names are unique
+  var_list <- c()
+  for (task in ps$task_list) {
+    v <- task$assignment_var
+    if (v != "") {
+      if (v %in% var_list) {
+        stop(paste0("check_ps: duplicate variable name (", v, ")"))
+      }
+      var_list <- append(var_list, v)
+    }
+  }
+
+  if (cDEBUG) {
+    print("SIX: check for prompt IDs")
+  }
+  # Check if a task ID has not been assigned
+  renumber <- FALSE
+  for (task in ps$task_list) {
+    if (task$prompt_id == "?" || task$prompt_id == "") {
+      renumber <- TRUE
+      break
+    }
+  }
+
+  # If an assignment ID has not been assigned make them up
+  if (renumber) {
+    IDs <- "abcdefghijklmnopqrstuvwxyz"
+    new_id <- 1
+    for (k in 1:N) {
+      # Only assign new IDs to prompts that are NOT message prompts
+      if (ps$task_list[[k]]$is_note_msg == FALSE) {
+        if (N <= 26) {
+          ps$task_list[[k]]$prompt_id <- str_sub(IDs, new_id, new_id)
+        } else {
+          ps$task_list[[k]]$prompt_id <- as.character(new_id)
+        }
+        new_id <- new_id + 1
+      }
+    }
+  }
+
+  if (cDEBUG) {
+    print(ps)
+  }
+
   return(ps)
 }
