@@ -2,7 +2,7 @@ practice.begin("P01")
 practice.questions()
 
 # a: Add ten, nine, and eight together. (t_01)
-t_01 <- 27
+t_01 <- 10 + 9 + 8
 
 # b: What is 111 divided by 9? (num)
 num <- 111 / 9

@@ -121,6 +121,65 @@ test_that("process_practice_set_vector - 3", {
   expect_equal(ps$task_list[[2]]$expected_answer,"10 + 9 + 8 + 7 + 6 + 5")
 })
 
+# A typical case
+s <-
+  "
+#' Practice Set Example
+#' @ps_short P03
+#' @ps_title This is a title
+#' @ps_descr
+#' * Line 1: xxx
+#' * Line 2: yyy
+#' * Line 3: zzz
+#' @end
+#' @ps_initial_vars
+X <<- c(1,2,3,4)
+Y <<- c('a', 'b', 'c', 'd')
+X1 <<- c(1,2,3,4)
+Y1 <<- c('a', 'b', 'c', 'd')
+#' @end
+
+# Prompt #1
+#' @id a
+#' @msg Add ten, nine, and eight together.
+#' @var t_01
+#' @code
+10 + 9 + 8
+#' @end
+
+# Prompt #1
+#' @id -
+#' @msg This is note; not a prompt.
+
+# Prompt #2
+#' @id b
+#' @msg Add ten, nine, and eight together.
+#' @var t_02
+#' @code
+10 + 9 + 8 + 7 + 6 + 5
+#' @end
+"
+t <- str_split(s,"\n")
+ps <- process_practice_set_vector(t[[1]])
+
+test_that("process_practice_set_vector - 3", {
+  expect_equal(ps$ps_short, "P03")
+  expect_equal(ps$ps_title, "This is a title")
+  expect_equal(length(ps$initial_vars),4)
+  expect_equal(ps$initial_vars[1],"X <<- c(1,2,3,4)")
+  expect_equal(ps$initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
+
+  expect_equal(length(ps$task_list), 3)
+  expect_equal(ps$task_list[[1]]$prompt_id,"a")
+  expect_equal(ps$task_list[[3]]$prompt_id,"b")
+
+  expect_equal(ps$task_list[[1]]$assignment_var,"t_01")
+  expect_equal(ps$task_list[[3]]$assignment_var,"t_02")
+
+  expect_equal(ps$task_list[[1]]$expected_answer,"10 + 9 + 8")
+  expect_equal(ps$task_list[[3]]$expected_answer,"10 + 9 + 8 + 7 + 6 + 5")
+})
+
 # Test the automatic assignment of prompt IDs - question mark
 s <-
 "

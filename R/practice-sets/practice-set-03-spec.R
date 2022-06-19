@@ -1,58 +1,33 @@
 #' Practice Set Example
 #' @ps_short P03
-#' @ps_title This is a title
+#' @ps_title Using vectors and basic functions
 #' @ps_descr
-#' * Xxx xxx xxx
-#' * xxxx xxxx
-#' * xxxxxxx
+#' Check into length() and sum()
 #' @end
 #' @ps_initial_vars
 X <<- c(1,2,3,4)
-Y <<- c('a', 'b', 'c', 'd')
 #' @end
 
-#' @id a
-#' @msg Add ten, nine, and eight together.
-#' @var t_01
-#' @code
-10 + 9 + 8
-#' @end
-#' @hints
-#' Do you use the math plus operator (+)?
-#' Do you use the assignment operator (<-)?"
-#' Is the variable name correct (t_01)?
-#' @end
-
-#' #' Test
-#' @msg Add ten, nine, and eight together.
-#' @code
-t_02 <- 10 + 9 + 8
-#' @end
-
-#' Test
 #' @id ?
-#' @msg Add ten, nine, and eight together.
-#' @var t_04
+#' @msg How many elements are in the vector X?
 #' @code
-t_04 <- 10 + 9 + 8
-#' @end
-#' @hints
-#' Do you use the math plus operator (+)?
-#' Do you use the assignment operator (<-)?
-#' Is the variable name correct (t_01)?
+num <- length(X)
 #' @end
 
-# Test 3
-#' @id c
-#' @msg Create a function
-#' @var t_03
+#' @id ?
+#' @msg Use a function to compute the sum of the numbers in vector X?
 #' @code
-# This function t_03
-t_03 <- function(a,b) {
-  a <- 10  # important variable
-  b <- 20
-  # The key piece of code
-  t <- a + b
-  return(t)
-}
+sum_of_X <- sum(X)
+#' @end
+
+#' @id ?
+#' @msg Create a vector with these three elements: 1, 2, 3.
+#' @code
+v1 <- c(1,2,3)
+#' @end
+
+#' @id ?
+#' @msg Add 5 to each element of the vector X.
+#' @code
+v2 <- X + 5
 #' @end

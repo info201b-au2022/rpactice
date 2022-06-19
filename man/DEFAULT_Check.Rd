@@ -4,14 +4,14 @@
 \alias{DEFAULT_Check}
 \title{Default function for checking learner's code}
 \usage{
-DEFAULT_Check(internal_id, val, result)
+DEFAULT_Check(internal_id, learner_val, result)
 }
 \arguments{
 \item{internal_id}{the internal ID of the prompt from the practice set}
 
-\item{val}{the value of the prompt variable}
-
 \item{result}{the result, which grows upon each call to a <var>_Check function}
+
+\item{val}{the value of the prompt variable}
 }
 \description{
 Default function for checking learner's code
