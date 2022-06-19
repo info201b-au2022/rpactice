@@ -43,7 +43,7 @@ t_12 <- 0 / 0
 
 # n: Write a function that takes one parameter, r for radius, and computes the
 #    the area of a circle. (Recall: A = pi*r^2) (circle_area)
-circle_area <- function(r) {
+area <- function(r) {
   area <- pi * r^2
   return(area)
 }

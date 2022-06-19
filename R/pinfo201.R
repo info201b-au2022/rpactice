@@ -8,3 +8,15 @@
 #' @docType package
 #' @name pinfo201
 NULL
+
+#' @import miniUI
+NULL
+
+#' @import stringr
+NULL
+
+#' @import shiny
+NULL
+
+#' @import rstudioapi
+NULL

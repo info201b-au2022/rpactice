@@ -2,17 +2,17 @@
 #----------------------------------------------------------------------------#
 # TODO: Import selected functions from these libraries
 #----------------------------------------------------------------------------#
-#' @import miniUI
-NULL
-
-#' @import stringr
-NULL
-
-#' @import shiny
-NULL
-
-#' @import rstudioapi
-NULL
+#' #' @import miniUI
+#' NULL
+#'
+#' #' @import stringr
+#' NULL
+#'
+#' #' @import shiny
+#' NULL
+#'
+#' #' @import rstudioapi
+#' NULL
 
 # Problem Set Definitions ----
 #----------------------------------------------------------------------------#
@@ -25,7 +25,7 @@ pkg.globals$gPRACTICE_SET_ID <- 1
 pkg.globals$gTO_CONSOLE <- FALSE
 
 ## Constants ----
-cDEBUG <- TRUE
+cDEBUG <- FALSE
 cTAB_IN_SPACES <- "   "
 
 # Manage Practice Sets ----
@@ -35,9 +35,9 @@ cTAB_IN_SPACES <- "   "
 # This function is called with the package is loaded. It is used to initialize
 # the "built-in" practice sets.
 ps_load_internal_ps <- function() {
-  ps01 <- create_practice_set("practice-set-01-spec.R")
-  ps03 <- create_practice_set("practice-set-03-spec.R")
-  pkg.globals$gPRACTICE_SETS <- list(ps01, ps02, ps03)
+  ps01 <- startup_create_ps("practice-set-01-spec.R")
+  ps03 <- startup_create_ps("practice-set-03-spec.R")
+  pkg.globals$gPRACTICE_SETS <- list(ps01, ps03)
   ps_set_current(1)
 }
 
@@ -119,9 +119,6 @@ set_initial_vars_doit <- function(expr) {
 
 set_env_vars <- function() {
   ps <- ps_get_current()
-
-  print(ps$initial_vars)
-
   t <- lapply(ps$initial_vars, set_initial_vars_doit)
 }
 
@@ -136,7 +133,7 @@ set_env_vars <- function() {
 #' Default function for checking learner's code
 #'
 #' @param internal_id the internal ID of the prompt from the practice set
-#' @param val the value of the prompt variable
+#' @param learner_val the value of the prompt variable
 #' @param result the result, which grows upon each call to a <var>_Check function
 #'
 DEFAULT_Check <- function(internal_id, learner_val, result) {
@@ -204,7 +201,9 @@ practice_get_all_assignment_vars <- function() {
   ps <- ps_get_current()
   vars <- c()
   for (t in ps$task_list) {
-    vars <- append(vars, t$assignment_var)
+    if (t$assignment_var != "") {
+      vars <- append(vars, t$assignment_var)
+    }
   }
   return(vars)
 }
@@ -225,8 +224,12 @@ ps_get_assignment_var <- function(id) {
 
 ps_get_internal_id_from_var_name <- function(var_name) {
   ps <- ps_get_current()
-  id <- which(practice_get_all_assignment_vars() == var_name)
-  return(id)
+  for (k in 1:length(ps$task_list)) {
+    if (ps$task_list[[k]]$assignment_var == var_name) {
+      return (k)
+    }
+  }
+  return(-1)
 }
 
 ps_get_internal_id_from_prompt_id <- function(prompt_id) {
@@ -261,6 +264,11 @@ ps_get_expected_answer_rs <- function(id) {
 #' @export
 ps_get_expected_answer <- function(id) {
   ps <- ps_get_current()
+
+  if (id < 1 || id > length(ps$task_list)) {
+    stop(paste0("id is out of bounds (id=", id, ")"))
+  }
+
   a <- ps$task_list[[id]]$expected_answer
   if (length(a) == 1) {
     if (str_detect(a, "<-") == TRUE) {
@@ -359,7 +367,7 @@ format_practice_script <- function(id) {
   }
 
   t <- paste0(
-    "# ", ps$ps_title, "(", ps$ps_short, ")\n",
+    "# ", ps$ps_short, ": ", ps$ps_title, "\n",
     "# ", str_replace_all(ps$ps_descr, "\n", "\n# "), "\n",
     "# ---\n",
     "practice.begin(\"", ps$ps_short, "\")\n",
@@ -377,16 +385,17 @@ format_prompts <- function(do_not_show = NULL) {
     for (task in ps$task_list) {
       m <- task$prompt_msg
 
-       if (task$prompt_id == "-") {
-      t_out <- paste0(t_out, "   <span style='color:blue'><b>Note</b>: ", m, "</span>")
-
-     } else {
+      if (task$prompt_id == "-") {
+        # t_out <- paste0(t_out, "   <span style='color:blue'><b>Note</b>: ", m, "</span>")
+        # t_out <- paste0(t_out, "\n     Note:\n")
+        t_out <- paste0(t_out, "\n   <b>Note</b>: ", m, "\n")
+      } else {
         t_out <- paste0(
           t_out, task$prompt_id, ": ",
-         m,
+          m,
           " (", task$assignment_var, ")", "\n"
         )
-    }
+      }
     }
   }
 
@@ -427,7 +436,7 @@ format_prompts <- function(do_not_show = NULL) {
   # }
 
   t_out <- paste0(
-    ps$ps_short, ": ", ps$ps_title, "\n",
+    "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n",
     ps$ps_descr, "\n",
     "---\n",
     t_out
@@ -447,15 +456,16 @@ format_answers <- function() {
   t <- ""
   id <- 0
   for (task in ps$task_list) {
-    id <- ps_get_internal_id_from_prompt_id(task$prompt_id)
+    if (task$is_note_msg == FALSE) {
+      id <- ps_get_internal_id_from_prompt_id(task$prompt_id)
+      t <- paste0(t, task$prompt_id, ": ", ps_get_prompt(id), "\n")
 
-    t <- paste0(t, task$prompt_id, ": ", ps_get_prompt(id), "\n")
+      expected <- format_code(ps_get_expected_answer(id))
+      expected_t <- paste0("<span style='color:purple'>", expected, "</span>\n", collapse = "")
 
-    expected <- format_code(ps_get_expected_answer(id))
-    expected_t <- paste0("<span style='color:purple'>", expected, "</span>\n", collapse = "")
-
-    t <- paste0(t, expected_t)
-    t <- paste0(t, cTAB_IN_SPACES, eval_expr(id), "\n")
+      t <- paste0(t, expected_t)
+      t <- paste0(t, cTAB_IN_SPACES, eval_expr(id), "\n")
+    }
   }
   return(t)
 }
@@ -510,10 +520,12 @@ check_answers <- function() {
 
     internal_id <- ps_get_internal_id_from_var_name(var)
     funct_callback <- paste0(var, "_Check") # Construct callback function name
-
+get
     if (is_callback_loaded(funct_callback) == TRUE) {
+      print(paste0("CALLBACK: ", funct_callback))
       practice_result <- do.call(funct_callback, list(internal_id, val, practice_result))
     } else {
+      print(paste0("DEFAULT CALLBACK: ", funct_callback))
       practice_result <- DEFAULT_Check(internal_id, val, practice_result)
     }
   }
@@ -527,6 +539,7 @@ check_answers <- function() {
 # Functions for formatting and outputting feedback on practice sets
 #----------------------------------------------------------------------------#
 format_code <- function(code_text, indent = cTAB_IN_SPACES) {
+  print(code_text)
   t <- styler::style_text(code_text)
   t <- paste0(indent, t)
   t <- paste0(t, collapse = "\n")
@@ -636,7 +649,7 @@ format_result <- function(result) {
   ps <- ps_get_current()
 
   t <- ""
-  t <- paste0(t, ps$ps_title, "(", ps$ps_short, ")", "\n", ps$ps_descr, "\n")
+  t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n", ps$ps_descr, "\n")
   t <- paste0(t, "---\n")
   t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
@@ -762,7 +775,7 @@ practice.answers <- function() {
   t <- format_answers()
 
   t <- paste0(
-    ps$ps_title, "(", ps$short, ")", ": Answers\n",
+    "<b>", ps$ps_short, ": ", ps$ps_title, ": Answers</b>\n",
     ps$ps_descr, "\n",
     "---\n",
     t

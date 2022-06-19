@@ -93,7 +93,7 @@ A <- pi * 4^2
 #' @end
 
 #' @id -
-#' @msg R is able to represent the concept of infinity.  Consider these three examples.
+#' @msg R is able to represent the mathematical concept of infinity. Consider:
 
 #' @id k
 #' @msg In R, Inf means 'positive infinity.' What is 7 / 0?
@@ -111,13 +111,4 @@ t_11 <- -7 / 0
 #' @msg In R, NaN means 'Not a Number'. What is 0 / 0?
 #' @code
 t_12 <- 0 / 0
-#' @end
-
-#' @id n
-#' @msg Write a function that takes one parameter, r for radius, and computes the the area of a circle. (Recall: A = pi*r^2) (circle_area)
-#' @code
-circle_area <- function(r) {
-  area <- pi * r^2
-  return(area)
-}
 #' @end

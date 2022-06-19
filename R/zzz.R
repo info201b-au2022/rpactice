@@ -9,6 +9,12 @@
   packageStartupMessage(paste0("", getwd()))
 }
 
+.onattach <- function(libname, pkgname) {
+  # packageStartupMessage(paste0("Welcome to ", pkgname))
+  # packageStartupMessage(paste0("", getwd()))
+  NULL
+}
+
 .onUnload <- function(libname,pkgname) {
   NULL  # Not sure if there is any clean up to do
 }

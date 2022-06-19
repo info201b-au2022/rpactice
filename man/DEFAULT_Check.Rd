@@ -9,9 +9,9 @@ DEFAULT_Check(internal_id, learner_val, result)
 \arguments{
 \item{internal_id}{the internal ID of the prompt from the practice set}
 
-\item{result}{the result, which grows upon each call to a <var>_Check function}
+\item{learner_val}{the value of the prompt variable}
 
-\item{val}{the value of the prompt variable}
+\item{result}{the result, which grows upon each call to a <var>_Check function}
 }
 \description{
 Default function for checking learner's code

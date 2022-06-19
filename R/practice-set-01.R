@@ -43,52 +43,52 @@ t_01_Check <- function(internal_id, learner_val, result) {
 # This callback shows that hints can be added programmatically within the callback.
 num_Check <- function(internal_id, learner_val, result) {
 
-  print("----- num_Check ------")
-  expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
-
-  if (learner_val == expected_val) {
-    result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-  } else {
-    t <- result_main_message(result_error_msg(internal_id, TRUE))
-    t <- result_sub_message(t, "Do you use the division operator (/) and assignment operator (<-)?")
-    t <- result_sub_message(t, "Is the variable name correct (t_02)?")
-    result <- result_update(result, internal_id, FALSE, t)
-  }
-  return(result)
-}
-
-circle_area_Check <- function(internal_id, learner_val, result) {
-
-  funct1_str <- paste0(".circle_area_f_expected <-", ps_get_expected_answer(internal_id))
-  funct1 <- eval(parse(text=funct1_str))
-
-# Check if the variable, circle_area, is a function
-  if (typeof(circle_area) != "closure") {
-    t <- result_main_message(result_error_msg(internal_id, TRUE))
-    t <- result_sub_message(t, "circle_area should be defined to be a function")
-    result <- result_update(result, internal_id, FALSE, t)
-    return(result)
-  }
-
-# Check if there is one parameter
-  if (length(formals(circle_area)) != 1) {
-    t <- result_main_message(result_error_msg(internal_id, TRUE))
-    t <- result_sub_message(t, "circle_area should take one argument, r")
-    result <- result_update(result, internal_id, FALSE, t)
-    return(result)
-  }
-
-# Check if the function compute the correct results
-  correct <-  do.call(".circle_area_f_expected", list(0)) == do.call("circle_area", list(0)) &&
-              do.call(".circle_area_f_expected", list(1)) == do.call("circle_area", list(1)) &&
-              do.call(".circle_area_f_expected", list(4)) == do.call("circle_area", list(4))
-  if (correct) {
-    result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-  } else {
-    t <- result_main_message(result_error_msg(internal_id, TRUE))
-    t <- result_sub_message(t, "check the formula for the area of a circle")
-    result <- result_update(result, internal_id, FALSE, t)
-  }
+#   print("----- num_Check ------")
+#   expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
+#
+#   if (learner_val == expected_val) {
+#     result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+#   } else {
+#     t <- result_main_message(result_error_msg(internal_id, TRUE))
+#     t <- result_sub_message(t, "Do you use the division operator (/) and assignment operator (<-)?")
+#     t <- result_sub_message(t, "Is the variable name correct (t_02)?")
+#     result <- result_update(result, internal_id, FALSE, t)
+#   }
+#   return(result)
+# }
+#
+# area_Check <- function(internal_id, learner_val, result) {
+#
+#   funct1_str <- paste0(".circle_area_f_expected <-", ps_get_expected_answer(internal_id))
+#   funct1 <- eval(parse(text=funct1_str))
+#
+# # Check if the variable, circle_area, is a function
+#   if (typeof(area) != "closure") {
+#     t <- result_main_message(result_error_msg(internal_id, TRUE))
+#     t <- result_sub_message(t, "circle_area should be defined to be a function")
+#     result <- result_update(result, internal_id, FALSE, t)
+#     return(result)
+#   }
+#
+# # Check if there is one parameter
+#   if (length(formals(area)) != 1) {
+#     t <- result_main_message(result_error_msg(internal_id, TRUE))
+#     t <- result_sub_message(t, "circle_area should take one argument, r")
+#     result <- result_update(result, internal_id, FALSE, t)
+#     return(result)
+#   }
+#
+# # Check if the function compute the correct results
+#   correct <-  do.call(".circle_area_f_expected", list(0)) == do.call("circle_area", list(0)) &&
+#               do.call(".circle_area_f_expected", list(1)) == do.call("circle_area", list(1)) &&
+#               do.call(".circle_area_f_expected", list(4)) == do.call("circle_area", list(4))
+#   if (correct) {
+#     result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+#   } else {
+#     t <- result_main_message(result_error_msg(internal_id, TRUE))
+#     t <- result_sub_message(t, "check the formula for the area of a circle")
+#     result <- result_update(result, internal_id, FALSE, t)
+#   }
   return(result)
 }
 
