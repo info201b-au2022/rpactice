@@ -1,7 +1,7 @@
 v <- ps_get_all()
 
 test_that("xxx", {
-  expect_equal(length(v), 2)
+  expect_equal(length(v), 4)
   expect_equal(v[1],"P01")
   expect_equal(v[2],"P03")
 })

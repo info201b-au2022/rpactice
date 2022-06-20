@@ -22,14 +22,11 @@
 #
 # NOTE: There is not reason to implement this callback, since DEFAULT_Check
 #       implements this.
-t_01_Check <- function(internal_id, learner_val, result) {
+t_01_Check <- function(internal_id, result) {
 
-  print("Here ...")
-
+  learner_var <- ps_get_assignment_var(internal_id)
+  learner_val <- eval(parse(text = learner_var))
   expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
-
-  print(expected_val)
-  print(learner_val)
 
   if (learner_val == expected_val) {
     result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
@@ -41,22 +38,23 @@ t_01_Check <- function(internal_id, learner_val, result) {
 
 # Prompt: "What is 111 divided by 9? (t_02)
 # This callback shows that hints can be added programmatically within the callback.
-num_Check <- function(internal_id, learner_val, result) {
+num_Check <- function(internal_id, result) {
 
-#   print("----- num_Check ------")
-#   expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
-#
-#   if (learner_val == expected_val) {
-#     result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-#   } else {
-#     t <- result_main_message(result_error_msg(internal_id, TRUE))
-#     t <- result_sub_message(t, "Do you use the division operator (/) and assignment operator (<-)?")
-#     t <- result_sub_message(t, "Is the variable name correct (t_02)?")
-#     result <- result_update(result, internal_id, FALSE, t)
-#   }
-#   return(result)
-# }
-#
+  learner_var <- ps_get_assignment_var(internal_id)
+  learner_val <- eval(parse(text = learner_var))
+  expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
+
+  if (learner_val == expected_val) {
+    result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+  } else {
+    t <- result_main_message(result_error_msg(internal_id, TRUE))
+    t <- result_sub_message(t, "Do you use the division operator (/) and assignment operator (<-)?")
+    t <- result_sub_message(t, "Is the variable name correct (t_02)?")
+    result <- result_update(result, internal_id, FALSE, t)
+  }
+  return(result)
+}
+
 # area_Check <- function(internal_id, learner_val, result) {
 #
 #   funct1_str <- paste0(".circle_area_f_expected <-", ps_get_expected_answer(internal_id))
@@ -89,8 +87,8 @@ num_Check <- function(internal_id, learner_val, result) {
 #     t <- result_sub_message(t, "check the formula for the area of a circle")
 #     result <- result_update(result, internal_id, FALSE, t)
 #   }
-  return(result)
-}
+#  return(result)
+#}
 
 # The remaining tasks are handled by the default callback function,
 # which is named DEFAULT_Check() (see "practice-201.R")

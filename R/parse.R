@@ -135,6 +135,9 @@ parse_ps <- function(t) {
       print(paste0("line: ", k, ": ", t[k]))
     }
 
+    # Add clean-up case for, which is easy to happen.
+    # #'#'
+
     # Found the practice set title
     if (str_detect(t[k], "^#' @title")) {
       ps_title_p <- str_trim(str_sub(t[k], 10, str_length(t[k])))

@@ -587,19 +587,12 @@ ps <- parse_ps(t[[1]])
 ps <- check_ps(ps)
 
 test_that("parse_ps - note messages", {
-  expect_equal(ps$ps_short, "P03")
-  expect_equal(ps$ps_title, "This is a title")
-  expect_equal(length(ps$initial_vars),2)
-  expect_equal(ps$initial_vars[1],"X <<- c(1,2,3,4)")
-  expect_equal(ps$initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
-
-  expect_equal(length(ps$task_list), 5)
+  expect_equal(ps$task_list[[1]]$prompt_id,"a")
   expect_equal(ps$task_list[[2]]$prompt_id,"-")
-  expect_equal(ps$task_list[[3]]$prompt_id,"-")
   expect_equal(ps$task_list[[5]]$prompt_id,"-")
 
+  expect_equal(ps$task_list[[1]]$is_note_msg,FALSE)
   expect_equal(ps$task_list[[2]]$is_note_msg,TRUE)
-  expect_equal(ps$task_list[[3]]$is_note_msg,TRUE)
   expect_equal(ps$task_list[[5]]$is_note_msg,TRUE)
 
   expect_equal(ps$task_list[[1]]$assignment_var,"t_01")
@@ -609,4 +602,40 @@ test_that("parse_ps - note messages", {
   expect_equal(ps$task_list[[1]]$expected_answer,"10 + 9 + 8")
   expect_equal(ps$task_list[[2]]$expected_answer,"")
   expect_equal(ps$task_list[[4]]$expected_answer,"t_02 <- 10 + 9 + 8 + 7 + 6 + 5")
+})
+
+# A typical case
+s <-
+  "
+#' Practice Set Example
+#' @version ps-1
+#' @short P03
+#' @title This is a title
+
+# Prompt #1
+#' @id -
+#' @msg A note message
+
+# Prompt #2
+#' @id ?
+#' @msg Add ten, nine, and eight together.
+#' @var
+#' @code
+t_02 <- 10 + 9 + 8 + 7 + 6 + 5
+#' @end
+
+# Prompt #3
+#' @id -
+#' @msg A note message
+"
+t <- str_split(s,"\n")
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
+
+test_that("parse_ps - note messages", {
+  expect_equal(ps$task_list[[1]]$prompt_id,"-")
+  expect_equal(ps$task_list[[2]]$prompt_id,"a")
+
+  expect_equal(ps$task_list[[1]]$is_note_msg,TRUE)
+  expect_equal(ps$task_list[[2]]$is_note_msg,FALSE)
 })

@@ -7,17 +7,19 @@
 \description{
 \code{pinfo201} refers to \emph{practice for INFO-201}. INFO-201 is an
 introduction to data science at the University of Washington, a class originally
-developed by Mike Freeman and Joel Ross. See Xxx.
+developed by Mike Freeman and Joel Ross.
+See \url{https://ischool.uw.edu/news/2018/12/ischools-freeman-and-ross-publish-textbook-informatics-classes}.
 }
 \details{
-' \code{pinfo201} is a package for practicing basic R programming, for
+\code{pinfo201} is a package for practicing basic R programming, for
 learners who are just beginning. In addition, \code{pinfo201} is intended
 to be used by teaching assistants when grading student work.
 }
 \section{Practice sets}{
  The key idea is that an instructor creates a practice
-  set, which comprises prompts, expected answers, and hints. Practice sets are
-  loaded into RStudio and controlled with four Addin menu options:
+  set, which comprises prompts, expected answers, and hints. Once \code{pinfo201} is
+  installed, practice can be loaded into RStudio and controlled with
+  four Addin menu options:
   \itemize{
   \item 1. Begin Practice
   \item 2. Show Prompts
@@ -25,28 +27,14 @@ to be used by teaching assistants when grading student work.
   \item 4. Show Answers}
 
   Learners select from the available practice sets (\code{1. Begin Practice}).
-  They write code for one or more of the prompts. The learner's code
-  responses are checked against the expected answers
+  They write code for one or more of the prompts. Then, the learner's code
+  responses can be checked against the expected answers
   (\code{3. Check Answers}). If the learner's answer differs from the expected
   answer, zero or more hints are shown. Learners can also ask for the answers
   to be shown (\code{4. Show Answers}).
 
   Practice sets are written in \code{.R} files, with tagged comments.  Below
   is a practice set with two prompts.
-
-  Practice sets have a title and an unique identifier (\code{short}), which
-  is a short form for referring to a practice set. Optionally, one or more
-  variables can be initialized with the \code{initial-vars} tag. The idea is
-  that the prompts can require learners to use those variables.
-
-  The prompts comprise a unique ID, a message (the prompt), the expected answer,
-  and a list of hints. If an \code{id} is "?" a set of unique IDs will be automatically
-  generated, which simplifies the development of prompts. If an \code{id} is
-  "-" (dash), a message is formatted for learners. This is a simple method for
-  organizing the prompts and guiding students.
-
-  That's it. When a practice set consists of the correct answers to an assigned
-  problem set, \code{pinfo201} turns into an auto-grader.
 
   \preformatted{
   #' @version ps-1
@@ -80,6 +68,20 @@ to be used by teaching assistants when grading student work.
   #' @msg Next: Consider reading up on built-in mathematical functions.
 
 }
+Practice sets have a title and an unique identifier (\code{short}), which
+  is a short form for referring to a practice set. Optionally, one or more
+  variables can be initialized with the \code{initial-vars} tag. The idea is
+  that the prompts can require learners to use those variables.
+
+  The prompts comprise a unique ID, a message (the prompt), the expected answer,
+  and a list of hints. If an \code{id} is "?" a set of unique IDs will be automatically
+  generated, which simplifies the development of prompts. If an \code{id} is
+  "-" (dash), a message is formatted for learners. This is a simple method for
+  organizing for guiding students through the prompts.
+
+  That's it. When a practice set consists of the correct answers to an assigned
+  problem set, \code{pinfo201} becomes an auto-grader, for helping teaching assistants
+  grade.
 }
 
 \section{What can be evaluated?}{
@@ -98,9 +100,9 @@ Currently, we intend evaluate expressions with the following result types:
 
 
 We plan to build in robust default approaches for evaluating expressions and giving
-learners feedback for improving. To do so, we are currently exploring how to structure the
-this package. A present, the framework can be extended with prompt-specific callback functions
-checking a learner's code by, for example, examining the
+learners feedback for improving. To do so, we are currently exploring how to structure
+this package. At present, the framework can be extended with prompt-specific callback functions
+for checking a learner's code by, for example, examining the
 the abstract syntax trees of learners' code submissions. This is the current structure of
 the checking callbacks:
 

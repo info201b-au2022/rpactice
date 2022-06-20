@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------#
-# The prompts and answers are specified in these files
+# Code for implementing the RStudio Addins
 #----------------------------------------------------------------------------#
 
 ## Global Variables ----
@@ -20,7 +20,9 @@ cTAB_IN_SPACES <- "   "
 ps_load_internal_ps <- function() {
   ps01 <- load_ps("practice-set-01-spec.R")
   ps03 <- load_ps("practice-set-03-spec.R")
-  pkg.globals$gPRACTICE_SETS <- list(ps01, ps03)
+  ps_t01 <-load_ps("PS-T01.R")
+  ps_Example <- load_ps("PS-Example.R")
+  pkg.globals$gPRACTICE_SETS <- list(ps01, ps03, ps_Example, ps_t01)
   ps_set_current(1)
 }
 
@@ -71,7 +73,7 @@ ps_get_id_by_short <- function(short_id) {
   return(-1)
 }
 
-ps_get_by_short <- function (short_id) {
+ps_get_by_short <- function(short_id) {
   id <- ps_get_id_by_short(short_id)
   if (id == -1) {
     return(NULL)
@@ -116,7 +118,7 @@ ps_ui_get_titles <- function() {
 # prompts can depend
 #----------------------------------------------------------------------------#
 set_initial_vars_doit <- function(expr) {
-  eval(parse(text = expr))
+  eval(parse(text = expr), envir = .GlobalEnv)
 }
 
 set_env_vars <- function() {
@@ -124,32 +126,53 @@ set_env_vars <- function() {
   t <- lapply(ps$initial_vars, set_initial_vars_doit)
 }
 
-# Expression eval, etc. ----
 
-#' Evaluate an R expression
-#'
-#' To test a learner's answer, call this function. This function accesses
-#' the learner's code, which is stored in the practice set data structure.
-#'
-#' @param id the internal ID for the prompt
-#' @return returns the result of the evaluation. If the learner's code produces
-#' a function (that is, a "closure") a text string summarizing the function is
-#' returned
-#' @export
-eval_expr <- function(id) {
-  answer <- ps_get_expected_answer(id)
-  t <- eval(parse(text = answer))
-  if (typeof(t) == "closure") {
-    args <- formals(t)
-    v <- names(args)
-    t <- paste0(v, collapse = ", ")
-    t <- paste0("function(", t, ") {...}")
-    # Check for vector
-  } else if (length(t) > 1) {
-    t <- paste0(t, collapse = " ")
-    t <- paste0("[1] ", t)
+# Expression eval, etc. ----
+# Evaluates string and returns some details about the result
+eval_string_details <- function(code) {
+  tryCatch(
+    expr = {
+      val <- eval(parse(text = code), envir = .GlobalEnv)
+      t <- typeof(val)
+      list(ok = TRUE, value = val, type = t, error = NULL)
+    }, error = function(e) {
+      list(ok = FALSE, value = NULL, type = NULL, error = e)
+    }
+  )
+}
+
+eval_string <- function(code) {
+  result <- eval_string_details(code)
+  if (result$ok == TRUE) {
+    return(result$value)
   } else {
-    t <- paste0("[1] ", t)
+    return(NULL)
+  }
+}
+
+expected_answer <- function(id) {
+  code <- ps_get_expected_answer(id)
+  t <- eval_string_details(code)
+  if (t$ok == FALSE) {
+    return("<error-something-broken>")
+  } else {
+
+    # Check for a function
+    if (typeof(t$type) == "closure") {
+      args <- formals(t$value)
+      v <- names(args)
+      t <- paste0(v, collapse = ", ")
+      t <- paste0("function(", t$value, ") {...}")
+
+      # Check for vector
+    } else if (length(t$value) > 1) {
+      t <- paste0(t, collapse = " ")
+      t <- paste0("[1] ", t)
+
+      # Everything else
+    } else {
+      t <- paste0("[1] ", t$value)
+    }
   }
   return(t)
 }
@@ -168,7 +191,7 @@ eval_expr <- function(id) {
 #' @param learner_val the value of the prompt variable
 #' @param result the result, which grows upon each call to a <var>_Check function
 #'
-DEFAULT_Check <- function(internal_id, learner_val, result) {
+DEFAULT_Check <- function(internal_id, result) {
   if (cDEBUG) {
     print("--- DEFAULT_Check")
     print(paste0("internal id:    ", internal_id))
@@ -179,7 +202,8 @@ DEFAULT_Check <- function(internal_id, learner_val, result) {
     print(paste0("answer val:     ", learner_val))
     print("---")
   }
-
+  learner_var <- ps_get_assignment_var(internal_id)
+  learner_val <- eval(parse(text = learner_var))
   expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
 
   # Check for not a number
@@ -211,9 +235,72 @@ DEFAULT_Check <- function(internal_id, learner_val, result) {
   return(result)
 }
 
+#----------------------------------------------------------------------------#
+# This function checks if the practice prompts are correct or incorrect and
+# collects student feedback for each of the practice prompts. It does the
+# following:
+#   1. Get all the variable names that need to be checked
+#   2. For each variable name, call the corresponding callback:
+#           <var_name>_Check(internal_id, val, practice_result)
+#   3. Collect collect all the feedback.
+#----------------------------------------------------------------------------#
+check_answers <- function() {
+
+  # This structure is used hold feedback on the practice coding prompts.
+  practice_result <- list(
+    num_correct = 0,
+    num_incorrect = 0,
+    message_list = list()
+    # The message_list comprises a list of messages, as follows:
+    #      message = list(
+    #        prompt_id = <from_practice_set>,
+    #        msg_text =  <feedback from the callback>)
+  )
+
+  # Get all of the variable names that need to be checked for correctness
+  var_names <- ps_get_live_var_names()
+
+  # No variables initialized - format result and return
+  if (length(var_names) == 0) {
+    t <- format_result(practice_result)
+    return(t)
+  }
+
+  # Get all the answers as code
+  # learner_code <- process_script()
+
+  # Call each of the functions that checks if the correct value
+  # has been computed. These functions follow this pattern:
+  #    <var_name>_Check(val,practice_result)
+  for (k in 1:length(var_names)) {
+    var <- var_names[k]
+    internal_id <- ps_get_internal_id_from_var_name(var)
+
+    # Update the practice set data structure to include code used to
+    # answer each of the tasks
+    # answer_code <- get_answer(learner_code, var)
+    # ps <- ps_get_current()
+    # ps <- ps_update_learner_answer(ps, var, answer_code)
+    # ps_update_current(ps)
+
+    if (is_callback_loaded(var) == TRUE) {
+      practice_result <- do.call(get_callback_name(var), list(internal_id, practice_result))
+    } else {
+      practice_result <- DEFAULT_Check(internal_id, practice_result)
+    }
+  }
+  t <- format_result(practice_result)
+  return(t)
+}
+
 # Checks if a callback function for checking a learner's answer
-# has been implemented
-is_callback_loaded <- function(funct_name) {
+# has been implemented load
+get_callback_name <- function(var_name) {
+  return(paste0(var_name, "_Check"))
+}
+
+is_callback_loaded <- function(var_name) {
+  funct_name <- get_callback_name(var_name)
   f_pattern <- paste0("^", funct_name, "$")
   t <- (length(ls(name = "package:pinfo201", pattern = f_pattern)) == 1)
   return(t)
@@ -242,7 +329,7 @@ ps_get_all_assignment_vars <- function() {
 
 # Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
-get_live_var_names <- function() {
+ps_get_live_var_names <- function() {
   expected <- ps_get_all_assignment_vars()
   all <- ls(envir = globalenv())
   var_names <- expected[expected %in% all]
@@ -465,75 +552,11 @@ format_answers <- function() {
       expected_t <- paste0("<span style='color:purple'>", expected, "</span>\n", collapse = "")
 
       t <- paste0(t, expected_t)
-      t <- paste0(t, cTAB_IN_SPACES, eval_expr(id), "\n")
+      t <- paste0(t, cTAB_IN_SPACES, expected_answer(id), "\n")
     }
   }
   return(t)
 }
-
-#----------------------------------------------------------------------------#
-# This function checks if the practice prompts are correct or incorrect and
-# collects student feedback for each of the practice prompts. It does the
-# following:
-#   1. Get all the variable names that need to be checked
-#   2. For each variable name, call the corresponding callback:
-#           <var_name>_Check(internal_id, val, practice_result)
-#   3. Collect collect all the feedback.
-#----------------------------------------------------------------------------#
-check_answers <- function() {
-
-  # This structure is used hold feedback on the practice coding prompts.
-  practice_result <- list(
-    num_correct = 0,
-    num_incorrect = 0,
-    message_list = list()
-    # The message_list comprises a list of messages, as follows:
-    #      message = list(
-    #        prompt_id = <from_practice_set>,
-    #        msg_text =  <feedback from the callback>)
-  )
-
-  # Get all of the variable names that need to be checked for correctness
-  var_names <- get_Live_var_names()
-
-  # No variables initialized - format result and return
-  if (length(var_names) == 0) {
-    t <- format_result(practice_result)
-    return(t)
-  }
-
-  # Get all the answers as code
-  # learner_code <- process_script()
-
-  # Call each of the functions that checks if the correct value
-  # has been computed. These functions follow this pattern:
-  #    <var_name>_Check(val,practice_result)
-  for (k in 1:length(var_names)) {
-    var <- var_names[k]
-    val <- eval(parse(text = var))
-
-    # Update the practice set data structure to include code used to
-    # answer each of the tasks
-    # answer_code <- get_answer(learner_code, var)
-    # ps <- ps_get_current()
-    # ps <- ps_update_learner_answer(ps, var, answer_code)
-    # ps_update_current(ps)
-
-    internal_id <- ps_get_internal_id_from_var_name(var)
-    funct_callback <- paste0(var, "_Check") # Construct callback function name
-
-    if (is_callback_loaded(funct_callback) == TRUE) {
-      print(paste0("CALLBACK: ", funct_callback))
-      practice_result <- do.call(funct_callback, list(internal_id, val, practice_result))
-    } else {
-      print(paste0("DEFAULT CALLBACK: ", funct_callback))
-      practice_result <- DEFAULT_Check(internal_id, val, practice_result)
-    }
-  }
-  t <- format_result(practice_result)
-  return(t)
-}
-
 
 # Formatting results ----
 #----------------------------------------------------------------------------#
@@ -556,7 +579,7 @@ format_code <- function(code_text, indent = cTAB_IN_SPACES) {
 #' @export
 result_good_msg <- function(id) {
   expected <- ps_get_expected_answer(id)
-  answer <- eval_expr(id)
+  answer <- expected_answer(id)
   t <- answer
   t <- paste0(
     "<span style='color:green'>&#10004;</span> Expected: \n",
@@ -654,7 +677,7 @@ format_result <- function(result) {
   t <- paste0(t, "---\n")
   t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
-    t <- paste0(t, " Good work!\n")
+    t <- paste0(t, " Good work! &#128512;\n")
   } else {
     t <- paste0(t, " More work to do.\n")
   }
@@ -721,7 +744,7 @@ print_output <- function(text, fn) {
 #' @export
 practice.begin <- function(short = "P01") {
   id <- ps_get_id_by_short(short)
-  if (is.null(id)) {
+  if (id == -1) {
     stop("practice.begin: Can't find practice set named ", short)
   }
 
@@ -729,13 +752,13 @@ practice.begin <- function(short = "P01") {
   ps_set_current(id)
 
   # Clear all variables in the R global environment
-  var_names <- get_live_var_names()
+  var_names <- ps_get_live_var_names()
   rm(list = var_names, envir = globalenv())
 
   # Check the basic integrity of the practice set
   ps_test_current()
 
-  # Practice sets can set some initital variables in the R global
+  # Practice sets can set some initial variables in the R global
   # environment, allowing practice prompts to refer to these variables
   set_env_vars()
 

@@ -41,12 +41,6 @@ t_11 <- -7 / 0
 # m: In R, NaN means 'Not a Number'. What is 0 / 0? (t_12)
 t_12 <- 0 / 0
 
-# n: Write a function that takes one parameter, r for radius, and computes the
-#    the area of a circle. (Recall: A = pi*r^2) (circle_area)
-area <- function(r) {
-  area <- pi * r^2
-  return(area)
-}
 practice.check()
 practice.answers()
 
