@@ -38,11 +38,11 @@ ps_set_current <- function(id) {
     stop(paste0("Error: Practice Set ID must be between 1 and ", length(pkg.globals$gPRACTICE_SETS), "."))
   }
 
-  pkg.globals$gPRACTICE_SET_ID <- id
+  pkg.globals$gPRACTICE_SET_ID <- as.numeric(id)
 }
 
 ps_get_current <- function() {
-  id <- as.numeric(pkg.globals$gPRACTICE_SET_ID)
+  id <- pkg.globals$gPRACTICE_SET_ID
   if (is.null(id) == TRUE || id < 1) {
     stop("Error: Bad gPRACTICE_SET_ID")
   }
@@ -68,7 +68,24 @@ ps_get_id_by_short <- function(short_id) {
     }
     k <- k + 1
   }
-  return(NULL)
+  return(-1)
+}
+
+ps_get_by_short <- function (short_id) {
+  id <- ps_get_id_by_short(short_id)
+  if (id == -1) {
+    return(NULL)
+  } else {
+    return(pkg.globals$gPRACTICE_SETS[[id]])
+  }
+}
+
+ps_get_all <- function() {
+  v <- c()
+  for (ps in pkg.globals$gPRACTICE_SETS) {
+    v <- append(v, ps$ps_short)
+  }
+  return(v)
 }
 
 # This returns a list of practice set titles and ids, suited
