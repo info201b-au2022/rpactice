@@ -1,10 +1,11 @@
 #' Practice Set Example
+#' @version ps-1
 #' @short P03
 #' @title Using vectors and basic functions
 #' @pdescr
 #' Check into length() and sum()
 #' @end
-#' @ps_initial_vars
+#' @initial-vars
 X <<- c(1,2,3,4)
 #' @end
 

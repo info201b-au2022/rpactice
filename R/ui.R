@@ -1,3 +1,7 @@
+#----------------------------------------------------------------------------#
+# Shiny gadget for selecting one of the loaded practice sets
+# See: https://shiny.rstudio.com/articles/gadgets.html
+#----------------------------------------------------------------------------#
 ui_begin <- function() {
 
   ui <- miniPage(

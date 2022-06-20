@@ -3,15 +3,16 @@
 # Practice Set One
 #----------------------------------------------------------------------------#
 
-#' @title Basic Arithmetic Operators
+#' @version ps-1
 #' @short P01
+#' @title Basic Arithmetic Operators
 #' @descr
 #'Practice using the basic arithmetic operators.
 #'     1. You should know how to use these operator: +, -, *, / ,^ , %%, %/%
 #'     2. For order of operations, you should know how to use parenthesis:  (, )
 #'     3. You should know the meaning of: Inf, -Inf, and NaN
 #' @end
-#' @initial_vars
+#' @initial-vars
 X <<- 10
 Y <<- c(1,2,3)
 #' @end
