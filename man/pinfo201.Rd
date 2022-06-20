@@ -7,12 +7,12 @@
 \description{
 \code{pinfo201} refers to \emph{practice for INFO-201}. INFO-201 is an
 introduction to data science at the University of Washington, a class originally
-developed by Micheal Freeman and Joel Ross. See Xxx.
+developed by Mike Freeman and Joel Ross. See Xxx.
 }
 \details{
-' \code{pinfo201} is a package for practicing basic R programming. The focus is
-on learners who are just beginning. In addition, \code{pinfo201} is intended
-to be used for grading student work.
+' \code{pinfo201} is a package for practicing basic R programming, for
+learners who are just beginning. In addition, \code{pinfo201} is intended
+to be used by teaching assistants when grading student work.
 }
 \section{Practice sets}{
  The key idea is that an instructor creates a practice
@@ -26,7 +26,7 @@ to be used for grading student work.
 
   Learners select from the available practice sets (\code{1. Begin Practice}).
   They write code for one or more of the prompts. The learner's code
-  responses are evaluated and checked against the expected answers
+  responses are checked against the expected answers
   (\code{3. Check Answers}). If the learner's answer differs from the expected
   answer, zero or more hints are shown. Learners can also ask for the answers
   to be shown (\code{4. Show Answers}).
@@ -46,11 +46,12 @@ to be used for grading student work.
   organizing the prompts and guiding students.
 
   That's it. When a practice set consists of the correct answers to an assigned
-  problem set, \code{pinfo201} turns into an auto-grader RStudio Addin.
+  problem set, \code{pinfo201} turns into an auto-grader.
 
   \preformatted{
-  #' @title Example practice set
+  #' @version ps-1
   #' @short PS-Example
+  #' @title Example practice set
   #' @descr
   #' An example that illustrates the essentials of practice sets.
   #' @end
@@ -76,7 +77,7 @@ to be used for grading student work.
   #' @end
 
   #' @id -
-  #' @msg Next: Consider reading up on the trig functions.
+  #' @msg Next: Consider reading up on built-in mathematical functions.
 
 }
 }
@@ -84,12 +85,11 @@ to be used for grading student work.
 \section{What can be evaluated?}{
 
 
-We are seeking to be able to evaluate results of the following
-types:
+Currently, we intend evaluate expressions with the following result types:
 \itemize{
 \item Special constants (NULL, NA, Inf, -Inf, and NaN)
 \item Basic atomic vectors (logical, integer, real, string)
-\item Vectors greater than length 1
+\item Vectors greater than length 1 (comprising logical, integer, real, and string types)
 \item Data frames
 }
 }
@@ -97,18 +97,19 @@ types:
 \section{Checking callbacks}{
 
 
-We are trying to build in robust default approaches - but the framework
-also can be extended with specific callback functions for checking
-a learner's code. In principle, code could be written to analyze
-the abstract syntax trees of learners' code submissions.
-
-This is the current structure of the checking callbacks:
+We plan to build in robust default approaches for evaluating expressions and giving
+learners feedback for improving. To do so, we are currently exploring how to structure the
+this package. A present, the framework can be extended with prompt-specific callback functions
+checking a learner's code by, for example, examining the
+the abstract syntax trees of learners' code submissions. This is the current structure of
+the checking callbacks:
 
 \preformatted{
   circle_area_Check <- function(internal_id, learner_val, result) {
     expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
 
-    # Analyze learner's code
+    # Analyze learner's code and provide feedback
+    #     add.message(result, message)
 
     if (learner_val == expected_val) {
       result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id)

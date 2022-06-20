@@ -312,12 +312,6 @@ check_ps <- function(ps) {
   }
   # Check if a task ID is a dash ("-"), which means it is a note (not a prompt for code)
   for (k in 1:N) {
-
-    # print("..........")
-    # print(paste0("prompt_id ", ps$task_list[[k]]$prompt_id))
-    # print(paste0("is_note_msg ", ps$task_list[[k]]$is_note_msg))
-    # print("..........")
-
     if (ps$task_list[[k]]$prompt_id == "-") {
       ps$task_list[[k]]$is_note_msg <- TRUE
     } else {
