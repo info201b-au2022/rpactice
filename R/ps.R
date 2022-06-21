@@ -18,9 +18,8 @@ cTAB_IN_SPACES <- "   "
 # This function is called with the package is loaded. It is used to initialize
 # the "built-in" practice sets.
 ps_load_internal_ps <- function() {
-  ps01 <- load_ps("practice-set-01-spec.R")
-  ps03 <- load_ps("practice-set-03-spec.R")
-  pkg.globals$gPRACTICE_SETS <- list(ps01, ps03)
+  ps_add(load_ps("practice-set-01-spec.R"))
+  ps_add(load_ps("practice-set-03-spec.R"))
 
   ps_add(load_ps("PS-T01.R"))
   ps_add(load_ps("PS-Example.R"))
@@ -28,8 +27,10 @@ ps_load_internal_ps <- function() {
   ps_set_current(1)
 }
 
-ps_load_ps <- function(filename) {
-
+# Add a practice set into the running package
+ps_add <- function(ps) {
+  new_k <- length(pkg.globals$gPRACTICE_SETS) + 1
+  pkg.globals$gPRACTICE_SETS[[new_k]] <- ps
 }
 
 # Only one practice set is active at a time - A global variable is used
@@ -45,9 +46,10 @@ ps_set_current <- function(id) {
   pkg.globals$gPRACTICE_SET_ID <- as.numeric(id)
 }
 
+# Return the currently active practice set
 ps_get_current <- function() {
   id <- pkg.globals$gPRACTICE_SET_ID
-  if (is.null(id) == TRUE || id < 1) {
+  if (is.null(id) == TRUE || id < 1 || id > length(pkg.globals$gPRACTICE_SETS)) {
     stop("Error: Bad gPRACTICE_SET_ID")
   }
   ps <- pkg.globals$gPRACTICE_SETS[[id]]
@@ -55,20 +57,19 @@ ps_get_current <- function() {
   return(ps)
 }
 
+# Update the current practice set to a new one
 ps_update_current <- function(ps) {
   pkg.globals$gPRACTICE_SETS[[pkg.globals$gPRACTICE_SET_ID]] <- ps
 }
 
-ps_add <- function(ps) {
-  new_k <- length(pkg.globals$gPRACTICE_SETS) + 1
-  pkg.globals$gPRACTICE_SETS[[new_k]] <- ps
-}
-
+# Check the integrity of the current practice set
 ps_test_current <- function() {
   # TBD
   return(TRUE)
 }
 
+# Get the internal id of a practice set by its short id
+# NOTE: Practice sets are assumed to have UNIQUE short ids
 ps_get_id_by_short <- function(short_id) {
   k <- 1
   for (ps in pkg.globals$gPRACTICE_SETS) {
@@ -80,6 +81,7 @@ ps_get_id_by_short <- function(short_id) {
   return(-1)
 }
 
+# Get the practice set by its short id
 ps_get_by_short <- function(short_id) {
   id <- ps_get_id_by_short(short_id)
   if (id == -1) {
@@ -89,6 +91,7 @@ ps_get_by_short <- function(short_id) {
   }
 }
 
+# Get a vector of all of the practice set short ids
 ps_get_all <- function() {
   v <- c()
   for (ps in pkg.globals$gPRACTICE_SETS) {
@@ -97,9 +100,10 @@ ps_get_all <- function() {
   return(v)
 }
 
-# This returns a list of practice set titles and ids, suited
+# Return a list of practice set titles and ids, suited
 # to a Shinny selectInput widget.  The list has this structure:
-#    list("P01: <title>" = "P1", "P2: <title>" = "P02")
+#    list("P01: <title>" = "P01", "P2: <title>" = "P02")
+# where "P01", "P02", and so on are the short ids for the practice sets
 ps_ui_get_titles <- function() {
   if (is.null(pkg.globals$gPRACTICE_SETS)) {
     stop("practice-info-201.R: Practice sets are not set.")
@@ -130,11 +134,14 @@ set_initial_vars_doit <- function(expr) {
 
 set_env_vars <- function() {
   ps <- ps_get_current()
-  t <- lapply(ps$initial_vars, set_initial_vars_doit)
+  t <- lapply(ps$ps_initial_vars, set_initial_vars_doit)
 }
 
 
-# Expression eval, etc. ----
+# Expression evaluation ----
+#----------------------------------------------------------------------------#
+# Functions for evaluating and formatting expressions
+#----------------------------------------------------------------------------#
 # Evaluates string and returns some details about the result
 eval_string_details <- function(code) {
   tryCatch(
@@ -162,7 +169,7 @@ eval_string_and_format <- function(code) {
   if (result$ok == TRUE) {
     if (result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
       if (length(result$value) == 1) {
-        return(paste0("(atomic [1] ", as.character(result$value)))
+        return(paste0("atomic [1] ", as.character(result$value)))
       } else {
         t <- paste0(result$value, collapse = " ")
         return(paste0("vector [1] ", t))
@@ -173,6 +180,19 @@ eval_string_and_format <- function(code) {
   } else {
     return("syntax error")
   }
+}
+
+format_code2 <- function (code) {
+  # Collapse everything to a long string
+  t <- paste0(code, collapse="\n")
+  # Styler might produce multiple strings ( s<-1; t<-2)
+  t <- styler::style_text(t)
+  # Collapse it again
+  t <- paste0(code, collapse="\n")
+  if (length(code) > 1) {
+    t <- paste0("\n", t)
+  }
+  return(t)
 }
 
 expected_answer <- function(id) {

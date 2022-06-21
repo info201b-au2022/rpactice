@@ -35,7 +35,7 @@ test_that("url read works", {
   expect_equal(RCurl::url.exists(url),TRUE)
   ps <- create_ps_from_url(url)
   expect_equal(ps$ps_short, "PS-T10")
-  expect_equal(length(ps$task_list), 11)
+  expect_equal(length(ps$task_list), 10)
 })
 
 
@@ -119,9 +119,9 @@ ps <- parse_ps(t[[1]])
 test_that("parse_ps - 3", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
-  expect_equal(length(ps$initial_vars),4)
-  expect_equal(ps$initial_vars[1],"X <<- c(1,2,3,4)")
-  expect_equal(ps$initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
+  expect_equal(length(ps$ps_initial_vars),4)
+  expect_equal(ps$ps_initial_vars[1],"X <<- c(1,2,3,4)")
+  expect_equal(ps$ps_initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
 
   expect_equal(length(ps$task_list), 2)
   expect_equal(ps$task_list[[1]]$prompt_id,"a")
@@ -178,9 +178,9 @@ ps <- parse_ps(t[[1]])
 test_that("parse_ps - 3", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
-  expect_equal(length(ps$initial_vars),4)
-  expect_equal(ps$initial_vars[1],"X <<- c(1,2,3,4)")
-  expect_equal(ps$initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
+  expect_equal(length(ps$ps_initial_vars),4)
+  expect_equal(ps$ps_initial_vars[1],"X <<- c(1,2,3,4)")
+  expect_equal(ps$ps_initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
 
   expect_equal(length(ps$task_list), 3)
   expect_equal(ps$task_list[[1]]$prompt_id,"a")
@@ -529,9 +529,9 @@ ps <- check_ps(ps)
 test_that("parse_ps - note messages", {
   expect_equal(ps$ps_short, "P03")
   expect_equal(ps$ps_title, "This is a title")
-  expect_equal(length(ps$initial_vars),2)
-  expect_equal(ps$initial_vars[1],"X <<- c(1,2,3,4)")
-  expect_equal(ps$initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
+  expect_equal(length(ps$ps_initial_vars),2)
+  expect_equal(ps$ps_initial_vars[1],"X <<- c(1,2,3,4)")
+  expect_equal(ps$ps_initial_vars[2],"Y <<- c('a', 'b', 'c', 'd')")
 
   expect_equal(length(ps$task_list), 3)
   expect_equal(ps$task_list[[1]]$prompt_id,"a")
@@ -763,4 +763,45 @@ ps <- check_ps(ps)
 test_that("parse_ps - note messages", {
   expect_equal(ps$task_list[[1]]$prompt_id,"-")
   expect_equal(ps$task_list[[1]]$is_note_msg,TRUE)
+})
+
+
+s <-
+  "
+#' @version ps-1
+#' @short PS-T10
+#' @title Test example in public on GitHub
+#' @descr
+#' Some simple tests
+#' @end
+#' @initial-vars
+X <- c(1,2,3)
+#' @end
+
+#' #' @id -
+#' @msg An expression
+
+#' @id a
+#' @msg An expression
+#' @code
+t01 <- sqrt((1+2+3)^2)*2  # 12
+#' @end
+
+#' #' @id b
+#' @msg An expression
+#' @code
+t01 <- sqrt((1+2+3)^2)*2  # 12
+#' @end
+"
+
+t <- str_split(s,"\n")
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
+
+test_that("parse_ps - note messages", {
+  expect_equal(ps$task_list[[1]]$prompt_id,"-")
+  expect_equal(ps$task_list[[1]]$is_note_msg,TRUE)
+
+  expect_equal(ps$task_list[[2]]$prompt_id,"a")
+  expect_equal(ps$task_list[[3]]$prompt_id,"b")
 })

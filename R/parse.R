@@ -84,10 +84,11 @@ update_list <- function(prompts, id, msg, var, code, h) {
 # Parse the pactice set document and produce the following structure:
 #
 # practice_set <- list (
+#   ps_version = <string>
 #   ps_title = <string>
 #   ps_short = <string>
 #   ps_descr = <string>
-#   initial_vars = c(<string>, <string>, ...)  // lines of code
+#   ps_initial_vars = c(<string>, <string>, ...)  // lines of code
 #   task_list = list (
 #     task = list (
 #        prompt_id = <string>
@@ -109,6 +110,7 @@ parse_ps <- function(t) {
   }
 
   ps <- NULL
+  ps_version_p <- ""
   ps_title_p <- ""
   ps_short_p <- "_SHORT_"
   ps_descr_p <- ""
@@ -130,14 +132,25 @@ parse_ps <- function(t) {
       print(paste0("line: ", k, ": ", t[k]))
     }
 
-    # Add clean-up case for, which is easy to happen.
-    # #'#'
+    # Syntax clean-up for a common typo, namely "#' #'"
+    if (str_detect(t[k], "^#' #'")) {
+      replace_t <- str_replace(t[k],"^#' #'", "#'")
+      t[k] <- replace_t
+    }
 
     # Found the practice set title
     if (str_detect(t[k], "^#' @title")) {
       ps_title_p <- str_trim(str_sub(t[k], 10, str_length(t[k])))
       if (cDEBUG) {
         print(paste0("ps_title: ", ps_title_p))
+      }
+    }
+
+    # Found the practice set version
+    else if (str_detect(t[k], "^#' @version")) {
+      ps_version_p <- str_trim(str_sub(t[k], 12, str_length(t[k])))
+      if (cDEBUG) {
+        print(paste0("ps_version: ", ps_version_p))
       }
     }
 
@@ -204,10 +217,11 @@ parse_ps <- function(t) {
       } else {
         first_id <- TRUE
         ps <- list(
+          ps_version = ps_version_p,
           ps_title = ps_title_p,
           ps_short = ps_short_p,
           ps_descr = ps_descr_p,
-          initial_vars = ps_initial_vars_p,
+          ps_initial_vars = ps_initial_vars_p,
           task_list = NULL
         )
       }
@@ -264,10 +278,11 @@ parse_ps <- function(t) {
   if (length(prompts) == 0) {
     ps <- list(
       # ps_id = ps_id_p,
+      ps_version = ps_version_p,
       ps_title = ps_title_p,
       ps_short = ps_short_p,
       ps_descr = ps_descr_p,
-      initial_vars = ps_initial_vars_p,
+      ps_initial_vars = ps_initial_vars_p,
       task_list = NULL
     )
   }

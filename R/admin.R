@@ -54,7 +54,7 @@ admin.prompts <- function (short) {
       }
       r <- sprintf("%-25s",r)
       cat(k, ":", task$prompt_id,"[", task$assignment_var, "]: \t\t\t\t\t\t", task$prompt_msg, "\n\t\t",
-          r, "\t\t",  task$expected_answer, "\n", sep="")
+          r, "\t\t",  format_code2(task$expected_answer), "\n", sep="")
     }
     k <- k + 1
     cat("\n")
