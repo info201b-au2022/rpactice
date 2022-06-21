@@ -47,7 +47,7 @@ admin.prompts <- function (short) {
       }
       cat(k, "[-] \t\t\t\t\t\t\t", m, sep="")
     } else {
-      r <- eval_string(task$expected_answer)
+      r <- eval_string_and_format(task$expected_answer)
       if(nchar(r) > 23){
         r <- substr(r, 1, 20)
         r <- paste0(r, "...")

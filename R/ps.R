@@ -20,9 +20,11 @@ cTAB_IN_SPACES <- "   "
 ps_load_internal_ps <- function() {
   ps01 <- load_ps("practice-set-01-spec.R")
   ps03 <- load_ps("practice-set-03-spec.R")
-  ps_t01 <-load_ps("PS-T01.R")
-  ps_Example <- load_ps("PS-Example.R")
-  pkg.globals$gPRACTICE_SETS <- list(ps01, ps03, ps_Example, ps_t01)
+  pkg.globals$gPRACTICE_SETS <- list(ps01, ps03)
+
+  ps_add(load_ps("PS-T01.R"))
+  ps_add(load_ps("PS-Example.R"))
+
   ps_set_current(1)
 }
 
@@ -55,6 +57,11 @@ ps_get_current <- function() {
 
 ps_update_current <- function(ps) {
   pkg.globals$gPRACTICE_SETS[[pkg.globals$gPRACTICE_SET_ID]] <- ps
+}
+
+ps_add <- function(ps) {
+  new_k <- length(pkg.globals$gPRACTICE_SETS) + 1
+  pkg.globals$gPRACTICE_SETS[[new_k]] <- ps
 }
 
 ps_test_current <- function() {
@@ -150,6 +157,24 @@ eval_string <- function(code) {
   }
 }
 
+eval_string_and_format <- function(code) {
+  result <- eval_string_details(code)
+  if (result$ok == TRUE) {
+    if (result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+      if (length(result$value) == 1) {
+        return(paste0("(atomic [1] ", as.character(result$value)))
+      } else {
+        t <- paste0(result$value, collapse = " ")
+        return(paste0("vector [1] ", t))
+      }
+    } else {
+      return("type not formatted")
+    }
+  } else {
+    return("syntax error")
+  }
+}
+
 expected_answer <- function(id) {
   code <- ps_get_expected_answer(id)
   t <- eval_string_details(code)
@@ -188,7 +213,6 @@ expected_answer <- function(id) {
 #' Default function for checking learner's code
 #'
 #' @param internal_id the internal ID of the prompt from the practice set
-#' @param learner_val the value of the prompt variable
 #' @param result the result, which grows upon each call to a <var>_Check function
 #'
 DEFAULT_Check <- function(internal_id, result) {
@@ -202,34 +226,42 @@ DEFAULT_Check <- function(internal_id, result) {
     print(paste0("answer val:     ", learner_val))
     print("---")
   }
-  learner_var <- ps_get_assignment_var(internal_id)
-  learner_val <- eval(parse(text = learner_var))
-  expected_val <- eval(parse(text = ps_get_expected_answer(internal_id)))
 
-  # Check for not a number
-  if (is.nan(learner_val) && is.nan(expected_val)) {
-    result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+  learner_val <- eval_string(ps_get_assignment_var(internal_id))
+  expected_val <- eval_string(ps_get_expected_answer(internal_id))
 
-    # Check for a data frame
-  } else if (is.data.frame(expected_val) == TRUE) {
-    NULL
+  learner_result <- eval_string_details(learner_val)
+  expected_result <- eval_string_details(learner_val)
 
-    # Check for a vector
-  } else if (length(expected_val) > 1) {
-    t <- (expected_val == learner_val)
-    if (sum(t) == length(t) && length(expected_val) == length(learner_val)) {
-      result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+  if (learner_result$ok == TRUE) {
+
+    # # Check for not a number
+    # if (is.nan(learner_val) && is.nan(expected_val)) {
+    #   result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+
+    if (learner_result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+
+      # Atomic
+      if (length(result$value) == 1) {
+        if (identical(learner_val, expected_val, ignore.environment=TRUE) == TRUE) {
+          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+        } else {
+          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+        }
+
+        # Vector
+      } else {
+        if (identical(learner_val, expected_val, ignore.environment=TRUE) == TRUE) {
+          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+        } else {
+          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+        }
+      }
     } else {
-      result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+      return("type not formatted")
     }
-
-    # Check for a single vale
   } else {
-    if (learner_val == expected_val) {
-      result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-    } else {
-      result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-    }
+    return("syntax error")
   }
 
   return(result)
@@ -812,7 +844,7 @@ practice.answers <- function() {
 #'
 #' @param fn filename
 #' @export
-practice.read_ps <- function(fn) {
-  ps <- create_practice_set(fn)
-  print(ps)
+practice.load_url <- function(fn="https://raw.githubusercontent.com/info201B-2022-Autumn/practice-sets/main/PS-T10.R") {
+  ps <- create_ps_from_url(fn)
+  ps_add(ps)
 }

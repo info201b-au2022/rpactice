@@ -2,20 +2,15 @@
 # These functions are used to read and process practice set input files
 #----------------------------------------------------------------------------#
 
-# Loading practice set files ----
-cPRACTICE_SET_DIR <- "/R/practice-sets/"
-
 # Create practice set from a coded text file
-create_ps <- function(fn) {
-  wdir <- getwd()
-  filename <- paste0(wdir, cPRACTICE_SET_DIR, fn)
-  if (file.exists(filename) == FALSE) {
-    stop(paste0("create_ps: File does not exist\n", filename))
-  }
+create_ps_from_url <- function(url) {
+   if (RCurl::url.exists(url) == FALSE) {
+    stop(paste0("create_ps_from_url: URL file does not exist\n", url))
+   }
 
-  ps <- read_ps_doc(filename)
+  ps <- read_ps_doc(url)
   if (is.null(ps)) {
-    stop(paste0("create_ps: Practice set not created\n", filename))
+    stop(paste0("create_ps: Practice set not created\n", url))
   }
 
   ps <- check_ps(ps)
@@ -275,10 +270,13 @@ parse_ps <- function(t) {
       initial_vars = ps_initial_vars_p,
       task_list = NULL
     )
-  } else {
+  }
+
+  if (id != "") {
     prompts <- update_list(prompts, id, msg, var, code, hints)
     ps$task_list <- prompts
   }
+
   return(ps)
 }
 
@@ -344,7 +342,8 @@ check_ps <- function(ps) {
         }
       }
       if (fixed == FALSE) {
-        stop(paste0("check_ps: unable to correct variable name"))
+        ps$task_list[[j]]$is_note_msg <- TRUE
+        ps$task_list[[j]]$prompt_id <- "-"
       }
     }
   }
