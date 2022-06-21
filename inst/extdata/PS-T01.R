@@ -89,12 +89,29 @@ t06 <- t05 * 2 # c(2 4 6 8)
 
 #' @id ?
 #' @msg Select items from the vector
+#' @var t07
 #' @code
-t07 <- t06[t06 > 4] # c(6 8)
+t06[t06 > 4] # c(6 8)
 #' @end
 #'
-#' #' @id ?
+#' @id ?
 #' @msg Select items from the vector
+#' @var t08
 #' @code
-t08 <- t06[t06 > 4] # c(6 8)
+t06[t06 > 4] # c(6 8)
 #' @end
+
+#' @id -
+#' @msg Functions
+
+#' @id ?
+#' @msg A  function
+#' @check c(1, 1000, 10, 0, -1, NA)
+#' @code
+f <- function(x) {
+  t <- x + 1
+  return(t)
+}
+#' @end
+
+

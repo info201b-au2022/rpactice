@@ -51,6 +51,17 @@ trim_comment <- function(s) {
 
 #----------------------------------------------------------------------------#
 # Find the variable name on left-hand side of an assignment statement
+# TODO: Test this for odd cases, including:
+#  a <- b <- 1   (Should get "a")
+#  a <- 1; b <- 1 (Should get "b")
+#
+# f3 <- function(x) {   (should be f3 NOT t)
+# t <- x + 1
+# return(t)
+# }
+#
+#
+# Need something more robust ...
 #----------------------------------------------------------------------------#
 get_var_lhs <- function(s) {
   if (str_detect(s, "<-")) {
@@ -65,12 +76,13 @@ get_var_lhs <- function(s) {
 #----------------------------------------------------------------------------#
 # Helper function to update the practice set data structure
 #----------------------------------------------------------------------------#
-update_list <- function(prompts, id, msg, var, code, h) {
+update_list <- function(prompts, id, msg, var, check, code, h) {
   new_prompt <- list(task = list(
     prompt_id = id,
     is_note_msg = FALSE,
     prompt_msg = msg,
     assignment_var = var,
+    checks_for_f = check,
     expected_answer = code,
     learner_answer = NULL,
     hints = h
@@ -119,6 +131,7 @@ parse_ps <- function(t) {
   id <- -1
   msg <- ""
   var <- ""
+  check <- ""
   code <- c()
   hints <- c()
 
@@ -206,10 +219,11 @@ parse_ps <- function(t) {
 
       # For the second or more ID update the prompts list structure
       if (first_id == TRUE) {
-        prompts <- update_list(prompts, id, msg, var, code, hints)
+        prompts <- update_list(prompts, id, msg, var, check, code, hints)
         id <- ""
         msg <- ""
         var <- ""
+        check <- ""
         code <- c()
         hints <- c()
 
@@ -242,6 +256,13 @@ parse_ps <- function(t) {
       var <- str_trim(str_sub(t[k], 8, str_length(t[k])))
       if (cDEBUG) {
         print(paste0("var: ", var))
+      }
+
+      # Found the check information
+    } else if (str_detect(t[k], "#' @check")) {
+      check <- str_trim(str_sub(t[k], 10, str_length(t[k])))
+      if (cDEBUG) {
+        print(paste0("check: ", check))
       }
 
       # Found the correct code for this prompt
@@ -288,7 +309,7 @@ parse_ps <- function(t) {
   }
 
   if (id != "") {
-    prompts <- update_list(prompts, id, msg, var, code, hints)
+    prompts <- update_list(prompts, id, msg, var, check, code, hints)
     ps$task_list <- prompts
   }
 

@@ -790,7 +790,7 @@ t01 <- sqrt((1+2+3)^2)*2  # 12
 #' #' @id b
 #' @msg An expression
 #' @code
-t01 <- sqrt((1+2+3)^2)*2  # 12
+t02 <- sqrt((1+2+3)^2)*2  # 12
 #' @end
 "
 
@@ -804,4 +804,55 @@ test_that("parse_ps - note messages", {
 
   expect_equal(ps$task_list[[2]]$prompt_id,"a")
   expect_equal(ps$task_list[[3]]$prompt_id,"b")
+})
+
+s =
+"
+#' @id a
+#' @msg A  function
+#' @check c(1, 1000, 10, 0, -1, NA)
+#' @var f1
+#' @code
+function(x) {
+  t <- x + 1
+  return(t)
+}
+#' @end
+
+#' @id b
+#' @msg A  function
+#' @check c()
+#' @var f2
+#' @code
+function(x) {
+  t <- x + 1
+  return(t)
+}
+#' @end
+
+#' @id c
+#' @msg A  function
+#' @check
+#' @var f3
+#' @code
+function(x) {
+  t <- x + 1
+  return(t)
+}
+#' @end
+"
+
+t <- str_split(s,"\n")
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
+
+test_that("parse_ps - @check input for functions", {
+  expect_equal(ps$task_list[[1]]$prompt_id,"a")
+  expect_equal(ps$task_list[[1]]$checks_for_f,"c(1, 1000, 10, 0, -1, NA)")
+  expect_equal(ps$task_list[[2]]$prompt_id,"b")
+  expect_equal(ps$task_list[[2]]$checks_for_f,"c()")
+  expect_equal(ps$task_list[[3]]$prompt_id,"c")
+  expect_equal(ps$task_list[[3]]$checks_for_f,"")
+
+
 })
