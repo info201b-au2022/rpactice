@@ -32,3 +32,9 @@ v1 <- c(1,2,3)
 #' @code
 v2 <- X + 5
 #' @end
+
+#' @id ?
+#' @msg Make a function
+#' @code
+f <- function(x) {10 * x}
+#' @end

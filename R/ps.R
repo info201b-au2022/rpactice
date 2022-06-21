@@ -168,12 +168,20 @@ eval_string_and_format <- function(code) {
   result <- eval_string_details(code)
   if (result$ok == TRUE) {
     if (result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+      # Atomic types
       if (length(result$value) == 1) {
         return(paste0("atomic [1] ", as.character(result$value)))
+
+        # Vector types
       } else {
         t <- paste0(result$value, collapse = " ")
         return(paste0("vector [1] ", t))
       }
+      # A function
+    } else if (result$type == "closure") {
+      return(paste0("function"))
+
+      # A type that is not handled
     } else {
       return("type not formatted")
     }
@@ -182,13 +190,13 @@ eval_string_and_format <- function(code) {
   }
 }
 
-format_code2 <- function (code) {
+format_code2 <- function(code) {
   # Collapse everything to a long string
-  t <- paste0(code, collapse="\n")
+  t <- paste0(code, collapse = "\n")
   # Styler might produce multiple strings ( s<-1; t<-2)
   t <- styler::style_text(t)
   # Collapse it again
-  t <- paste0(code, collapse="\n")
+  t <- paste0(code, collapse = "\n")
   if (length(code) > 1) {
     t <- paste0("\n", t)
   }
@@ -263,7 +271,7 @@ DEFAULT_Check <- function(internal_id, result) {
 
       # Atomic
       if (length(result$value) == 1) {
-        if (identical(learner_val, expected_val, ignore.environment=TRUE) == TRUE) {
+        if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
           result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
         } else {
           result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
@@ -271,12 +279,24 @@ DEFAULT_Check <- function(internal_id, result) {
 
         # Vector
       } else {
-        if (identical(learner_val, expected_val, ignore.environment=TRUE) == TRUE) {
+        if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
           result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
         } else {
           result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
         }
       }
+    } else if (learner_result$type == "closure") {
+      print("\n ----\n")
+      print(learner_result)
+      print("\n ----\n")
+
+      if (TRUE) {
+        result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+      } else {
+        result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+      }
+
+
     } else {
       return("type not formatted")
     }
@@ -864,7 +884,7 @@ practice.answers <- function() {
 #'
 #' @param fn filename
 #' @export
-practice.load_url <- function(fn="https://raw.githubusercontent.com/info201B-2022-Autumn/practice-sets/main/PS-T10.R") {
+practice.load_url <- function(fn = "https://raw.githubusercontent.com/info201B-2022-Autumn/practice-sets/main/PS-T10.R") {
   ps <- create_ps_from_url(fn)
   ps_add(ps)
 }

@@ -14,4 +14,6 @@ v1 <- c(1,2,3)
 # d: Add 5 to each element of the vector X. (v2)
 v2 <- X+5
 
+f <- function(x) {return(10*x)}
+
 practice.check()
