@@ -20,7 +20,7 @@ admin.ls <- function (detailed=TRUE) {
   for (k in 1:length(v)) {
     ps <- ps_get_by_short(v[k])
     num_prompts <- length(ps$task_list)
-    cat(paste0(k, ": [",v[k], "]: ", num_prompts, "\n"))
+    cat(paste0(k, ": [",v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
   }
 }
 
@@ -31,30 +31,31 @@ admin.prompts <- function (short) {
   practice.begin(short)
   ps <- ps_get_by_short(short)
   if (is.null(ps)) {
-    stop(past0("Error. Practice set not found (",short,")"))
+    stop(paste0("Error. Practice set not found (",short,")"))
   }
   cat("\014") # Clear screen
   cat("[",short, "]: ", ps$ps_descr, "\n", sep="")
   cat("Prompts: ", length(ps$task_list), ".\n", sep="")
-  cat("ID\t\tValue\t\t\t\t\tCode\n")
+  cat("ID\n")
   k = 1
   for(task in ps$task_list) {
     if (task$is_note_msg) {
       m <- task$prompt_msg
       if (nchar(m) > 39) {
         m <- substr(m, 1, 40)
-        m <- paste0("\t\t", m, "...")
+        m <- paste0(" ", m, "...")
       }
-      cat(k, "[-] \t\t\t\t\t\t\t", m, sep="")
+      cat(k, "[-] ", m, sep="")
     } else {
       r <- eval_string_and_format(task$expected_answer)
       if(nchar(r) > 23){
         r <- substr(r, 1, 20)
         r <- paste0(r, "...")
       }
-      r <- sprintf("%-25s",r)
-      cat(k, ":", task$prompt_id,"[", task$assignment_var, "]: \t\t\t\t\t\t", task$prompt_msg, "\n\t\t",
-          r, "\t\t",  format_code2(task$expected_answer), "\n", sep="")
+      r <- sprintf("%-40s %-25s", format_code2(task$expected_answer), r)
+
+      cat(k, ":", task$prompt_id,"[", task$assignment_var, "]: \t", task$prompt_msg, "\n\t\t",
+          r, "\t\t", "\n", sep="")
     }
     k <- k + 1
     cat("\n")
@@ -86,4 +87,8 @@ admin.vars <- function() {
     cat("No callbacks.")
   }
   cat("\n")
+}
+
+admin.run_answers <- function(fn) {
+  print("run_answers")
 }

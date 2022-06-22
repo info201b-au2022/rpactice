@@ -4,7 +4,10 @@
 \alias{practice.load_url}
 \title{Read a practice set}
 \usage{
-practice.load_url(fn)
+practice.load_url(
+  fn = paste0("https://raw.githubusercontent.com/",
+    "info201B-2022-Autumn/practice-sets/main/", "PS-T10.R")
+)
 }
 \arguments{
 \item{fn}{filename}

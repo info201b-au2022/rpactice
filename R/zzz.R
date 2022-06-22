@@ -5,13 +5,13 @@
 #----------------------------------------------------------------------------#
 .onLoad <- function(libname,pkgname) {
   ps_load_internal_ps()
-  packageStartupMessage(paste0("Welcome to ", pkgname))
-  packageStartupMessage(paste0("", getwd()))
+  # packageStartupMessage(paste0("Welcome to ", pkgname))
+  # packageStartupMessage(paste0("", getwd()))
 }
 
 .onattach <- function(libname, pkgname) {
-  # packageStartupMessage(paste0("Welcome to ", pkgname))
-  # packageStartupMessage(paste0("", getwd()))
+  packageStartupMessage(paste0("Welcome to ", pkgname))
+  packageStartupMessage(paste0("", getwd()))
   NULL
 }
 

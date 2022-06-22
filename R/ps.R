@@ -21,7 +21,10 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("practice-set-01-spec.R"))
   ps_add(load_ps("practice-set-03-spec.R"))
 
-  ps_add(load_ps("PS-T01.R"))
+  ps_add(load_ps("T01.R"))
+  ps_add(load_ps("T02.R"))
+  ps_add(load_ps("T03.R"))
+
   ps_add(load_ps("PS-Example.R"))
 
   ps_set_current(1)
@@ -170,16 +173,16 @@ eval_string_and_format <- function(code) {
     if (result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
       # Atomic types
       if (length(result$value) == 1) {
-        return(paste0("atomic [1] ", as.character(result$value)))
+        return(paste0("atomic: ", as.character(result$value)))
 
         # Vector types
       } else {
         t <- paste0(result$value, collapse = " ")
-        return(paste0("vector [1] ", t))
+        return(paste0("vector: ", t))
       }
       # A function
     } else if (result$type == "closure") {
-      return(paste0("function"))
+      return(paste0("function: "))
 
       # A type that is not handled
     } else {
@@ -884,7 +887,10 @@ practice.answers <- function() {
 #'
 #' @param fn filename
 #' @export
-practice.load_url <- function(fn = "https://raw.githubusercontent.com/info201B-2022-Autumn/practice-sets/main/PS-T10.R") {
+practice.load_url <- function(fn = paste0(
+  "https://raw.githubusercontent.com/",
+  "info201B-2022-Autumn/practice-sets/main/",
+  "PS-T10.R")) {
   ps <- create_ps_from_url(fn)
   ps_add(ps)
 }

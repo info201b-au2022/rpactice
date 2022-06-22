@@ -1,4 +1,4 @@
-practice.begin("PS-T01")
+practice.begin("T01")
 
 
 test_that("xxx", {

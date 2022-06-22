@@ -765,7 +765,9 @@ test_that("parse_ps - note messages", {
   expect_equal(ps$task_list[[1]]$is_note_msg,TRUE)
 })
 
-
+#----------------------------------------------------------------------------#
+# ??
+#----------------------------------------------------------------------------#
 s <-
   "
 #' @version ps-1
@@ -806,6 +808,9 @@ test_that("parse_ps - note messages", {
   expect_equal(ps$task_list[[3]]$prompt_id,"b")
 })
 
+#----------------------------------------------------------------------------#
+# Check for tag checks_for_f
+#----------------------------------------------------------------------------#
 s =
 "
 #' @id a
@@ -853,6 +858,75 @@ test_that("parse_ps - @check input for functions", {
   expect_equal(ps$task_list[[2]]$checks_for_f,"c()")
   expect_equal(ps$task_list[[3]]$prompt_id,"c")
   expect_equal(ps$task_list[[3]]$checks_for_f,"")
+})
 
+#----------------------------------------------------------------------------#
+# Correct duplicate variable names (explicitly set)
+#----------------------------------------------------------------------------#
+s =
+  "
+#' @id a
+#' @msg An assignment
+#' @var t01
+#' @code
+1
+#' @end
 
+#' @id b
+#' @msg An assignment duplicate
+#' @var t01
+#' @code
+1
+#' @end
+
+#' @id c
+#' @msg An assignment duplicate
+#' @var t01
+#' @code
+1
+#' @end
+
+#' @id c
+#' @msg An assignment duplicate
+#' @var t01
+#' @code
+1
+#' @end
+"
+
+t <- str_split(s,"\n")
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
+
+test_that("parse_ps - @check input for functions", {
+  expect_equal(ps$task_list[[1]]$assignment_var,"t01")
+  expect_equal(ps$task_list[[2]]$assignment_var,"t01.a")
+  expect_equal(ps$task_list[[3]]$assignment_var,"t01.ab")
+})
+
+#----------------------------------------------------------------------------#
+# Correct duplicate variable names (implicitly set)
+#----------------------------------------------------------------------------#
+s =
+  "
+#' @id a
+#' @msg An assignment
+#' @code
+t01 <- 1
+#' @end
+
+#' @id b
+#' @msg An assignment duplicate
+#' @code
+t01 <- 1
+#' @end
+"
+
+t <- str_split(s,"\n")
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
+
+test_that("parse_ps - @check input for functions", {
+  expect_equal(ps$task_list[[1]]$assignment_var,"t01")
+  expect_equal(ps$task_list[[2]]$assignment_var,"t01.a")
 })

@@ -4,9 +4,9 @@
 
 # Create practice set from a coded text file
 create_ps_from_url <- function(url) {
-   if (RCurl::url.exists(url) == FALSE) {
+  if (RCurl::url.exists(url) == FALSE) {
     stop(paste0("create_ps_from_url: URL file does not exist\n", url))
-   }
+  }
 
   ps <- read_ps_doc(url)
   if (is.null(ps)) {
@@ -147,7 +147,7 @@ parse_ps <- function(t) {
 
     # Syntax clean-up for a common typo, namely "#' #'"
     if (str_detect(t[k], "^#' #'")) {
-      replace_t <- str_replace(t[k],"^#' #'", "#'")
+      replace_t <- str_replace(t[k], "^#' #'", "#'")
       t[k] <- replace_t
     }
 
@@ -322,6 +322,7 @@ parse_ps <- function(t) {
 #----------------------------------------------------------------------------#
 check_ps <- function(ps) {
   cDEBUG <- FALSE
+  letters <- "abcdefghijklmnopqrstuvwxyz"
   N <- length(ps$task_list)
 
   if (cDEBUG) {
@@ -387,15 +388,28 @@ check_ps <- function(ps) {
   if (cDEBUG) {
     print("FIVE: variable names are unique?")
   }
-  # Check that a all variable names are unique
+  # Check that a all variable names are unique - if not unique, try to
+  # fix them
   var_list <- c()
-  for (task in ps$task_list) {
-    v <- task$assignment_var
+  for (j in 1:N) {
+    v <- ps$task_list[[j]]$assignment_var
     if (v != "") {
-      if (v %in% var_list) {
-        stop(paste0("check_ps: duplicate variable name (", v, ")"))
+      k <- 1
+      repeat {
+        if (v %in% var_list) {
+          if (k == 1) {
+            v <- paste0(v, ".")
+          } else if (k > 5) {
+            stop(paste0("check_ps: duplicate variable name - could not correct (", v, ")"))
+          }
+          v <- paste0(v, str_sub(letters, k, k))
+        } else {
+          var_list <- append(var_list, v)
+          ps$task_list[[j]]$assignment_var <- v
+          break
+        }
+        k <- k + 1
       }
-      var_list <- append(var_list, v)
     }
   }
 
@@ -413,13 +427,12 @@ check_ps <- function(ps) {
 
   # If an assignment ID has not been assigned make them up
   if (renumber) {
-    IDs <- "abcdefghijklmnopqrstuvwxyz"
     new_id <- 1
     for (k in 1:N) {
       # Only assign new IDs to prompts that are NOT message prompts
       if (ps$task_list[[k]]$is_note_msg == FALSE) {
         if (N <= 26) {
-          ps$task_list[[k]]$prompt_id <- str_sub(IDs, new_id, new_id)
+          ps$task_list[[k]]$prompt_id <- str_sub("abcdefghijklmnopqrstuvwxyz", new_id, new_id)
         } else {
           ps$task_list[[k]]$prompt_id <- as.character(new_id)
         }
