@@ -1,6 +1,6 @@
 # T03: Test cases: Functions
-
 practice.begin("T03")
+
 # a: Call function that is pre-installed (t01)
 t01 <- g(10)  #A: 11
 
