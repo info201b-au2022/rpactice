@@ -32,10 +32,8 @@ t02 <- squared(100)
 #' @msg Test a function with a vector of inputs
 #' @check c(1, 1000, 10, 0, -1, NA)
 #' @code
-f <- function(x) {
-  t <- x + 1
+f <- function(arg1) {
+  t <- arg1 + 1
   return(t)
 }
-
-
-
+#' @end

@@ -34,8 +34,12 @@ admin.prompts <- function (short) {
     stop(paste0("Error. Practice set not found (",short,")"))
   }
   cat("\014") # Clear screen
-  cat("[",short, "]: ", ps$ps_descr, "\n", sep="")
-  cat("Prompts: ", length(ps$task_list), ".\n", sep="")
+  cat("[",short, "]: ", ps$ps_title, " (Prompts: ", length(ps$task_list), ")\n", sep="")
+
+  v <- get_env_vars(short)
+  t <- paste0(v, collapse="\n")
+  cat("Envir Variables\n  ", t, "\n")
+
   cat("ID\n")
   k = 1
   for(task in ps$task_list) {
@@ -48,14 +52,15 @@ admin.prompts <- function (short) {
       cat(k, "[-] ", m, sep="")
     } else {
       r <- eval_string_and_format(task$expected_answer)
-      if(nchar(r) > 23){
-        r <- substr(r, 1, 20)
+      if(nchar(r) > 65){
+        r <- substr(r, 1, 60)
         r <- paste0(r, "...")
       }
-      r <- sprintf("%-40s %-25s", format_code2(task$expected_answer), r)
 
-      cat(k, ":", task$prompt_id,"[", task$assignment_var, "]: \t", task$prompt_msg, "\n\t\t",
-          r, "\t\t", "\n", sep="")
+      cat(k, ":", task$prompt_id,"[", task$assignment_var, "]: ", task$prompt_msg, "\n", sep="")
+      t1 <- sprintf("%-60s", format_code2(task$expected_answer))
+      cat(t1, "\n", sep="")
+      cat("", red(r), "\n", sep="")
     }
     k <- k + 1
     cat("\n")

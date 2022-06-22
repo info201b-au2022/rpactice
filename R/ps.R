@@ -140,6 +140,11 @@ set_env_vars <- function() {
   t <- lapply(ps$ps_initial_vars, set_initial_vars_doit)
 }
 
+get_env_vars <- function(short) {
+  ps <- ps_get_by_short(short)
+  return(ps$ps_initial_vars)
+}
+
 
 # Expression evaluation ----
 #----------------------------------------------------------------------------#
@@ -182,7 +187,10 @@ eval_string_and_format <- function(code) {
       }
       # A function
     } else if (result$type == "closure") {
-      return(paste0("function: "))
+      args <- names(formals(result$value))
+      t <- paste0(args, collapse = ", ")
+      t <- paste0("function(", t, ") {...}")
+      return(paste0("funct: ", t))
 
       # A type that is not handled
     } else {
@@ -200,9 +208,9 @@ format_code2 <- function(code) {
   t <- styler::style_text(t)
   # Collapse it again
   t <- paste0(code, collapse = "\n")
-  if (length(code) > 1) {
-    t <- paste0("\n", t)
-  }
+  # if (length(code) > 1) {
+  #   t <- paste0("\n", t)
+  # }
   return(t)
 }
 
