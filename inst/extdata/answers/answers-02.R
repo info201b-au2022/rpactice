@@ -1,6 +1,4 @@
 # Answers to practice set P02
-library("pinfo201")
-source("./R/practice-info201.R")
 
 practice.begin("P02")
 practice.questions()

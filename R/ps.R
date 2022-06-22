@@ -156,9 +156,9 @@ eval_string_details <- function(code) {
     expr = {
       val <- eval(parse(text = code), envir = .GlobalEnv)
       t <- typeof(val)
-      list(ok = TRUE, value = val, type = t, error = NULL)
+      list(ok = TRUE, value = val, type = t, error = NULL, scode = code)
     }, error = function(e) {
-      list(ok = FALSE, value = NULL, type = NULL, error = e)
+      list(ok = FALSE, value = NULL, type = NULL, error = e, scode = code)
     }
   )
 }
@@ -216,26 +216,26 @@ format_code2 <- function(code) {
 
 expected_answer <- function(id) {
   code <- ps_get_expected_answer(id)
-  t <- eval_string_details(code)
-  if (t$ok == FALSE) {
+  r <- eval_string_details(code)
+  if (r$ok == FALSE) {
     return("<error-something-broken>")
   } else {
 
     # Check for a function
-    if (typeof(t$type) == "closure") {
-      args <- formals(t$value)
+    if (r$type == "closure") {
+      args <- formals(r$value)
       v <- names(args)
       t <- paste0(v, collapse = ", ")
-      t <- paste0("function(", t$value, ") {...}")
+      t <- paste0("function(", t, ") {...}")
 
       # Check for vector
-    } else if (length(t$value) > 1) {
-      t <- paste0(t, collapse = " ")
+    } else if (length(r$value) > 1) {
+      t <- paste0(r$value, collapse = " ")
       t <- paste0("[1] ", t)
 
       # Everything else
     } else {
-      t <- paste0("[1] ", t$value)
+      t <- paste0("function: ", r$scode)
     }
   }
   return(t)
@@ -255,6 +255,7 @@ expected_answer <- function(id) {
 #' @param result the result, which grows upon each call to a <var>_Check function
 #'
 DEFAULT_Check <- function(internal_id, result) {
+  cDEBUG <- TRUE
   if (cDEBUG) {
     print("--- DEFAULT_Check")
     print(paste0("internal id:    ", internal_id))
@@ -262,57 +263,110 @@ DEFAULT_Check <- function(internal_id, result) {
     print(paste0("var name:       ", ps_get_assignment_var(internal_id)))
     print(paste0("expected:       ", ps_get_expected_answer(internal_id)))
     print(paste0("learner answer: ", ps_get_learner_answer(internal_id)))
-    print(paste0("answer val:     ", learner_val))
     print("---")
   }
 
-  learner_val <- eval_string(ps_get_assignment_var(internal_id))
-  expected_val <- eval_string(ps_get_expected_answer(internal_id))
+  print("...---...")
+  print(result)
+  print("...---...")
 
-  learner_result <- eval_string_details(learner_val)
-  expected_result <- eval_string_details(learner_val)
+  learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
+
+  print("...---...")
+  print(learner_result)
+  print("...---...")
 
   if (learner_result$ok == TRUE) {
+    if (cDEBUG) {
+      print(">> Okay")
+    }
 
     # # Check for not a number
     # if (is.nan(learner_val) && is.nan(expected_val)) {
     #   result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
 
     if (learner_result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+      if (cDEBUG) {
+        print(">> double, integer, etc.")
+      }
+
+      learner_val <- learner_result$value
+
+      expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
+      expected_val <- expected_result$value
 
       # Atomic
-      if (length(result$value) == 1) {
+      if (length(learner_result$value) == 1) {
+        if (cDEBUG) {
+          print(">> Atomic")
+        }
+
         if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
           result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
         } else {
           result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
         }
 
-        # Vector
+      # Vector
       } else {
+        if (cDEBUG) {
+          print(">> Vector")
+        }
         if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
           result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
         } else {
           result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
         }
       }
-    } else if (learner_result$type == "closure") {
-      print("\n ----\n")
-      print(learner_result)
-      print("\n ----\n")
 
-      if (TRUE) {
+    # Function
+    } else if (learner_result$type == "closure") {
+      if (cDEBUG) {
+        print(">> Closure")
+      }
+
+      checks <- ps_get_checks(internal_id)
+
+      if (cDEBUG) {
+        if (length(checks) == 0) {
+          print("No checks")
+        } else {
+          t <- paste0(checks, collapse = " ")
+          print(paste0("Checks: ", t))
+        }
+      }
+
+      learner_f_answers <- do.call(learner_result$scode, list(checks))
+      print(paste0("learner_f_answers: ", learner_f_answers))
+
+      t1 <- ps_get_expected_answer(internal_id)
+      print(paste0("t1: ", t1))
+      t <- eval(parse(text=paste0(t1, collapse="\n")))
+      print(t)
+
+      expected_f_answers <- do.call(t, list(checks))
+      print(paste0("expected_f_answers: ", expected_f_answers))
+
+      if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
       } else {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
       }
 
-
+    #
     } else {
-      return("type not formatted")
+      if (cDEBUG) {
+        print(">> Type not handled")
+      }
+      t <- result_prompt_error(internal_id, "Type not handled.")
+      result <- result_update(result, internal_id, FALSE, t)
     }
   } else {
-    return("syntax error")
+    if (cDEBUG) {
+      print(">> Syntax error")
+    }
+    t <- result_prompt_error(internal_id, "Syntax error")
+    result <- result_update(result, internal_id, FALSE, t)
   }
 
   return(result)
@@ -409,6 +463,18 @@ ps_get_all_assignment_vars <- function() {
   }
   return(vars)
 }
+
+ps_get_checks <- function(id) {
+  v <- c()
+  ps <- ps_get_current()
+  checks <- ps$task_list[[id]]$checks_for_f
+  if (checks != "") {
+    v <- eval(parse(text = checks))
+  }
+  return(v)
+}
+
+
 
 # Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
@@ -690,6 +756,12 @@ result_error_msg <- function(id, show_hints = TRUE) {
   return(t)
 }
 
+result_prompt_error <- function(id, msg) {
+  t <- paste0("Prompt error: \"", ps_get_prompt(id), "\"\n")
+  t <- paste0(t, msg)
+  return(t)
+}
+
 #' Formats a message
 #'
 #' Currently, no formatting is done.
@@ -896,9 +968,10 @@ practice.answers <- function() {
 #' @param fn filename
 #' @export
 practice.load_url <- function(fn = paste0(
-  "https://raw.githubusercontent.com/",
-  "info201B-2022-Autumn/practice-sets/main/",
-  "PS-T10.R")) {
+                                "https://raw.githubusercontent.com/",
+                                "info201B-2022-Autumn/practice-sets/main/",
+                                "PS-T10.R"
+                              )) {
   ps <- create_ps_from_url(fn)
   ps_add(ps)
 }

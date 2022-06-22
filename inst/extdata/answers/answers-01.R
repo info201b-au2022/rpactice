@@ -1,5 +1,4 @@
 practice.begin("P01")
-practice.questions()
 
 # a: Add ten, nine, and eight together. (t_01)
 t_01 <- 10 + 9 + 8
@@ -42,6 +41,5 @@ t_11 <- -7 / 0
 t_12 <- 0 / 0
 
 practice.check()
-practice.answers()
 
 
