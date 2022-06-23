@@ -14,14 +14,14 @@ admin <- function() {
 #----------------------------------------------------------------------------#
 # List all the practice sets that have been loaded
 #----------------------------------------------------------------------------#
-admin.ls <- function (detailed=TRUE) {
+admin.ls <- function(detailed = TRUE) {
   v <- ps_get_all()
   cat("\014") # Clear screen
   cat("Practice sets:", str_trim(length(v)), "\n")
   for (k in 1:length(v)) {
     ps <- ps_get_by_short(v[k])
     num_prompts <- length(ps$task_list)
-    cat(paste0(k, ": [",v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
+    cat(paste0(k, ": [", v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
     cat(paste0("   Filename: ", ps$ps_filename, "\n"))
   }
 }
@@ -29,40 +29,40 @@ admin.ls <- function (detailed=TRUE) {
 #----------------------------------------------------------------------------#
 # List the prompts and some basic information for a practice set
 #----------------------------------------------------------------------------#
-admin.prompts <- function (short) {
+admin.prompts <- function(short) {
   practice.begin(short)
   ps <- ps_get_by_short(short)
   if (is.null(ps)) {
-    stop(paste0("Error. Practice set not found (",short,")"))
+    stop(paste0("Error. Practice set not found (", short, ")"))
   }
   cat("\014") # Clear screen
-  cat("[",short, "]: ", ps$ps_title, " (Prompts: ", length(ps$task_list), ")\n", sep="")
+  cat("[", short, "]: ", ps$ps_title, " (Prompts: ", length(ps$task_list), ")\n", sep = "")
 
   v <- get_env_vars(short)
-  t <- paste0(v, collapse="\n")
+  t <- paste0(v, collapse = "\n")
   cat("Envir Variables\n  ", t, "\n")
 
   cat("ID\n")
-  k = 1
-  for(task in ps$task_list) {
+  k <- 1
+  for (task in ps$task_list) {
     if (task$is_note_msg) {
       m <- task$prompt_msg
       if (nchar(m) > 39) {
         m <- substr(m, 1, 40)
         m <- paste0(" ", m, "...")
       }
-      cat(k, "[-] ", m, sep="")
+      cat(k, "[-] ", m, sep = "")
     } else {
       r <- eval_string_and_format(task$expected_answer)
-      if(nchar(r) > 65){
+      if (nchar(r) > 65) {
         r <- substr(r, 1, 60)
         r <- paste0(r, "...")
       }
 
-      cat(k, ":", task$prompt_id,"[", task$assignment_var, "]: ", task$prompt_msg, "\n", sep="")
+      cat(k, ":", task$prompt_id, "[", task$assignment_var, "]: ", task$prompt_msg, "\n", sep = "")
       t1 <- sprintf("%-60s", format_code2(task$expected_answer))
-      cat(t1, "\n", sep="")
-      cat("", crayon::red(r), "\n", sep="")
+      cat(t1, "\n", sep = "")
+      cat("", crayon::red(r), "\n", sep = "")
     }
     k <- k + 1
     cat("\n")
@@ -74,9 +74,9 @@ admin.prompts <- function (short) {
 #----------------------------------------------------------------------------#
 admin.vars <- function() {
   v <- ps_get_live_var_names()
-  cat("Live variables: ", "\n", sep="")
-  for (k in 1: length(v)) {
-    cat("   ", k, ":[", v[k], "]:\t", sep="")
+  cat("Live variables: ", "\n", sep = "")
+  for (k in 1:length(v)) {
+    cat("   ", k, ":[", v[k], "]:\t", sep = "")
     cat("\n")
   }
   cat("Number: ", length(v), "\n")
@@ -84,7 +84,7 @@ admin.vars <- function() {
   any <- 0
   for (k in 1:length(v)) {
     if (is_callback_loaded(v[k])) {
-      cat("   ", k, ":CALLBACK:", v[k], "_Check(internal_id, result)\n", sep="")
+      cat("   ", k, ":CALLBACK:", v[k], "_Check(internal_id, result)\n", sep = "")
       any <- any + 1
     }
   }
@@ -96,14 +96,52 @@ admin.vars <- function() {
   cat("\n")
 }
 
-admin.run_answers <- function(fn) {
-  print("run_answers")
+admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01") {
+
+  if (file.exists(dir) == FALSE) {
+    stop(paste0("Directory does not exist.\n", dir, ""), sep="")
+  }
+
+  # File names only
+  file_names <- list.files(dir)
+
+  file_list <- list.files(dir, full.name = TRUE)
+  for (k in 1:length(file_list)) {
+
+    # Get the learners code from a file
+    code_v <- code_to_grade(file_list[k])
+    code_string <- paste0(code_v, collapse = "\n")
+
+    # Get ready to evaluate a solution
+    practice.begin(short)
+
+    # Try to evaluate the code
+    out <- tryCatch(
+      {
+        eval(parse(text = code_string), envir = .GlobalEnv)
+      },
+      error = function(cond) {
+        message(paste0("Evaluation failed."))
+        message(paste0("Filename: ", file_list[k]))
+        message(cond)
+      }
+    )
+
+    # Check the answers and get the results
+    result <- check_answers()
+
+    # A brief summary
+    cat("[", k, "] ", file_names[k], "\t",
+        result$user_name, "\t",
+        result$num_correct, " of ",
+        (result$num_incorrect+result$num_correct), " correct\n", sep="")
+  }
 }
 
-admin.check_ps <- function (short) {
+admin.check_ps <- function(short) {
   ps <- ps_get_by_short(short)
   if (is.null(ps)) {
-    stop(paste0("Error. Practice set not found (",short,")"))
+    stop(paste0("Error. Practice set not found (", short, ")"))
   }
-  temp_ps <- load_ps(ps$ps_filename, silent=FALSE)
+  temp_ps <- load_ps(ps$ps_filename, silent = FALSE)
 }

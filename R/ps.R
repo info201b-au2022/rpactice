@@ -118,7 +118,6 @@ ps_ui_get_titles <- function() {
   }
   t <- as.list(stats::setNames(ids, items))
   # t <- list("P01: xxx" = "P01", "P02: xxx" = "P02")
-  print(t)
   return(t)
 }
 
@@ -269,7 +268,7 @@ expected_answer <- function(id) {
 #' @param result the result, which grows upon each call to a <var>_Check function
 #'
 DEFAULT_Check <- function(internal_id, result) {
-  cDEBUG <- TRUE
+  cDEBUG <- FALSE
   if (cDEBUG) {
     print("--- DEFAULT_Check")
     print(paste0("internal id:    ", internal_id))
@@ -406,10 +405,6 @@ DEFAULT_Check <- function(internal_id, result) {
 #----------------------------------------------------------------------------#
 check_answers <- function() {
 
-  print("==================================================")
-  print(pkg.globals$gUSER_NAME)
-
-
   # This structure is used hold feedback on the practice coding prompts.
   practice_result <- list(
     user_name = pkg.globals$gUSER_NAME,
@@ -418,12 +413,11 @@ check_answers <- function() {
     message_list = list()
     # The message_list comprises a list of messages, as follows:
     #      message = list(
-    #        prompt_id = <from_practice_set>,
-    #        msg_text =  <feedback from the callback>)
+    #        internal_id = <internal integer>,
+    #        prompt_id = <string from problem set>,
+    #        correct = <boolean: is the answer correct?>,
+    #        msg_text = <message for learner>)
   )
-
-  print(".....------......")
-  print(practice_result$user_name)
 
   # Get all of the variable names that need to be checked for correctness
   var_names <- ps_get_live_var_names()
@@ -747,7 +741,6 @@ format_answers <- function() {
 # Functions for formatting and outputting feedback on practice sets
 #----------------------------------------------------------------------------#
 format_code <- function(code_text, indent = cTAB_IN_SPACES) {
-  print(code_text)
   t <- styler::style_text(code_text)
   t <- paste0(indent, t)
   t <- paste0(t, collapse = "\n")
@@ -860,12 +853,6 @@ format_result <- function(result) {
   num_attempted <- result$num_correct + result$num_incorrect
   num_correct <- result$num_correct
 
-  if (TRUE) {
-    print("--- begin: format_result --- ")
-    print(result$user_name)
-    print("--- end: format_result ---")
-  }
-
   ps <- ps_get_current()
 
   t <- ""
@@ -944,7 +931,7 @@ print_output <- function(text, fn) {
 practice.begin <- function(short = "P01", learner="Anonymous") {
   id <- ps_get_id_by_short(short)
   if (id == -1) {
-    stop("practice.begin: Can't find practice set named ", short)
+    stop(paste0("Can't find practice set named ", short, " (id=", id, ")."))
   }
 
   # Set the current practice set ID
@@ -960,10 +947,6 @@ practice.begin <- function(short = "P01", learner="Anonymous") {
 
   # Currently, no session information, so just a global variable
   pkg.globals$gUSER_NAME <- learner
-
-  print("....")
-  print(learner)
-  print(pkg.globals$gUSER_NAME)
 
   return(TRUE)
 }
