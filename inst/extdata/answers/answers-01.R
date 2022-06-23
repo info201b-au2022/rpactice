@@ -9,7 +9,7 @@ num <- 111 / 9
 # c: What is the average of 1, 17, 19, and 31? (t_03)
 t_03 <- (1 + 17 + 19 + 31) / 4
 
-# d: What is the average of these Celcius temperatures: -5C, -10C, -12C (t_04)
+# d: What is the average of these Celsius temperatures: -5C, -10C, -12C (t_04)
 t_04 <- (-5 + -10 + -12) / 3
 
 # e: Use the exponent operator (^ or **) to compute 2 to the 20th power. (t_05)

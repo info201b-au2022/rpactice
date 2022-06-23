@@ -227,15 +227,24 @@ expected_answer <- function(id) {
       v <- names(args)
       t <- paste0(v, collapse = ", ")
       t <- paste0("function(", t, ") {...}")
+    } else if (r$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+      if (length(r$value) == 1) {
+        # Check for atomic
+        t <- paste0("atomic: ", r$scode)
+      } else {
+        # Check for vector > 1
+        t <- paste0(r$value, collapse = " ")
+        t <- paste0("vector: ", t)
+      }
+    # Check for dataframe
+    } else if (is.dataframe(r$type)) {
+      nr <- nrow(r$value)
+      nc <- ncol(r$value)
+      t <- paste0("df: [", nr, "x", ncol, "]")
 
-      # Check for vector
-    } else if (length(r$value) > 1) {
-      t <- paste0(r$value, collapse = " ")
-      t <- paste0("[1] ", t)
-
-      # Everything else
+    # Everything else
     } else {
-      t <- paste0("function: ", r$scode)
+      t <- paste0("everything else: ", r$scode)
     }
   }
   return(t)
@@ -266,15 +275,13 @@ DEFAULT_Check <- function(internal_id, result) {
     print("---")
   }
 
-  print("...---...")
-  print(result)
-  print("...---...")
-
   learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
 
-  print("...---...")
-  print(learner_result)
-  print("...---...")
+  if (cDEBUG) {
+    print("...---...")
+    print(learner_result)
+    print("...---...")
+  }
 
   if (learner_result$ok == TRUE) {
     if (cDEBUG) {
@@ -295,7 +302,7 @@ DEFAULT_Check <- function(internal_id, result) {
       expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
       expected_val <- expected_result$value
 
-      # Atomic
+      # Atomic values
       if (length(learner_result$value) == 1) {
         if (cDEBUG) {
           print(">> Atomic")
@@ -307,11 +314,12 @@ DEFAULT_Check <- function(internal_id, result) {
           result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
         }
 
-      # Vector
+        # Vector values
       } else {
         if (cDEBUG) {
           print(">> Vector")
         }
+
         if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
           result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
         } else {
@@ -319,12 +327,13 @@ DEFAULT_Check <- function(internal_id, result) {
         }
       }
 
-    # Function
+      # Functions
     } else if (learner_result$type == "closure") {
       if (cDEBUG) {
         print(">> Closure")
       }
 
+      # Get the values that will be used to check the function
       checks <- ps_get_checks(internal_id)
 
       if (cDEBUG) {
@@ -336,16 +345,12 @@ DEFAULT_Check <- function(internal_id, result) {
         }
       }
 
+      # Call the learner's function on each of the checks
       learner_f_answers <- do.call(learner_result$scode, list(checks))
-      print(paste0("learner_f_answers: ", learner_f_answers))
 
-      t1 <- ps_get_expected_answer(internal_id)
-      print(paste0("t1: ", t1))
-      t <- eval(parse(text=paste0(t1, collapse="\n")))
-      print(t)
-
-      expected_f_answers <- do.call(t, list(checks))
-      print(paste0("expected_f_answers: ", expected_f_answers))
+      expected_code <- ps_get_expected_answer(internal_id)
+      expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
+      expected_f_answers <- do.call(expected_function, list(checks))
 
       if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
@@ -353,7 +358,20 @@ DEFAULT_Check <- function(internal_id, result) {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
       }
 
-    #
+    # Check for dataframe
+    } else if (is.dataframe(learner_result$type)) {
+
+      learner_val <- learner_result$value
+
+      expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
+      expected_val <- expected_result$value
+
+      if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
+        result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+      } else {
+        result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+      }
+
     } else {
       if (cDEBUG) {
         print(">> Type not handled")
