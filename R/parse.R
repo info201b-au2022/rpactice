@@ -28,10 +28,11 @@ create_ps_from_url <- function(url) {
 # NOTE: system.file is the preferred way to do this, so that the files
 #       are available in the package and while developing the package
 #----------------------------------------------------------------------------#
-load_ps <- function(fn) {
+load_ps <- function(fn, silent=TRUE) {
   filename <- system.file("extdata", fn, package = "pinfo201", mustWork = TRUE)
   ps <- read_ps_doc(filename)
-  ps <- check_ps(ps)
+  ps$ps_filename <- fn
+  ps <- check_ps(ps, silent)
   return(ps)
 }
 
@@ -64,6 +65,9 @@ trim_comment <- function(s) {
 # Need something more robust ...
 #----------------------------------------------------------------------------#
 get_var_lhs <- function(s) {
+  if (is.null(s)) {
+    return (NULL)
+  }
   if (str_detect(s, "<-")) {
     p <- str_locate(s, "<-")
     v <- str_trim(str_sub(s, 1, p[1, 1] - 1))
@@ -123,6 +127,7 @@ parse_ps <- function(t) {
 
   ps <- NULL
   ps_version_p <- ""
+  ps_filename <- ""
   ps_title_p <- ""
   ps_short_p <- "_SHORT_"
   ps_descr_p <- ""
@@ -232,6 +237,7 @@ parse_ps <- function(t) {
         first_id <- TRUE
         ps <- list(
           ps_version = ps_version_p,
+          ps_filename = "",
           ps_title = ps_title_p,
           ps_short = ps_short_p,
           ps_descr = ps_descr_p,
@@ -320,34 +326,38 @@ parse_ps <- function(t) {
 # Check the basic integrity of the practice set. Where possible, clean
 # things up and make corrections
 #----------------------------------------------------------------------------#
-check_ps <- function(ps) {
-  cDEBUG <- FALSE
+check_ps <- function(ps, silent = FALSE) {
   letters <- "abcdefghijklmnopqrstuvwxyz"
+  no_prompt_assigned <- "<no prompt assigned>"
+
   N <- length(ps$task_list)
 
-  if (cDEBUG) {
-    print("ONE: messages")
+  if (!silent) {
+    message("\nChecking practice set ... ")
+    message(paste0("   ", ps$ps_short, ":", ps$ps_title))
+    message(paste0("   From: ", ps$ps_filename))
+    message(paste0("   Number of prompts: ", N))
   }
+
   # Check that all messages have been assigned something
   for (k in 1:N) {
     if (ps$task_list[[k]]$prompt_msg == "") {
-      ps$task_list[[k]]$prompt_msg <- "<no prompt assigned>"
+      ps$task_list[[k]]$prompt_msg <- no_prompt_assigned
     }
   }
 
-  if (cDEBUG) {
-    print("TWO: answers")
-  }
+
   # Check that the expected answer has some code
   for (k in 1:N) {
-    if (is.null(ps$task_list[[k]]$expected_answer)) {
-      ps$task_list[[k]]$expected_answer <- ""
+    if (length(ps$task_list[[k]]$expected_answer) == 0) {
+      if (ps$task_list[[k]]$prompt_id != "-") {
+        if (!silent) {
+          message(paste0("[", k, "] @code. No code found."))
+        }
+      }
     }
   }
 
-  if (cDEBUG) {
-    print("THREE: message notes")
-  }
   # Check if a task ID is a dash ("-"), which means it is a note (not a prompt for code)
   for (k in 1:N) {
     if (ps$task_list[[k]]$prompt_id == "-") {
@@ -357,7 +367,6 @@ check_ps <- function(ps) {
     }
   }
 
-  if (cDEBUG) print("FOUR: variable names")
   # Check that a variable name was assigned; if not, correct
   for (j in 1:N) {
     # Check of the prompt is a note (not a coding prompt)
@@ -373,30 +382,37 @@ check_ps <- function(ps) {
         t <- code[k]
         v <- get_var_lhs(t)
         if (!is.null(v)) {
+          if (!silent) {
+            message(paste0("[", j, "] @var missing: Added variable:", v))
+          }
           ps$task_list[[j]]$assignment_var <- v
           fixed <- TRUE
           break
         }
       }
       if (fixed == FALSE) {
+        if (!silent) {
+          message(paste0("[", j, "] @var missing: Is prompt a message?"))
+          message(paste0("   Prompt:", ps$task_list[[j]]$prompt_msg))
+        }
         ps$task_list[[j]]$is_note_msg <- TRUE
         ps$task_list[[j]]$prompt_id <- "-"
       }
     }
   }
 
-  if (cDEBUG) {
-    print("FIVE: variable names are unique?")
-  }
   # Check that a all variable names are unique - if not unique, try to
   # fix them
   var_list <- c()
   for (j in 1:N) {
     v <- ps$task_list[[j]]$assignment_var
+    duplicate <- FALSE
+    old_v <- v
     if (v != "") {
       k <- 1
       repeat {
         if (v %in% var_list) {
+          duplicate <- TRUE
           if (k == 1) {
             v <- paste0(v, ".")
           } else if (k > 5) {
@@ -411,11 +427,12 @@ check_ps <- function(ps) {
         k <- k + 1
       }
     }
+    if (!silent && duplicate) {
+      message(paste0("[", j, "] @var: Duplicate varirable names."))
+      message(paste0("   Changed variable name (from ", old_v, " to ", ps$task_list[[j]]$assignment_var, ")."))
+    }
   }
 
-  if (cDEBUG) {
-    print("SIX: check for prompt IDs")
-  }
   # Check if a task ID has not been assigned
   renumber <- FALSE
   for (task in ps$task_list) {
@@ -427,6 +444,9 @@ check_ps <- function(ps) {
 
   # If an assignment ID has not been assigned make them up
   if (renumber) {
+    if (!silent) {
+      message(paste0("Found '?' or unassigned prompt ID. Renumbering prompt IDs."))
+    }
     new_id <- 1
     for (k in 1:N) {
       # Only assign new IDs to prompts that are NOT message prompts
@@ -440,10 +460,5 @@ check_ps <- function(ps) {
       }
     }
   }
-
-  if (cDEBUG) {
-    print(ps)
-  }
-
   return(ps)
 }

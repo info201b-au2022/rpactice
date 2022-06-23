@@ -547,7 +547,7 @@ test_that("parse_ps - note messages", {
   expect_equal(ps$task_list[[3]]$assignment_var,"t_02")
 
   expect_equal(ps$task_list[[1]]$expected_answer,"10 + 9 + 8")
-  expect_equal(ps$task_list[[2]]$expected_answer,"")
+  expect_equal(ps$task_list[[2]]$expected_answer,c())
   expect_equal(ps$task_list[[3]]$expected_answer,"t_02 <- 10 + 9 + 8 + 7 + 6 + 5")
 })
 
@@ -613,7 +613,7 @@ test_that("parse_ps - note messages", {
   expect_equal(ps$task_list[[4]]$assignment_var,"t_02")
 
   expect_equal(ps$task_list[[1]]$expected_answer,"10 + 9 + 8")
-  expect_equal(ps$task_list[[2]]$expected_answer,"")
+  expect_equal(ps$task_list[[2]]$expected_answer,c())
   expect_equal(ps$task_list[[4]]$expected_answer,"t_02 <- 10 + 9 + 8 + 7 + 6 + 5")
 })
 

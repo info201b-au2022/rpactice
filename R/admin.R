@@ -8,6 +8,7 @@ admin <- function() {
   cat("admin.ls()           List installed practice sets\n")
   cat("admin.prompts(short) List the practice prompts\n")
   cat("admin.vars()         List the live variables")
+  cat("admin.check_ps       Check practice set")
 }
 
 #----------------------------------------------------------------------------#
@@ -96,4 +97,8 @@ admin.vars <- function() {
 
 admin.run_answers <- function(fn) {
   print("run_answers")
+}
+
+admin.check_ps <- function (fn) {
+  temp_ps <- load_ps(fn, silent=FALSE)
 }
