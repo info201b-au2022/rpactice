@@ -22,6 +22,7 @@ admin.ls <- function (detailed=TRUE) {
     ps <- ps_get_by_short(v[k])
     num_prompts <- length(ps$task_list)
     cat(paste0(k, ": [",v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
+    cat(paste0("   Filename: ", ps$ps_filename, "\n"))
   }
 }
 

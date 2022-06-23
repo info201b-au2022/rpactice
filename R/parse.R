@@ -335,8 +335,10 @@ check_ps <- function(ps, silent = FALSE) {
   if (!silent) {
     message("\nChecking practice set ... ")
     message(paste0("   ", ps$ps_short, ":", ps$ps_title))
-    message(paste0("   From: ", ps$ps_filename))
+    message(paste0("   From filename: ", ps$ps_filename))
     message(paste0("   Number of prompts: ", N))
+    message(paste0("1. Analyzing prompts:"))
+
   }
 
   # Check that all messages have been assigned something
@@ -352,7 +354,7 @@ check_ps <- function(ps, silent = FALSE) {
     if (length(ps$task_list[[k]]$expected_answer) == 0) {
       if (ps$task_list[[k]]$prompt_id != "-") {
         if (!silent) {
-          message(paste0("[", k, "] @code. No code found."))
+          message(paste0("   [", k, "] @code. No code found."))
         }
       }
     }
@@ -383,7 +385,7 @@ check_ps <- function(ps, silent = FALSE) {
         v <- get_var_lhs(t)
         if (!is.null(v)) {
           if (!silent) {
-            message(paste0("[", j, "] @var missing: Added variable:", v))
+            message(paste0("   [", j, "] @var missing. Added variable: ", v))
           }
           ps$task_list[[j]]$assignment_var <- v
           fixed <- TRUE
@@ -392,8 +394,8 @@ check_ps <- function(ps, silent = FALSE) {
       }
       if (fixed == FALSE) {
         if (!silent) {
-          message(paste0("[", j, "] @var missing: Is prompt a message?"))
-          message(paste0("   Prompt:", ps$task_list[[j]]$prompt_msg))
+          message(paste0("   [", j, "] @var missing: Is prompt a message?"))
+          message(paste0("      Prompt:", ps$task_list[[j]]$prompt_msg))
         }
         ps$task_list[[j]]$is_note_msg <- TRUE
         ps$task_list[[j]]$prompt_id <- "-"
@@ -428,8 +430,8 @@ check_ps <- function(ps, silent = FALSE) {
       }
     }
     if (!silent && duplicate) {
-      message(paste0("[", j, "] @var: Duplicate varirable names."))
-      message(paste0("   Changed variable name (from ", old_v, " to ", ps$task_list[[j]]$assignment_var, ")."))
+      message(paste0("   [", j, "] @var: Duplicate varirable names."))
+      message(paste0("      Changed variable name (from ", old_v, " to ", ps$task_list[[j]]$assignment_var, ")."))
     }
   }
 
@@ -442,10 +444,14 @@ check_ps <- function(ps, silent = FALSE) {
     }
   }
 
+  if (!silent) {
+    message(paste0("2. Checking prompt IDs:"))
+  }
+
   # If an assignment ID has not been assigned make them up
   if (renumber) {
     if (!silent) {
-      message(paste0("Found '?' or unassigned prompt ID. Renumbering prompt IDs."))
+      message(paste0("   Found '?' or unassigned prompt ID. Renumbering prompt IDs."))
     }
     new_id <- 1
     for (k in 1:N) {
@@ -460,5 +466,10 @@ check_ps <- function(ps, silent = FALSE) {
       }
     }
   }
+
+  if (!silent) {
+    message(paste0("Done checking."))
+  }
+
   return(ps)
 }
