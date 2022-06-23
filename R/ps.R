@@ -6,6 +6,7 @@
 pkg.globals <- new.env()
 pkg.globals$gPRACTICE_SET_ID <- 1
 pkg.globals$gTO_CONSOLE <- FALSE
+pkg.globals$gUSER_NAME <- ""
 
 ## Constants ----
 cDEBUG <- FALSE
@@ -366,7 +367,7 @@ DEFAULT_Check <- function(internal_id, result) {
       expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
       expected_val <- expected_result$value
 
-      if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
+      if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
       } else {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
@@ -403,6 +404,7 @@ check_answers <- function() {
 
   # This structure is used hold feedback on the practice coding prompts.
   practice_result <- list(
+    user_name = pkg.globals$gUSER_NAME,
     num_correct = 0,
     num_incorrect = 0,
     message_list = list()
@@ -621,11 +623,17 @@ format_practice_script <- function(id) {
     }
   }
 
+  s <- ""
+  if (pkg.globals$gUSER_NAME != "") {
+    s <- paste0("# Learner name: ", pkg.globals$gUSER_NAME, "\n")
+  }
+
   t <- paste0(
     "# ", ps$ps_short, ": ", ps$ps_title, "\n",
     "# ", str_replace_all(ps$ps_descr, "\n", "\n# "), "\n",
+    s,
     "# ---\n",
-    "practice.begin(\"", ps$ps_short, "\")\n",
+    "practice.begin(\"", ps$ps_short, "\", learner=\"<your name>\")\n",
     t,
     "practice.check()\n"
   )
@@ -848,6 +856,8 @@ format_result <- function(result) {
   t <- ""
   t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n", ps$ps_descr, "\n")
   t <- paste0(t, "---\n")
+  t <- paste0(t,"<i>Learner name: ", result$user_name, "</i>\n" )
+  t <- paste0(t, "---\n")
   t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
     t <- paste0(t, " Good work! &#128512;\n")
@@ -915,11 +925,14 @@ print_output <- function(text, fn) {
 #' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
 #' @seealso \code{\link{practice.questions}}
 #' @export
-practice.begin <- function(short = "P01") {
+practice.begin <- function(short = "P01", learner="Anonymous") {
   id <- ps_get_id_by_short(short)
   if (id == -1) {
     stop("practice.begin: Can't find practice set named ", short)
   }
+
+  # Currently, no session information, so just a global variable
+  pkg.globals$gUSER_NAME <- learner
 
   # Set the current practice set ID
   ps_set_current(id)
