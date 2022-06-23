@@ -2,6 +2,7 @@
 #' @short T01
 #' @title Test cases: Assignment
 #' @descr
+#' Test different forms of assignment statements
 #' @end
 #' @initial-vars
 X <- c(1,2,3)

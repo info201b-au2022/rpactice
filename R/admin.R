@@ -4,11 +4,11 @@
 #----------------------------------------------------------------------------#
 
 admin <- function() {
-  cat("Function             Purpose\n")
-  cat("admin.ls()           List installed practice sets\n")
-  cat("admin.prompts(short) List the practice prompts\n")
-  cat("admin.vars()         List the live variables")
-  cat("admin.check_ps       Check practice set")
+  cat("Function                    Purpose\n")
+  cat("admin.ls()                  List installed practice sets\n")
+  cat("admin.prompts(short)        List the practice prompts\n")
+  cat("admin.vars()               List the live variables")
+  cat("admin.check_ps(short)       Check practice set")
 }
 
 #----------------------------------------------------------------------------#
@@ -100,6 +100,10 @@ admin.run_answers <- function(fn) {
   print("run_answers")
 }
 
-admin.check_ps <- function (fn) {
-  temp_ps <- load_ps(fn, silent=FALSE)
+admin.check_ps <- function (short) {
+  ps <- ps_get_by_short(short)
+  if (is.null(ps)) {
+    stop(paste0("Error. Practice set not found (",short,")"))
+  }
+  temp_ps <- load_ps(ps$ps_filename, silent=FALSE)
 }

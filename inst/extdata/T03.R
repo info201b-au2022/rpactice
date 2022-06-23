@@ -2,6 +2,7 @@
 #' @short T03
 #' @title Test cases: Functions
 #' @descr
+#' Test statements that return functions (including the @check tag)
 #' @end
 #' @initial-vars
 g <- function(x) {return(x+1)}
@@ -16,7 +17,7 @@ t01 <- g(10)  #A: 11
 #' @id ?
 #' @msg Create a function that squares a number
 #' @var squared
-#' @check c(1, 2, 3, 4, -1, -2, -3, -4)
+#' @check c(1, 2, 3, 0, -1, -2, -3, NA)
 #' @code
 squared <- function(x) {
   t <- x^2

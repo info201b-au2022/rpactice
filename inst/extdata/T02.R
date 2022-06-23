@@ -2,6 +2,7 @@
 #' @short T02
 #' @title Test cases: Vectors
 #' @descr
+#' Test statements that return vectors
 #' @end
 #' @initial-vars
 X <- c(1,2,3,4)

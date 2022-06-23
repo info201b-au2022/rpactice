@@ -1,4 +1,4 @@
-practice.begin("P01")
+practice.begin("P01", learner="Anonymous")
 
 # a: Add ten, nine, and eight together. (t_01)
 t_01 <- 10 + 9 + 8
@@ -41,5 +41,4 @@ t_11 <- -7 / 0
 t_12 <- 0 / 0
 
 practice.check()
-
 

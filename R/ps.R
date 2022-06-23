@@ -25,6 +25,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("T01.R"))
   ps_add(load_ps("T02.R"))
   ps_add(load_ps("T03.R"))
+  ps_add(load_ps("T04.R"))
 
   ps_add(load_ps("PS-Example.R"))
 
@@ -64,12 +65,6 @@ ps_get_current <- function() {
 # Update the current practice set to a new one
 ps_update_current <- function(ps) {
   pkg.globals$gPRACTICE_SETS[[pkg.globals$gPRACTICE_SET_ID]] <- ps
-}
-
-# Check the integrity of the current practice set
-ps_test_current <- function() {
-  # TBD
-  return(TRUE)
 }
 
 # Get the internal id of a practice set by its short id
@@ -157,6 +152,9 @@ eval_string_details <- function(code) {
     expr = {
       val <- eval(parse(text = code), envir = .GlobalEnv)
       t <- typeof(val)
+      if (is.data.frame(val)) {
+        t <- "dataframe"
+      }
       list(ok = TRUE, value = val, type = t, error = NULL, scode = code)
     }, error = function(e) {
       list(ok = FALSE, value = NULL, type = NULL, error = e, scode = code)
@@ -231,17 +229,23 @@ expected_answer <- function(id) {
     } else if (r$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
       if (length(r$value) == 1) {
         # Check for atomic
-        t <- paste0("atomic: ", r$scode)
+        t <- paste0("atomic: ", r$value)
       } else {
         # Check for vector > 1
         t <- paste0(r$value, collapse = " ")
         t <- paste0("vector: ", t)
       }
     # Check for dataframe
-    } else if (is.data.frame(r$type)) {
+    } else if (r$type == "dataframe") {
       nr <- nrow(r$value)
       nc <- ncol(r$value)
-      t <- paste0("df: [", nr, "x", ncol, "]")
+
+      df_info_rows <- "0 rows"
+      df_info_cols <- "0 columns"
+      if (nr == 1) df_info_rows <- "1 row" else df_info_rows <- paste0(nr, " rows")
+      if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
+
+      t <- paste0("dataframe: [", df_info_rows, " X ", df_info_cols, "]")
 
     # Everything else
     } else {
@@ -360,7 +364,7 @@ DEFAULT_Check <- function(internal_id, result) {
       }
 
     # Check for dataframe
-    } else if (is.data.frame(learner_result$type)) {
+    } else if (learner_result$type == "dataframe") {
 
       learner_val <- learner_result$value
 
@@ -402,6 +406,10 @@ DEFAULT_Check <- function(internal_id, result) {
 #----------------------------------------------------------------------------#
 check_answers <- function() {
 
+  print("==================================================")
+  print(pkg.globals$gUSER_NAME)
+
+
   # This structure is used hold feedback on the practice coding prompts.
   practice_result <- list(
     user_name = pkg.globals$gUSER_NAME,
@@ -414,13 +422,15 @@ check_answers <- function() {
     #        msg_text =  <feedback from the callback>)
   )
 
+  print(".....------......")
+  print(practice_result$user_name)
+
   # Get all of the variable names that need to be checked for correctness
   var_names <- ps_get_live_var_names()
 
   # No variables initialized - format result and return
   if (length(var_names) == 0) {
-    t <- format_result(practice_result)
-    return(t)
+    return(practice_result)
   }
 
   # Get all the answers as code
@@ -446,8 +456,7 @@ check_answers <- function() {
       practice_result <- DEFAULT_Check(internal_id, practice_result)
     }
   }
-  t <- format_result(practice_result)
-  return(t)
+  return(practice_result)
 }
 
 # Checks if a callback function for checking a learner's answer
@@ -633,7 +642,7 @@ format_practice_script <- function(id) {
     "# ", str_replace_all(ps$ps_descr, "\n", "\n# "), "\n",
     s,
     "# ---\n",
-    "practice.begin(\"", ps$ps_short, "\", learner=\"<your name>\")\n",
+    "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n",
     t,
     "practice.check()\n"
   )
@@ -835,8 +844,14 @@ result_update <- function(result, id, is_correct, text) {
 
   result$message_list <- append(
     result$message_list,
-    list(message = list(prompt_id = ps_get_prompt_id(id), msg_text = text))
+    list( message = list(
+      internal_id = id,
+      prompt_id = ps_get_prompt_id(id),
+      correct = is_correct,
+      msg_text = text)
+      )
   )
+
   return(result)
 }
 
@@ -845,9 +860,9 @@ format_result <- function(result) {
   num_attempted <- result$num_correct + result$num_incorrect
   num_correct <- result$num_correct
 
-  if (cDEBUG) {
+  if (TRUE) {
     print("--- begin: format_result --- ")
-    print(result)
+    print(result$user_name)
     print("--- end: format_result ---")
   }
 
@@ -932,9 +947,6 @@ practice.begin <- function(short = "P01", learner="Anonymous") {
     stop("practice.begin: Can't find practice set named ", short)
   }
 
-  # Currently, no session information, so just a global variable
-  pkg.globals$gUSER_NAME <- learner
-
   # Set the current practice set ID
   ps_set_current(id)
 
@@ -942,12 +954,16 @@ practice.begin <- function(short = "P01", learner="Anonymous") {
   var_names <- ps_get_live_var_names()
   rm(list = var_names, envir = globalenv())
 
-  # Check the basic integrity of the practice set
-  ps_test_current()
-
   # Practice sets can set some initial variables in the R global
   # environment, allowing practice prompts to refer to these variables
   set_env_vars()
+
+  # Currently, no session information, so just a global variable
+  pkg.globals$gUSER_NAME <- learner
+
+  print("....")
+  print(learner)
+  print(pkg.globals$gUSER_NAME)
 
   return(TRUE)
 }
@@ -971,7 +987,8 @@ practice.questions <- function(do_not_show = NULL) {
 #' @seealso \code{\link{practice.questions}}
 #' @export
 practice.check <- function() {
-  t <- check_answers()
+  results <- check_answers()
+  t <- format_result(results)
   print_output(t, "check")
   return(TRUE)
 }
