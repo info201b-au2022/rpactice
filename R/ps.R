@@ -238,7 +238,7 @@ expected_answer <- function(id) {
         t <- paste0("vector: ", t)
       }
     # Check for dataframe
-    } else if (is.dataframe(r$type)) {
+    } else if (is.data.frame(r$type)) {
       nr <- nrow(r$value)
       nc <- ncol(r$value)
       t <- paste0("df: [", nr, "x", ncol, "]")
@@ -360,7 +360,7 @@ DEFAULT_Check <- function(internal_id, result) {
       }
 
     # Check for dataframe
-    } else if (is.dataframe(learner_result$type)) {
+    } else if (is.data.frame(learner_result$type)) {
 
       learner_val <- learner_result$value
 
@@ -922,6 +922,7 @@ print_output <- function(text, fn) {
 #' "P01" and "P02".
 #'
 #' @param short The short ID for this practice set.
+#' @param learner The learner's name
 #' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
 #' @seealso \code{\link{practice.questions}}
 #' @export

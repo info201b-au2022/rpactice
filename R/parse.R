@@ -403,8 +403,7 @@ check_ps <- function(ps, silent = FALSE) {
     }
   }
 
-  # Check that a all variable names are unique - if not unique, try to
-  # fix them
+  # Check that a all variable names are unique - if not unique, try to fix
   var_list <- c()
   for (j in 1:N) {
     v <- ps$task_list[[j]]$assignment_var

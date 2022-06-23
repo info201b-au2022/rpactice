@@ -15,7 +15,7 @@ get_answer <- function(answers, var_name) {
 }
 
 is_answer <- function(s) {
-  var_names <- practice_get_all_assignment_vars()
+  var_names <- ps_get_all_assignment_vars()
   for (v in var_names) {
     if (str_detect(s, v)) {
       s <- str_trim(s)

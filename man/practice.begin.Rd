@@ -6,10 +6,12 @@
 set and to set things up. Currently, there are two practice sets -
 "P01" and "P02".}
 \usage{
-practice.begin(short = "P01")
+practice.begin(short = "P01", learner = "Anonymous")
 }
 \arguments{
 \item{short}{The short ID for this practice set.}
+
+\item{learner}{The learner's name}
 }
 \value{
 `TRUE` if all goes well; otherwise, this function will stop with an message.
