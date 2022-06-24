@@ -33,6 +33,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("T02.R"))
   ps_add(load_ps("T03.R"))
   ps_add(load_ps("T04.R"))
+  ps_add(load_ps("T05.R"))
 
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
@@ -149,8 +150,13 @@ set_env_vars <- function() {
   t <- lapply(ps$ps_initial_vars, set_initial_vars_doit)
 }
 
-get_env_vars <- function(short) {
-  ps <- ps_get_by_short(short)
+get_env_vars <- function(short="") {
+  if (short == "") {
+    ps <- ps_get_current()
+  }
+  else {
+    ps <- ps_get_by_short(short)
+  }
   return(ps$ps_initial_vars)
 }
 
@@ -174,17 +180,23 @@ eval_string_details <- function(code) {
   )
 }
 
-eval_string <- function(code) {
-  result <- eval_string_details(code)
-  if (result$ok == TRUE) {
-    return(result$value)
-  } else {
-    return(NULL)
-  }
-}
+# eval_string <- function(code) {
+#   result <- eval_string_details(code)
+#   if (result$ok == TRUE) {
+#     return(result$value)
+#   } else {
+#     return(NULL)
+#   }
+# }
 
 # This function evaluates some code and formats the result for
-# compact presentation
+# compact presentation. Code can be either a single string
+# or a vector of strings. These three expressions all produce
+# the same thing - namely "atomic: 3":
+#     "t <- 1; x <- t + 1; y <- x + 1"          (string with semi-colons)
+#     c("t <- 1", "x <- t + 1", "y <- x + 1")   (vector of strings)
+#     t <- 1\n x <- t + 1\n y <- x + 1"         (string with newlines)
+#
 eval_string_and_format <- function(code) {
   result <- eval_string_details(code)
   if (result$ok == TRUE) {
@@ -220,10 +232,14 @@ eval_string_and_format <- function(code) {
 
       # A type that is not handled
     } else {
-      return(paste0("type not handled: ", result$scode))
+      message("\nType unhandled:", result$type, "\n")
+      return(paste0("Type unhandled: ", result$type))
     }
   } else {
-    return("syntax error")
+    message("\nERROR: eval_string_and_format:\n", result$error)
+    e <- str_replace_all(result$error[1], "\n", " ")
+    t <- paste0("Error: ", e )
+    return(t)
   }
 }
 
@@ -630,9 +646,11 @@ format_practice_script <- function(id) {
   }
 
   s <- ""
-  if (pkg.globals$gUSER_NAME != "") {
-    s <- paste0("# Learner name: ", pkg.globals$gUSER_NAME, "\n")
-  }
+  # if (pkg.globals$gUSER_NAME != "") {
+  #   s <- paste0("# Learner name: ", pkg.globals$gUSER_NAME, "\n")
+  # }
+
+  lines_of_code <- paste0(cTAB_IN_SPACES, get_env_vars(), collapse="\n")
 
   t <- paste0(
     "# ", ps$ps_short, ": ", ps$ps_title, "\n",
@@ -640,6 +658,8 @@ format_practice_script <- function(id) {
     s,
     "# ---\n",
     "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n",
+    "# Initial variables\n",
+    lines_of_code, "\n",
     t,
     "practice.check()\n"
   )
@@ -811,10 +831,13 @@ format_result <- function(result) {
 
   t <- ""
   t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n", ps$ps_descr, "\n")
-  t <- paste0(t, "---\n")
-  t <- paste0(t,"<i>Learner name: ", result$user_name, "</i>\n" )
-  t <- paste0(t, "---\n")
-  t <- paste0(t, "Checking code: ", num_correct, "/", total, " complete.")
+  t <- paste0(t,"Learner name:\n<i>   ", result$user_name, "</i>" )
+  t <- paste0(t, "\n")
+
+  lines_of_code <- paste0(cTAB_IN_SPACES, get_env_vars(), collapse="\n")
+  t <- paste0(t, paste0("Initial variables:\n", lines_of_code, "\n"))
+
+  t <- paste0(t, "Checking code:\n   ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
     t <- paste0(t, " Good work! &#128512;\n")
   } else {

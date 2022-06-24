@@ -1,4 +1,4 @@
-# Answers to practice set P02
+# Answers to P02
 
 practice.begin("P02")
 practice.questions()

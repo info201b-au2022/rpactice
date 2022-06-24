@@ -1,4 +1,9 @@
+# Answers to P01
+
 practice.begin("P01", learner="Anonymous")
+
+X <- 10
+Y <- c(1,2,3)
 
 # a: Add ten, nine, and eight together. (t_01)
 t_01 <- 10 + 9 + 8

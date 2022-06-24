@@ -13,8 +13,8 @@
 #'     3. You should know the meaning of: Inf, -Inf, and NaN
 #' @end
 #' @initial-vars
-X <<- 10
-Y <<- c(1,2,3)
+X <- 10
+Y <- c(1,2,3)
 #' @end
 
 #' @id a

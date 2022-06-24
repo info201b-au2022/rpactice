@@ -1,5 +1,4 @@
-# P03: Using vectors and basic functions
-#  Check into length() and sum()
+# Answers to P03
 # ---
 practice.begin("P03")
 # a: How many elements are in the vector X? (num)
