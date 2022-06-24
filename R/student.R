@@ -14,6 +14,7 @@
 #' @param short The short ID for this practice set.
 #' @param learner The learner's name
 #' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
+#'
 #' @export
 practice.begin <- function(short = "P01", learner="Anonymous") {
   id <- ps_get_id_by_short(short)

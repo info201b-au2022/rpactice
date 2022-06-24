@@ -145,7 +145,7 @@ get_env_vars <- function(short) {
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
 #----------------------------------------------------------------------------#
-# Evaluates string and returns some details about the result
+# Evaluates a code string and returns some details about the result
 eval_string_details <- function(code) {
   tryCatch(
     expr = {
@@ -170,89 +170,101 @@ eval_string <- function(code) {
   }
 }
 
+# This function evaluates some code and formats the result for
+# compact presentation
 eval_string_and_format <- function(code) {
   result <- eval_string_details(code)
   if (result$ok == TRUE) {
+    # Check for basic type
     if (result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
       # Atomic types
       if (length(result$value) == 1) {
         return(paste0("atomic: ", as.character(result$value)))
 
-        # Vector types
+      # Vector type
       } else {
         t <- paste0(result$value, collapse = " ")
         return(paste0("vector: ", t))
       }
-      # A function
+      # Check for a function
     } else if (result$type == "closure") {
       args <- names(formals(result$value))
       t <- paste0(args, collapse = ", ")
       t <- paste0("function(", t, ") {...}")
       return(paste0("funct: ", t))
 
-      # A type that is not handled
-    } else {
-      return("type not formatted")
-    }
-  } else {
-    return("syntax error")
-  }
-}
-
-format_code2 <- function(code) {
-  # Collapse everything to a long string
-  t <- paste0(code, collapse = "\n")
-  # Styler might produce multiple strings ( s<-1; t<-2)
-  t <- styler::style_text(t)
-  # Collapse it again
-  t <- paste0(code, collapse = "\n")
-  # if (length(code) > 1) {
-  #   t <- paste0("\n", t)
-  # }
-  return(t)
-}
-
-expected_answer <- function(id) {
-  code <- ps_get_expected_answer(id)
-  r <- eval_string_details(code)
-  if (r$ok == FALSE) {
-    return("<error-something-broken>")
-  } else {
-
-    # Check for a function
-    if (r$type == "closure") {
-      args <- formals(r$value)
-      v <- names(args)
-      t <- paste0(v, collapse = ", ")
-      t <- paste0("function(", t, ") {...}")
-    } else if (r$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
-      if (length(r$value) == 1) {
-        # Check for atomic
-        t <- paste0("atomic: ", r$value)
-      } else {
-        # Check for vector > 1
-        t <- paste0(r$value, collapse = " ")
-        t <- paste0("vector: ", t)
-      }
-    # Check for dataframe
-    } else if (r$type == "dataframe") {
-      nr <- nrow(r$value)
-      nc <- ncol(r$value)
+      # Check for dataframe
+    } else if (result$type == "dataframe") {
+      nr <- nrow(result$value)
+      nc <- ncol(result$value)
 
       df_info_rows <- "0 rows"
       df_info_cols <- "0 columns"
       if (nr == 1) df_info_rows <- "1 row" else df_info_rows <- paste0(nr, " rows")
       if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
 
-      t <- paste0("dataframe: [", df_info_rows, " X ", df_info_cols, "]")
+      return(paste0("dataframe: [", df_info_rows, " X ", df_info_cols, "]"))
 
-    # Everything else
+      # A type that is not handled
     } else {
-      t <- paste0("everything else: ", r$scode)
+      return(paste0("type not handled: ", result$scode))
     }
+  } else {
+    return("syntax error")
   }
+}
+
+# This function formats some code
+format_code <- function(code_text, indent = cTAB_IN_SPACES) {
+  t <- styler::style_text(code_text)
+  t <- paste0(indent, t)
+  t <- paste0(t, collapse = "\n")
   return(t)
 }
+
+expected_answer <- function(id) {
+  code <- ps_get_expected_answer(id)
+  return(eval_string_and_format(code))
+}
+#   r <- eval_string_details(code)
+#   if (r$ok == FALSE) {
+#     return("error-something-broken")
+#   } else {
+#
+#     # Check for a function
+#     if (r$type == "closure") {
+#       args <- formals(r$value)
+#       v <- names(args)
+#       t <- paste0(v, collapse = ", ")
+#       t <- paste0("function(", t, ") {...}")
+#     } else if (r$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+#       if (length(r$value) == 1) {
+#         # Check for atomic
+#         t <- paste0("atomic: ", r$value)
+#       } else {
+#         # Check for vector > 1
+#         t <- paste0(r$value, collapse = " ")
+#         t <- paste0("vector: ", t)
+#       }
+#     # Check for dataframe
+#     } else if (r$type == "dataframe") {
+#       nr <- nrow(r$value)
+#       nc <- ncol(r$value)
+#
+#       df_info_rows <- "0 rows"
+#       df_info_cols <- "0 columns"
+#       if (nr == 1) df_info_rows <- "1 row" else df_info_rows <- paste0(nr, " rows")
+#       if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
+#
+#       t <- paste0("dataframe: [", df_info_rows, " X ", df_info_cols, "]")
+#
+#     # Everything else
+#     } else {
+#       t <- paste0("everything else: ", r$scode)
+#     }
+#   }
+#   return(t)
+# }
 
 # Checking Callbacks ----
 #----------------------------------------------------------------------------#
@@ -726,13 +738,6 @@ format_answers <- function() {
 #----------------------------------------------------------------------------#
 # Functions for formatting and outputting feedback on practice sets
 #----------------------------------------------------------------------------#
-format_code <- function(code_text, indent = cTAB_IN_SPACES) {
-  t <- styler::style_text(code_text)
-  t <- paste0(indent, t)
-  t <- paste0(t, collapse = "\n")
-  return(t)
-}
-
 result_good_msg <- function(id) {
   expected <- ps_get_expected_answer(id)
   answer <- expected_answer(id)

@@ -1,6 +1,6 @@
 # Admin ----
 #----------------------------------------------------------------------------#
-# Admin functions - very useful for debugging
+# Admin functions - very useful for debugging and for auto-grading
 #----------------------------------------------------------------------------#
 
 #' List the available admin functions
@@ -25,7 +25,7 @@ admin <- function() {
 #' \code{admin.ls()} simply lists all currently installed practice sets.
 #' At present, each of these practice sets will be available to
 #' learners.
-
+#'
 #' @export
 #----------------------------------------------------------------------------#
 # List all the practice sets that have been loaded
@@ -86,7 +86,7 @@ admin.prompts <- function(short) {
       }
 
       cat(k, ":", task$prompt_id, "[", task$assignment_var, "]: ", task$prompt_msg, "\n", sep = "")
-      t1 <- sprintf("%-60s", format_code2(task$expected_answer))
+      t1 <- sprintf("%-60s", format_code(task$expected_answer))
       cat(t1, "\n", sep = "")
       cat("", crayon::red(r), "\n", sep = "")
     }
@@ -153,11 +153,13 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
   # File names only
   file_names <- list.files(dir)
 
+  # Full directory paths and file names
   file_list <- list.files(dir, full.names = TRUE)
+
   for (k in 1:length(file_list)) {
 
     # Get the learners code from a file
-    code_v <- code_to_grade(file_list[k])
+    code_v <- readLines(file_list[k])
     code_string <- paste0(code_v, collapse = "\n")
 
     # Get ready to evaluate a solution
@@ -178,6 +180,7 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
     # Check the answers and get the results
     result <- check_answers()
 
+    # Collect feedback - need to expand this
     wrongs <- paste0(result$incorrect_v, collapse=" ")
 
     # A brief summary

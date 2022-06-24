@@ -58,3 +58,14 @@ df4 <- cDF %>%
   filter(C==TRUE) %>%
   select(A,C)
 #' @end
+
+#' @id ?
+#' @msg Write a function of filter rows by column C (which can be either FALSE or TRUE)
+#' @check c(TRUE, FALSE)
+#' @code
+df5_f <- function(test) {
+cDF %>%
+  filter(C==test) %>%
+  select(A,C)
+}
+#' @end
