@@ -5,9 +5,9 @@
 #' developed by Mike Freeman and Joel Ross.
 #' See \url{https://ischool.uw.edu/news/2018/12/ischools-freeman-and-ross-publish-textbook-informatics-classes}.
 #'
-#' \code{pinfo201} is a package for practicing basic R programming, for
-#' learners who are just beginning. In addition, \code{pinfo201} is intended
-#' to be used by teaching assistants when grading student work.
+#' \code{pinfo201} is a package for practicing basic R programming. It is intended for
+#' learners who are just beginning. In addition, \code{pinfo201} provides functions
+#' for grading student work.
 #'
 #' @section Practice sets: The key idea is that an instructor creates a practice
 #'   set, which comprises prompts, expected answers, and hints. Once \code{pinfo201} is
@@ -22,12 +22,12 @@
 #'   Learners select from the available practice sets (\code{1. Begin Practice}).
 #'   They write code for one or more of the prompts. Then, the learner's code
 #'   can be checked against the expected code
-#'   (\code{3. Check Answers}). If the learner's answer differs from the expected
+#'   (\code{3. Check Answers}). When the learner's answer differs from the expected
 #'   answer, zero or more hints are shown. Learners can also ask for the answers
 #'   to be shown (\code{4. Show Answers}).
 #'
 #'   Practice sets are written in \code{.R} files, with tagged comments.  Below
-#'   is a practice set with four illustrative prompts.
+#'   is a practice set with four illustrative prompts:
 #'
 #'   \preformatted{
 #'   #' @version ps-1
@@ -85,22 +85,24 @@
 #' Practice sets have a title and an unique identifier (\code{short}), which
 #'   is a short form for referring to a practice set. Optionally, one or more
 #'   variables can be initialized with the \code{initial-vars} tag. The idea is
-#'   that the prompts can require learners to use those variables. You can
-#'   also install any required libraries.
+#'   that the prompts can require learners to use those variables. As can be seen
+#'   in the example, you can can also load any required libraries.
 #'
 #'   The prompts comprise a unique ID, a message (the prompt), the expected answer,
 #'   and a list of hints. If an \code{id} is "?" a set of unique IDs will be automatically
-#'   generated, which simplifies the development of prompts. If an \code{id} is
-#'   "-" (dash), a message is formatted for learners. This is a simple method for
+#'   generated, which simplifies the development of prompts. If an \code{id}
+#'   is a dash ("-"), a message is formatted. This is a simple method for
 #'   organizing for guiding students through the prompts.
 #'
-#'   In addition, the \code{@checks} tag
-#'   can be used check if a learner's implementation of a function. More complex function
-#'   check is possible by implementing a check callback.
+#'   In addition, the \code{@checks} tag (see prompt id "c")
+#'   can be used to check the implementation of a function. More complex function
+#'   checking is possible by implementing prompt-specific callback functions (see below).
 #'
-#'   That's it. When a practice set consists of the correct answers to an assigned
+#'   When a practice set consists of the correct answers to an assigned
 #'   problem set, \code{pinfo201} becomes an auto-grader, for helping teaching assistants
-#'   grade.
+#'   grade. Administrative functions are provided for this work.
+#'
+#'    That's it.
 #'
 #' @section What can be evaluated?:
 #'
@@ -116,7 +118,7 @@
 #' @section Checking callbacks:
 #'
 #' We plan to build in robust default approaches for evaluating expressions and giving
-#' learners feedback for improving. To do so, we are currently exploring how to structure
+#' learners feedback. To do so, we are currently exploring how to structure
 #' this package. At present, the framework can be extended with prompt-specific callback functions
 #' for checking a learner's code by, for example, examining the
 #' the abstract syntax trees of learners' code submissions. This is the current structure of
@@ -127,7 +129,8 @@
 #'     learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
 #'     expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
 #'
-#'     # Analyze learner's code and add feedback to the result
+#'     # Analyze learner's code (with an abstract syntax tree) and add feedback
+#'     # to the result
 #'     #     add.message(result, message)
 #'
 #'     if (identical(learner_result, expected_result)) {

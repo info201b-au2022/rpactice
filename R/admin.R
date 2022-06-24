@@ -3,18 +3,34 @@
 # Admin functions - very useful for debugging
 #----------------------------------------------------------------------------#
 
+#' List the available admin functions
+#'
+#' Intended for teaching assistants and instructors only,
+#' \code{admin} simply lists all the available admin functions.
+#'
+#' @export
 admin <- function() {
   cat("Function                    Purpose\n")
-  cat("admin.ls()                  List installed practice sets\n")
-  cat("admin.prompts(short)        List the practice prompts\n")
-  cat("admin.vars()               List the live variables")
-  cat("admin.check_ps(short)       Check practice set")
+  cat("admin()                     List the current admin functinons.\n")
+  cat("admin.check_ps(short)       Check the integrity of a pracitce set file.\n")
+  cat("admin.grade(short, dir)     Grade all the work in the directory (dir) for a practice set (short).")
+  cat("admin.ls()                  List installed practice sets and basic info.\n")
+  cat("admin.prompts(short)        List the practice prompts and results.\n")
+  cat("admin.vars()                List all the variables that are 'alive'.\n")
 }
 
+#' List installed practice sets
+#'
+#' Intended for teaching assistants and instructors only,
+#' \code{admin.ls()} simply lists all currently installed practice sets.
+#' At present, each of these practice sets will be available to
+#' learners.
+
+#' @export
 #----------------------------------------------------------------------------#
 # List all the practice sets that have been loaded
 #----------------------------------------------------------------------------#
-admin.ls <- function(detailed = TRUE) {
+admin.ls <- function() {
   v <- ps_get_all()
   cat("\014") # Clear screen
   cat("Practice sets:", str_trim(length(v)), "\n")
@@ -26,6 +42,16 @@ admin.ls <- function(detailed = TRUE) {
   }
 }
 
+#' Show the practice set prompts
+#'
+#' Intended for teaching assistants and instructors only,
+#' \code{admin.prompts()} shows all of the practice sets, including the
+#' written prompts and
+#' the expected answers
+#'
+#' @param short for the short name of the practice set
+#'
+#' @export
 #----------------------------------------------------------------------------#
 # List the prompts and some basic information for a practice set
 #----------------------------------------------------------------------------#
@@ -69,6 +95,15 @@ admin.prompts <- function(short) {
   }
 }
 
+#' List practice set objects
+#'
+#'
+#' Intended for teaching assistants and instructors only,
+#' \code{admin.prompts()} lists all of the objects associated with
+#' the currently active practice set, including expected variables
+#' and callback functions for checking code.
+#'
+#' @export
 #----------------------------------------------------------------------------#
 # List all the variable names that are current alive in the practice set
 #----------------------------------------------------------------------------#
@@ -96,16 +131,29 @@ admin.vars <- function() {
   cat("\n")
 }
 
+#' Evaluate a directory of practice sets
+#'
+#' Intended for teaching assistants and instructors only,
+#' \code{admin.grade()}, will check all of the practice sets
+#' within a directory. This function will be extended to
+#' provide auto-grader functionality.
+#'
+#' @param short for the short name of the practice set
+#' @param dir directory of practice sets to grade
+#'
+#' @export
 admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01") {
 
   if (file.exists(dir) == FALSE) {
     stop(paste0("Directory does not exist.\n", dir, ""), sep="")
   }
 
+  cat("   ", "\tFilename\tStudent Name\tSummary\t\t\t:Wrong Prompts:\n", sep="")
+
   # File names only
   file_names <- list.files(dir)
 
-  file_list <- list.files(dir, full.name = TRUE)
+  file_list <- list.files(dir, full.names = TRUE)
   for (k in 1:length(file_list)) {
 
     # Get the learners code from a file
@@ -118,7 +166,7 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
     # Try to evaluate the code
     out <- tryCatch(
       {
-        eval(parse(text = code_string), envir = .GlobalEnv)
+        eval(parse(text = code_string), envir = globalenv())
       },
       error = function(cond) {
         message(paste0("Evaluation failed."))
@@ -130,14 +178,26 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
     # Check the answers and get the results
     result <- check_answers()
 
+    wrongs <- paste0(result$incorrect_v, collapse=" ")
+
     # A brief summary
-    cat("[", k, "] ", file_names[k], "\t",
+    cat("[", k, "]\t", file_names[k], "\t",
         result$user_name, "\t",
         result$num_correct, " of ",
-        (result$num_incorrect+result$num_correct), " correct\n", sep="")
+        (result$num_incorrect+result$num_correct), " correct\t\t",
+        wrongs, "\n",
+        sep="")
   }
 }
 
+#' Check the integrity of practice set
+#'
+#' Intended for teaching assistants and instructors only,
+#' \code{admin.ps()} checks the integrity of a practice set. It loads
+#' the source file and provides feedback on the mark-up.
+#'
+#' @param short for the short name of the practice set
+#' @export
 admin.check_ps <- function(short) {
   ps <- ps_get_by_short(short)
   if (is.null(ps)) {

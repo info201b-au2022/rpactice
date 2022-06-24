@@ -259,14 +259,6 @@ expected_answer <- function(id) {
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
 
-# The default callback, which checks for correctness - yes or no
-# NOTE: Investigate identical()
-
-#' Default function for checking learner's code
-#'
-#' @param internal_id the internal ID of the prompt from the practice set
-#' @param result the result, which grows upon each call to a <var>_Check function
-#'
 DEFAULT_Check <- function(internal_id, result) {
   cDEBUG <- FALSE
   if (cDEBUG) {
@@ -539,13 +531,7 @@ ps_get_prompt <- function(id) {
   return(t)
 }
 
-#' Get the expected answer
-#'
-#' Xxx xxx xxx
-#'
-#' @param id the internal ID for the prompt
-#' @return formatted code
-#' @export
+
 ps_get_expected_answer <- function(id) {
   ps <- ps_get_current()
 
@@ -747,13 +733,6 @@ format_code <- function(code_text, indent = cTAB_IN_SPACES) {
   return(t)
 }
 
-#' Formats a "good" message
-#'
-#' This should be called when a learner's answer is correct.
-#'
-#' @param id the internal ID for the prompt
-#' @return a formatted string that can be concatenated to a full output string
-#' @export
 result_good_msg <- function(id) {
   expected <- ps_get_expected_answer(id)
   answer <- expected_answer(id)
@@ -767,14 +746,6 @@ result_good_msg <- function(id) {
   return(t)
 }
 
-#' Formats a "try again" message
-#'
-#' This should be called when a learner's answer is incorrect.
-#'
-#' @param id the internal ID for the prompt
-#' @param show_hints to show or not show the hints for incorrect answers
-#' @return a formatted string that can be concatenated to a full output string
-#' @export
 result_error_msg <- function(id, show_hints = TRUE) {
   t <- paste0("Try again. Prompt: \"", ps_get_prompt(id), "\"")
   if (ps_num_hints(id) > 0) {
@@ -790,42 +761,15 @@ result_prompt_error <- function(id, msg) {
   return(t)
 }
 
-#' Formats a message
-#'
-#' Currently, no formatting is done.
-#'
-#' @param main_message the text of the message
-#' @return a formatted string that can be concatenated to a full output string
-#' @export
 result_main_message <- function(main_message) {
   return(main_message)
 }
 
-#' Format a sub-message
-#'
-#' Currently, sub-messages are simply intended
-#'
-#' @param message the formatted text of the current message
-#' @param sub_message the sub-message to be added
-#' @return a formatted string that can be concatenated to a full output string
-#' @export
 result_sub_message <- function(message, sub_message) {
   t <- paste0(message, "\n", cTAB_IN_SPACES, sub_message)
   return(t)
 }
 
-#' Updates a result data structure
-#'
-#' When implementing checks to prompts in callbacks (\code{<var_name>_CHECK}), this
-#' function is called to update the learner's results. For an example, see
-#' \code{\link{DEFAULT_Check}}.
-#'
-#' @param result a list that holds data related to the correctness of the learners work
-#' @param id the internal ID of a specific prompt
-#' @param is_correct indicating whether the learner's answer is correct or not
-#' @param text a message for the learner about their answer
-#' @return result the updated data structure
-#' @export
 result_update <- function(result, id, is_correct, text) {
   if (is_correct == TRUE) {
     result$num_correct <- result$num_correct + 1
@@ -911,99 +855,4 @@ print_output <- function(text, fn) {
   } else {
     print_to_viewer(text, fn)
   }
-}
-
-# Addins ----
-#----------------------------------------------------------------------------#
-# The add-in functions for controlling the presentation of the practice
-# sets
-#----------------------------------------------------------------------------#
-
-#' Begin a practice set. Call this function to install a specific practice
-#' set and to set things up. Currently, there are two practice sets -
-#' "P01" and "P02".
-#'
-#' @param short The short ID for this practice set.
-#' @param learner The learner's name
-#' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
-#' @seealso \code{\link{practice.questions}}
-#' @export
-practice.begin <- function(short = "P01", learner="Anonymous") {
-  id <- ps_get_id_by_short(short)
-  if (id == -1) {
-    stop(paste0("Can't find practice set named ", short, " (id=", id, ")."))
-  }
-
-  # Set the current practice set ID
-  ps_set_current(id)
-
-  # Clear all variables in the R global environment
-  var_names <- ps_get_live_var_names()
-  rm(list = var_names, envir = globalenv())
-
-  # Practice sets can set some initial variables in the R global
-  # environment, allowing practice prompts to refer to these variables
-  set_env_vars()
-
-  # Currently, no session information, so just a global variable
-  pkg.globals$gUSER_NAME <- learner
-
-  return(TRUE)
-}
-
-#' Show all the questions for a practice set.
-#'
-#' @param do_not_show optional list of internal IDs of questions to not show
-#' @return `TRUE` if all goes well.
-#' @seealso [practice.questions]
-#' @export
-practice.questions <- function(do_not_show = NULL) {
-  ps <- ps_get_current()
-  t <- format_prompts(do_not_show)
-  print_output(t, "questions")
-  return(TRUE)
-}
-
-#' Check the practice set answers.
-#'
-#' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
-#' @seealso \code{\link{practice.questions}}
-#' @export
-practice.check <- function() {
-  results <- check_answers()
-  t <- format_result(results)
-  print_output(t, "check")
-  return(TRUE)
-}
-
-#' Show all the answers for the practice set
-#'
-#' @return `TRUE` if all goes well.
-#' @seealso \code{\link{practice.questions}}
-#' @export
-practice.answers <- function() {
-  ps <- ps_get_current()
-  t <- format_answers()
-
-  t <- paste0(
-    "<b>", ps$ps_short, ": ", ps$ps_title, ": Answers</b>\n",
-    ps$ps_descr, "\n",
-    "---\n",
-    t
-  )
-  print_output(t, "anwers")
-  return(TRUE)
-}
-
-#' Read a practice set
-#'
-#' @param fn filename
-#' @export
-practice.load_url <- function(fn = paste0(
-                                "https://raw.githubusercontent.com/",
-                                "info201B-2022-Autumn/practice-sets/main/",
-                                "PS-T10.R"
-                              )) {
-  ps <- create_ps_from_url(fn)
-  ps_add(ps)
 }
