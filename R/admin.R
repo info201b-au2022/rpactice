@@ -148,13 +148,17 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
     stop(paste0("Directory does not exist.\n", dir, ""), sep="")
   }
 
-  cat("   ", "\tFilename\tStudent Name\tSummary\t\t\t:Wrong Prompts:\n", sep="")
+  cat(
+      "Practice set: ", short, "\n",
+      "Directory:    ", dir, "\n", sep="")
+
+  cat("   ", "\tFilename\tName\t\tSummary\t\t\tWrong Answers(internal ids)\n", sep="")
 
   # File names only
-  file_names <- list.files(dir)
+  file_names <- list.files(dir, pattern = "*.R")
 
   # Full directory paths and file names
-  file_list <- list.files(dir, full.names = TRUE)
+  file_list <- list.files(dir, pattern = "*.R", full.names = TRUE)
 
   for (k in 1:length(file_list)) {
 
@@ -179,8 +183,16 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
 
     # Check the answers and get the results
     result <- check_answers()
+    t <-format_grading(result)
 
-    # Collect feedback - need to expand this
+    # Write grading results
+    ps_feedback_fn <- str_replace(file_names[k], ".R", ".html")
+    ps_feedback_fn <- paste0(dir, "/", ps_feedback_fn)
+    fileConn <- file(ps_feedback_fn, "w")
+    writeLines(t, fileConn)
+    close(fileConn)
+
+    # Collect some basic feedback
     wrongs <- paste0(result$incorrect_v, collapse=" ")
 
     # A brief summary

@@ -180,15 +180,6 @@ eval_string_details <- function(code) {
   )
 }
 
-# eval_string <- function(code) {
-#   result <- eval_string_details(code)
-#   if (result$ok == TRUE) {
-#     return(result$value)
-#   } else {
-#     return(NULL)
-#   }
-# }
-
 # This function evaluates some code and formats the result for
 # compact presentation. Code can be either a single string
 # or a vector of strings. These three expressions all produce
@@ -449,11 +440,6 @@ check_answers <- function() {
     # ps <- ps_get_current()
     # ps <- ps_update_learner_answer(ps, var, answer_code)
     # ps_update_current(ps)
-
-    print("-------------")
-    print(paste0(is_callback_loaded(var), "\n"))
-    print(paste0(get_callback_name(var), "\n"))
-    print("-------------")
 
     if (is_callback_loaded(var) == TRUE) {
       practice_result <- do.call(get_callback_name(var), list(internal_id, practice_result))
@@ -856,6 +842,12 @@ format_result <- function(result) {
 
   return(t)
 }
+
+# A special formatter is needed for instructors and grading
+format_grading <- function(results) {
+  return(format_result(results))
+}
+
 
 # Output ----
 #----------------------------------------------------------------------------#
