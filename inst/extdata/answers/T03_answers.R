@@ -19,4 +19,10 @@ f <- function(arg1) {
    return(t)
 }
 
+# e: Test a function with two arguments - and call a callback function (g)
+  h <- function(num, p) {
+    t <- round(num + pi, p)
+    return(t)
+  }
+
 practice.check()

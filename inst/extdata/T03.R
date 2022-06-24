@@ -41,3 +41,13 @@ f <- function(arg1) {
   return(t)
 }
 #' @end
+#'
+#' #' @id ?
+#' @msg Test a function with two arguments - and call a callback function (see g.T03_Check())
+#' @var h
+#' @code
+h <- function(arg1, precision) {
+  t <- round(arg1 + pi, precision)
+  return(t)
+}
+#' @end

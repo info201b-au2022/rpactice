@@ -11,6 +11,7 @@ pkg.globals$gUSER_NAME <- ""
 ## Constants ----
 cDEBUG <- FALSE
 cTAB_IN_SPACES <- "   "
+cPACKAGE_ENVIR_NAME <- "package:pinfo201"
 
 # Manage Practice Sets ----
 #----------------------------------------------------------------------------#
@@ -18,21 +19,28 @@ cTAB_IN_SPACES <- "   "
 #----------------------------------------------------------------------------#
 # This function is called with the package is loaded. It is used to initialize
 # the "built-in" practice sets.
+#
+# Note: These files are located here, because of the expected structure of
+# packages:
+#     inst/extdata/
 ps_load_internal_ps <- function() {
-  ps_add(load_ps("practice-set-01-spec.R"))
-  ps_add(load_ps("practice-set-03-spec.R"))
+  # Problem sets
+  ps_add(load_ps("P01.R"))
+  ps_add(load_ps("P02.R"))
 
+  # Test cases
   ps_add(load_ps("T01.R"))
   ps_add(load_ps("T02.R"))
   ps_add(load_ps("T03.R"))
   ps_add(load_ps("T04.R"))
 
-  ps_add(load_ps("PS-Example.R"))
+  # Basic illustrative example (used in documentation)
+  ps_add(load_ps("PS_Example.R"))
 
   ps_set_current(1)
 }
 
-# Add a practice set into the running package
+# Add a practice set into the running aplication
 ps_add <- function(ps) {
   new_k <- length(pkg.globals$gPRACTICE_SETS) + 1
   pkg.globals$gPRACTICE_SETS[[new_k]] <- ps
@@ -60,6 +68,12 @@ ps_get_current <- function() {
   ps <- pkg.globals$gPRACTICE_SETS[[id]]
 
   return(ps)
+}
+
+# Return the short ID of the currently active practrice set
+ps_get_short <- function() {
+  ps <- ps_get_current()
+  return(ps$ps_short)
 }
 
 # Update the current practice set to a new one
@@ -140,7 +154,6 @@ get_env_vars <- function(short) {
   return(ps$ps_initial_vars)
 }
 
-
 # Expression evaluation ----
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
@@ -203,7 +216,7 @@ eval_string_and_format <- function(code) {
       if (nr == 1) df_info_rows <- "1 row" else df_info_rows <- paste0(nr, " rows")
       if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
 
-      return(paste0("dataframe: [", df_info_rows, " X ", df_info_cols, "]"))
+      return(paste0("dataframe: [", df_info_rows, " x ", df_info_cols, "]"))
 
       # A type that is not handled
     } else {
@@ -226,45 +239,6 @@ expected_answer <- function(id) {
   code <- ps_get_expected_answer(id)
   return(eval_string_and_format(code))
 }
-#   r <- eval_string_details(code)
-#   if (r$ok == FALSE) {
-#     return("error-something-broken")
-#   } else {
-#
-#     # Check for a function
-#     if (r$type == "closure") {
-#       args <- formals(r$value)
-#       v <- names(args)
-#       t <- paste0(v, collapse = ", ")
-#       t <- paste0("function(", t, ") {...}")
-#     } else if (r$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
-#       if (length(r$value) == 1) {
-#         # Check for atomic
-#         t <- paste0("atomic: ", r$value)
-#       } else {
-#         # Check for vector > 1
-#         t <- paste0(r$value, collapse = " ")
-#         t <- paste0("vector: ", t)
-#       }
-#     # Check for dataframe
-#     } else if (r$type == "dataframe") {
-#       nr <- nrow(r$value)
-#       nc <- ncol(r$value)
-#
-#       df_info_rows <- "0 rows"
-#       df_info_cols <- "0 columns"
-#       if (nr == 1) df_info_rows <- "1 row" else df_info_rows <- paste0(nr, " rows")
-#       if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
-#
-#       t <- paste0("dataframe: [", df_info_rows, " X ", df_info_cols, "]")
-#
-#     # Everything else
-#     } else {
-#       t <- paste0("everything else: ", r$scode)
-#     }
-#   }
-#   return(t)
-# }
 
 # Checking Callbacks ----
 #----------------------------------------------------------------------------#
@@ -399,13 +373,31 @@ DEFAULT_Check <- function(internal_id, result) {
 }
 
 #----------------------------------------------------------------------------#
-# This function checks if the practice prompts are correct or incorrect and
-# collects student feedback for each of the practice prompts. It does the
-# following:
-#   1. Get all the variable names that need to be checked
-#   2. For each variable name, call the corresponding callback:
-#           <var_name>_Check(internal_id, val, practice_result)
-#   3. Collect collect all the feedback.
+# This function evaluates a learner's answer and collects feedback for each
+# of practice prompts.  It does the following:
+#   1. From the Global environment, get all the active variables
+#   2. For each variable name, call the DEFAULT callback or the
+#      implemented callback, which takes this form:
+#           <var_name>.<short>_Check(internal_id, practice_result)
+#   3. Collect collect all the feedback in practice_result
+#
+# Callbacks are currently located in the file checks.R
+#
+# A practice_result takes this structure:
+#
+# practice_result <- list(
+#    user_name = <string>,
+#     num_correct = <integer>,
+#     num_incorrect = <integer>,
+#     message_list = list (
+#        message = list (
+#           internal_id = <internal integer>,
+#           prompt_id = <string from problem set>,
+#           correct = <boolean: is the answer correct?>,
+#           msg_text = <message for learner>
+#        )
+#     )
+# )
 #----------------------------------------------------------------------------#
 check_answers <- function() {
 
@@ -415,12 +407,6 @@ check_answers <- function() {
     num_correct = 0,
     num_incorrect = 0,
     message_list = list()
-    # The message_list comprises a list of messages, as follows:
-    #      message = list(
-    #        internal_id = <internal integer>,
-    #        prompt_id = <string from problem set>,
-    #        correct = <boolean: is the answer correct?>,
-    #        msg_text = <message for learner>)
   )
 
   # Get all of the variable names that need to be checked for correctness
@@ -439,7 +425,7 @@ check_answers <- function() {
   #    <var_name>_Check(val,practice_result)
   for (k in 1:length(var_names)) {
     var <- var_names[k]
-    internal_id <- ps_get_internal_id_from_var_name(var)
+    internal_id <- ps_var_name_to_id(var)
 
     # Update the practice set data structure to include code used to
     # answer each of the tasks
@@ -447,6 +433,11 @@ check_answers <- function() {
     # ps <- ps_get_current()
     # ps <- ps_update_learner_answer(ps, var, answer_code)
     # ps_update_current(ps)
+
+    print("-------------")
+    print(paste0(is_callback_loaded(var), "\n"))
+    print(paste0(get_callback_name(var), "\n"))
+    print("-------------")
 
     if (is_callback_loaded(var) == TRUE) {
       practice_result <- do.call(get_callback_name(var), list(internal_id, practice_result))
@@ -457,16 +448,30 @@ check_answers <- function() {
   return(practice_result)
 }
 
-# Checks if a callback function for checking a learner's answer
-# has been implemented load
+# Create the name for a callback function.  The name follows this template:
+#     <var_name>.<short>_Check
+#
+# var_name  is the name of the variable that is defined in the problem set
+# short     is the short name of the problem set (typically P)
+#
+# Typical examples: t_01.P01_Check | circle_area.P01_Check
+
 get_callback_name <- function(var_name) {
-  return(paste0(var_name, "_Check"))
+  t <- paste0(var_name, ".", ps_get_short(), "_Check")
+  return(t)
 }
+
+# Checks if a callback has been implemented for a prompt in a problem set
+# Currently, these callbacks are implemented in the file "checks.R"
+#
+# TODO: Not sure how best to structure callbacks in a package, since
+#       all R files need to be located in the the R/ directory.
+#       Sub-directories do not seem to be allowed.
 
 is_callback_loaded <- function(var_name) {
   funct_name <- get_callback_name(var_name)
   f_pattern <- paste0("^", funct_name, "$")
-  t <- (length(ls(name = "package:pinfo201", pattern = f_pattern)) == 1)
+  t <- (length(ls(name = cPACKAGE_ENVIR_NAME, pattern = f_pattern)) == 1)
   return(t)
 }
 
@@ -517,7 +522,7 @@ ps_get_assignment_var <- function(id) {
   return(ps$task_list[[id]]$assignment_var)
 }
 
-ps_get_internal_id_from_var_name <- function(var_name) {
+ps_var_name_to_id <- function(var_name) {
   ps <- ps_get_current()
   for (k in 1:length(ps$task_list)) {
     if (ps$task_list[[k]]$assignment_var == var_name) {
@@ -585,7 +590,7 @@ ps_get_formatted_hints <- function(id) {
 # Answer code ----
 
 ps_update_learner_answer <- function(ps, var_name, answer) {
-  id <- ps_get_internal_id_from_var_name(var_name)
+  id <- ps_var_name_to_id(var_name)
   ps$task_list[[id]]$learner_answer <- answer
   return(ps)
 }

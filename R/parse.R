@@ -350,7 +350,6 @@ check_ps <- function(ps, silent = FALSE) {
     }
   }
 
-
   # Check that the expected answer has some code
   for (k in 1:N) {
     if (length(ps$task_list[[k]]$expected_answer) == 0) {
