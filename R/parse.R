@@ -67,17 +67,23 @@ trim_comment <- function(s) {
 # Need something more robust ...
 #----------------------------------------------------------------------------#
 get_var_lhs <- function(s) {
-  if (is.null(s)) {
-    return (NULL)
-  }
-  if (str_detect(s, "<-")) {
-    p <- str_locate(s, "<-")
-    v <- str_trim(str_sub(s, 1, p[1, 1] - 1))
-    return(v)
-  } else {
+  r <- get_var_name(s)
+  if (length(r)==0) {
     return(NULL)
+  } else {
+  return(r$lhs)
   }
 }
+  # if (is.null(s)) {
+  #   return (NULL)
+  # }
+  # if (str_detect(s, "<-")) {
+  #   p <- str_locate(s, "<-")
+  #   v <- str_trim(str_sub(s, 1, p[1, 1] - 1))
+  #   return(v)
+  # } else {
+  #   return(NULL)
+  # }
 
 #----------------------------------------------------------------------------#
 # Helper function to update the practice set data structure

@@ -23,7 +23,7 @@ test_that("get_var_lhs - 2", {
 })
 
 test_that("get_var_lhs - 3", {
-  expect_equal(get_var_lhs("<-  f(xxx)"), "")
+  expect_equal(get_var_lhs("<-  f(xxx)"), NULL)
 })
 
 test_that("get_var_lhs - 4", {

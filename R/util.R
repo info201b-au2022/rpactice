@@ -8,23 +8,50 @@
 #    "s <-1\n t <- 1"
 #    "t <- function(a,b) {p <- 10; s <-100}"
 #    "t <- { s <- 1}"
-
+#    "t <- function(x) {
+#             z <- x + 1
+#             return(t)
+#           }"
 get_var_name <- function(s) {
+  return(get_var_name2(s))
+  # tryCatch(
+  #   expr = {
+  #     list_e <- as.list(parse(text = s))
+  #     e <- list_e[[length(list_e)]]
+  #     if (length(e) == 3) {
+  #       if (as.character(e[[1]]) == "<-") {
+  #         return(list(lhs = deparse(e[[2]]), rhs = e[[3]]))
+  #       }
+  #     }
+  #   }, error = function(e) {
+  #     return(list())
+  #   }
+  # )
+  # return(list())
+}
+
+get_var_name2 <- function(e1) {
   tryCatch(
+    # Try
     expr = {
-      list_e <- as.list(parse(text = s))
+      if (typeof(e1)=="character") {
+        e1 <- parse(text=e1)
+      }
+      list_e <- as.list(e1)
       e <- list_e[[length(list_e)]]
       if (length(e) == 3) {
         if (as.character(e[[1]]) == "<-") {
-          return(list(lhs = as.character(e[[2]]), rhs = e[[3]]))
+          return(list(lhs = deparse(e[[2]]), rhs = deparse(e[[3]]), rhs_e =e[[3]]))
         }
       }
+    # Catch
     }, error = function(e) {
       return(list())
     }
   )
   return(list())
 }
+
 
 parse_script <- function(code_v) {
   t <- as.list(parse(text = code_v))
@@ -75,8 +102,8 @@ t_01 <- 10 + 9 + 8
 
 # b: What is 111 divided by 9? (num)
 num <- 111 / 9 + 10 -
-1 * 10
-+ f(10,101)
+1 * 10 +
+f(10,101)
 
 #b.a
 t_01a <- t_01 <- 1 + 2

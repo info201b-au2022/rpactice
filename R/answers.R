@@ -26,10 +26,24 @@ is_answer <- function(s) {
 }
 
 doit <- function() {
-  t <- rstudioapi::getSourceEditorContext()
-  rstudioapi::documentSave(t$id)
-  p <- rstudioapi::documentPath(t$id)
-  script <- readLines(p)
+  # t <- rstudioapi::getSourceEditorContext()
+  # rstudioapi::documentSave(t$id)
+  # p <- rstudioapi::documentPath(t$id)
+  # script <- readLines(p)
+
+  script <- get_example_script()
+  code_lines <- as.list(parse(text=script))
+  for (k in 1:length(code_lines)) {
+    t <- get_var_name2(code_lines[k])
+    cat(paste0(k, " ", code_lines[k], "\n"), sep="")
+    cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
+    cat(paste0("   rhs: ", t$rhs, "\n"), sep="")
+
+    ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", t$rhs))
+  }
+  ps <- ps_get_current()
+  print(ps$task_list)
+
 }
 
 # find_answers <- function(code) {

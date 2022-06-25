@@ -109,3 +109,12 @@ t <- get_var_name("t <- { s <- 1} ")
 test_that("get_var_name", {
   expect_equal(t$lhs, "t")
 })
+
+s <- "f3 <- function(x) {
+t <- x + 1
+return(t)
+}"
+t <- get_var_name(s)
+test_that("get_var_name", {
+  expect_equal(t$lhs, "f3")
+})

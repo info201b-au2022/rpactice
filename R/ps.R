@@ -527,6 +527,12 @@ ps_get_assignment_var <- function(id) {
 }
 
 ps_var_name_to_id <- function(var_name) {
+  if (is.null(var_name)) {
+    return(-1)
+  }
+  if (var_name == "") {
+    return(-1)
+  }
   ps <- ps_get_current()
   for (k in 1:length(ps$task_list)) {
     if (ps$task_list[[k]]$assignment_var == var_name) {
@@ -593,16 +599,28 @@ ps_get_formatted_hints <- function(id) {
 
 # Answer code ----
 
-ps_update_learner_answer <- function(ps, var_name, answer) {
+ps_update_learner_answer <- function(var_name, answer) {
+  ps_id <- pkg.globals$gPRACTICE_SET_ID
+  ps <- pkg.globals$gPRACTICE_SETS[[ps_id]]
+
   id <- ps_var_name_to_id(var_name)
-  ps$task_list[[id]]$learner_answer <- answer
-  return(ps)
+  if (id > 0) {
+    ps$task_list[[id]]$learner_answer <- answer
+    pkg.globals$gPRACTICE_SETS[[ps_id]] <- ps
+  }
+
+  return(TRUE)
 }
 
-ps_get_learner_answer <- function(id) {
-  ps <- ps_get_current()
+ps_get_learner_answer_by_id <- function(id) {
   t <- ps$task_list[[id]]$learner_answer
   return(t)
+}
+
+ps_get_learner_answer <- function(var_name) {
+  ps <- ps_get_current()
+  id <- ps_var_name_to_id(var_name)
+  reutrn(ps_get_learner_answer_by_id(id))
 }
 
 # Prompts ----
@@ -756,8 +774,11 @@ result_good_msg <- function(id) {
   answer <- expected_answer(id)
   t <- answer
   t <- paste0(
-    "<span style='color:green'>&#10004;</span> Expected: \n",
+    "<span style='color:green'>&#10004;</span>",
+    "Expected: \n",
     "", format_code(expected),
+    "\n", "Your code: \n",
+    "", format_code(ps_get_learner_answer_by_id(id)),
     "\n<span style='color:green'>   ", t,
     "</span>"
   )
