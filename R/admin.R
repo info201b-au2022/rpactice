@@ -205,6 +205,21 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
   }
 }
 
+#' UI for selecting files to grade
+#'
+#' @param short for the short name of the practice set
+#'
+#' @export
+admin.grade_ui <- function(short = "P01") {
+
+t <- rstudioapi::selectDirectory(
+  caption = "Select Directory",
+  label = "Select",
+  path = getActiveProject())
+
+admin.grade(short,t)
+}
+
 #' Check the integrity of practice set
 #'
 #' Intended for teaching assistants and instructors only,

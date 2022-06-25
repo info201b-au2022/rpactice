@@ -152,10 +152,10 @@ NULL
 #' @import rstudioapi
 NULL
 
-#' @import stringr
+#' @import shiny
 NULL
 
-#' @import shiny
+#' @import stringr
 NULL
 
 #' @import tidyverse

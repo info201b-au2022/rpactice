@@ -38,3 +38,14 @@ ui_begin <- function() {
 # Try running the ui
 #ui_begin()
 
+test2 <- function() {
+  # t <- rstudioapi::askForSecret("xxx", "message ...", "title title")
+  t <- rstudioapi::selectDirectory(
+    caption = "Select Directory",
+    label = "Select",
+    path = getActiveProject()
+  )
+  print(t)
+}
+
+
