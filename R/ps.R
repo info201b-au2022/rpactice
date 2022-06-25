@@ -416,6 +416,11 @@ check_answers <- function() {
     message_list = list()
   )
 
+  # Save the file being edited and get the script
+  t <- rstudioapi::getSourceEditorContext()
+  rstudioapi::documentSave(t$id)
+  learner_code <- readLines(rstudioapi::documentPath(t$id))
+
   # Get all of the variable names that need to be checked for correctness
   var_names <- ps_get_live_var_names()
 
@@ -423,9 +428,6 @@ check_answers <- function() {
   if (length(var_names) == 0) {
     return(practice_result)
   }
-
-  # Get all the answers as code
-  # learner_code <- process_script()
 
   # Call each of the functions that checks if the correct value
   # has been computed. These functions follow this pattern:

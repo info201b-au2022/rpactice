@@ -27,7 +27,6 @@ practice.begin <- function(short = "P01", learner="Anonymous") {
 
   # Clear all variables in the R global environment
   var_names <- ps_get_live_var_names()
-  #var_names <- ps_get_all_assignment_vars()
   rm(list = var_names, envir = globalenv())
 
   # Practice sets can set some initial variables in the R global
