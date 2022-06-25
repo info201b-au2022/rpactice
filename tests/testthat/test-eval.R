@@ -70,3 +70,42 @@ test_that("Three statements with semi-colons.", {
   expect_equal(t, "atomic: 3")
 })
 
+
+#----------------------------------------------------------------------------#
+# Tests of get_var_name() (see util.R)
+#----------------------------------------------------------------------------#
+
+t <- get_var_name("t <- 10")
+test_that("get_var_name", {
+  expect_equal(t$lhs, "t")
+})
+
+t <- get_var_name("t <- x <- 10")
+test_that("get_var_name", {
+  expect_equal(t$lhs, "t")
+})
+
+t <- get_var_name("2t <- x <- 10")
+test_that("get_var_name", {
+  expect_equal(t$lhs, NULL)
+})
+
+t <- get_var_name("t <- x <- 10; s <- 100")
+test_that("get_var_name", {
+  expect_equal(t$lhs, "s")
+})
+
+t <- get_var_name("t <- x <- 10\ns <- 100")
+test_that("get_var_name", {
+  expect_equal(t$lhs, "s")
+})
+
+t <- get_var_name("t <- function(a,b) {p <- 10; s <-100} ")
+test_that("get_var_name", {
+  expect_equal(t$lhs, "t")
+})
+
+t <- get_var_name("t <- { s <- 1} ")
+test_that("get_var_name", {
+  expect_equal(t$lhs, "t")
+})

@@ -1,9 +1,19 @@
 # The function returns the left- and right-hand side of an assignment
 # statement. For parsing errors, the function returns an empty list.
+#
+# In each of these cases, "t" is the lft  (see test-eval.R)
+#    "t <- 1"
+#    "t <- s <- 1"
+#    "s <-1; t <- 1"
+#    "s <-1\n t <- 1"
+#    "t <- function(a,b) {p <- 10; s <-100}"
+#    "t <- { s <- 1}"
+
 get_var_name <- function(s) {
   tryCatch(
     expr = {
-      e <- as.list(parse(text = s))[[1]]
+      list_e <- as.list(parse(text = s))
+      e <- list_e[[length(list_e)]]
       if (length(e) == 3) {
         if (as.character(e[[1]]) == "<-") {
           return(list(lhs = as.character(e[[2]]), rhs = e[[3]]))
