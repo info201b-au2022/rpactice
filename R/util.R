@@ -1,3 +1,4 @@
+# Variable names ----
 # The function returns the left- and right-hand side of an assignment
 # statement. For parsing errors, the function returns an empty list.
 #
@@ -12,41 +13,29 @@
 #             z <- x + 1
 #             return(t)
 #           }"
+#
+# Note: We need to a solution for getting rid of print() and cat()
+#
 
 get_var_name <- function(s) {
-    return(get_var_name2(s))
+  return(get_var_name2(s))
 }
-
-  # tryCatch(
-  #   expr = {
-  #     list_e <- as.list(parse(text = s))
-  #     e <- list_e[[length(list_e)]]
-  #     if (length(e) == 3) {
-  #       if (as.character(e[[1]]) == "<-") {
-  #         return(list(lhs = deparse(e[[2]]), rhs = e[[3]]))
-  #       }
-  #     }
-  #   }, error = function(e) {
-  #     return(list())
-  #   }
-  # )
-  # return(list())
 
 get_var_name2 <- function(e1) {
   tryCatch(
     # Try
     expr = {
-      if (typeof(e1)=="character") {
-        e1 <- parse(text=e1)
+      if (typeof(e1) == "character") {
+        e1 <- parse(text = e1)
       }
       list_e <- as.list(e1)
       e <- list_e[[length(list_e)]]
       if (length(e) == 3) {
         if (as.character(e[[1]]) == "<-") {
-          return(list(lhs = deparse(e[[2]]), rhs = deparse(e[[3]]), rhs_e =e[[3]]))
+          return(list(lhs = deparse(e[[2]]), rhs = deparse(e[[3]]), rhs_e = e[[3]]))
         }
       }
-    # Catch
+      # Catch
     }, error = function(e) {
       return(list())
     }
@@ -54,26 +43,93 @@ get_var_name2 <- function(e1) {
   return(list())
 }
 
-
-parse_script <- function(code_v) {
-  t <- as.list(parse(text = code_v))
-  return(t)
+# AST functions ----
+# This function returns a vector of the line numbers, where each statement matches
+# a particular function call. It can be used to answer questions such as:
+#
+#   1. Find all assignment statements -- ast_scan (e, "<-", TRUE)
+#   2. Find all print or cat statements -- ast_scan(e, c("print", "cat"), TRUE)
+#
+# When the argument in_statement is FALSE, the function it will return all line numbers that
+# do NOT satisfy the condition.
+#
+# Example:
+#   t <- "m<-1; print(g(x,b)); cat(10, 'aaa'); print('aa'); u <- 1; print('hello')"
+#   ast_scan(parse(text=t))
+#   2 3 4 6
+ast_scan <- function(e, s, in_statement = TRUE) {
+  lines_true <- c()
+  lines_false <- c()
+  for (k in 1:length(e)) {
+    if (length(e[[k]]) > 1) {
+      if (as.character(e[[k]][[1]]) %in% s) {
+        lines_true <- append(lines_true, k)
+      } else {
+        lines_false <- append(lines_false, k)
+      }
+    }
+  }
+  if (in_statement) return(lines_true) else  return(lines_false)
 }
 
-show_ast <- function(expressions_v, k) {
-  print(as.list(expressions_v[[k]]))
-  ast(!!expressions_v[[k]])
+# All statements denoted by the line numbers in x will be removed and a
+# new expression will be returned
+ast_rm <- function(e, x) {
+  e1 <- list()
+
+  for (k in 1:length(e)) {
+    if (!(k %in% x)) {
+      e1 <- append(e1, e[k])
+    }
+  }
+  return(e1)
 }
 
-show_as_string <- function(expressions_v, k) {
-  return(deparse(expressions_v[[k]]))
+# In a block of code, return all assignment statements
+ast_get_assignments <- function(e1) {
+  result <- list()
+  line_nums <- ast_scan(e1, "<-", FALSE)
+  e2 <- ast_rm(e1,line_nums)
+
+  for(k in 1:length(e2)) {
+    t <- list(r=list(lhs=deparse(e2[[k]][[2]]), rhs=deparse(e2[[k]][[3]]), e=e2[[k]][[3]]))
+    result <- append(result,t)
+  }
+  return(result)
+}
+
+# In a block of code, return the last assignment statement
+ast_last_assignment <- function(e1) {
+  r <- ast_get_assignments(e1)
+  k <- length(r)
+  if (k != 0)
+    return(r[[k]])
+  else
+    return(list())
+}
+
+ast_test <- function() {
+  t <-
+    "
+t <- 1
+u <- 2; v <-3
+cat(t, u)
+w<- x <- 4
+y<-5
+"
+e <- parse(text=t)
+r <- ast_get_assignments(e)
+print(r)
+
+
+return(TRUE)
 }
 
 # t <- parse(text="t<-(a+b) / (c+d); print(0); u <- t[(a+b)/(c+d)]")
 # walk2(t)
 # Find all assignments at level-1
 # Choose the last assignment
-walk2 <- function(e, level = 1) {
+ast_walk <- function(e, level = 1) {
   t <- str_sub("...............", 1, (level - 1) * 2)
   if (rlang::is_syntactic_literal(e)) {
     cat(paste0(t, " ", "(constant: '", as.character(e), "')\n"), sep = "")
@@ -83,21 +139,26 @@ walk2 <- function(e, level = 1) {
       cat(paste0(t, " ", "(Got: '", as.character(e), "')\n"), sep = "")
       return(TRUE)
     } else if (as.character(e) == "print") {
-      cat(paste0(t," ", "(Got:", as.character(e), ")\n", sep=""))
+      cat(paste0(t, " ", "(Got:", as.character(e), ")\n", sep = ""))
       return(TRUE)
-    }
-    else {
-      cat(paste0(t," ", "('", as.character(e), "')\n", sep=""))
+    } else {
+      cat(paste0(t, " ", "('", as.character(e), "')\n", sep = ""))
       return(TRUE)
     }
   }
   cat(paste(t, "walk\n"))
-    level <- level + 1
-    for (k in 1:length(e)) {
-      walk2(e[[k]], level)
-    }
+  level <- level + 1
+  for (k in 1:length(e)) {
+    walk2(e[[k]], level)
+  }
   return(TRUE)
 }
+
+ast_code <- function() {
+  t <- parse(text = "t<-(a+b) / (c+d); print(g(x,b)); cat(10, 'aaa'); print('aa'); u <- t[(a+b)/(c+d)]; print('hello')")
+  return(t)
+}
+
 
 get_example_script <- function() {
   script <- readLines(
@@ -163,4 +224,18 @@ library(xxxx)
     )
   )
   return(script)
+}
+
+parse_script <- function(code_v) {
+  t <- as.list(parse(text = code_v))
+  return(t)
+}
+
+show_ast <- function(expressions_v, k) {
+  print(as.list(expressions_v[[k]]))
+  lobstr::ast(!!expressions_v[[k]])
+}
+
+show_as_string <- function(expressions_v, k) {
+  return(deparse(expressions_v[[k]]))
 }

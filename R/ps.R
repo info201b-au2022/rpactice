@@ -629,7 +629,7 @@ ps_get_learner_answer_by_id <- function(id) {
 
 ps_get_learner_answer <- function(var_name) {
   id <- ps_var_name_to_id(var_name)
-  reutrn(ps_get_learner_answer_by_id(id))
+  return(ps_get_learner_answer_by_id(id))
 }
 
 # Prompts ----
