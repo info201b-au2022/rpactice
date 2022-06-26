@@ -20,20 +20,19 @@ cPACKAGE_ENVIR_NAME <- "package:pinfo201"
 # This function is called with the package is loaded. It is used to initialize
 # the "built-in" practice sets.
 #
-# Note: These files are located here, because of the expected structure of
-# packages:
+# Note: Because of the expected structure of packages, these file are located
+# here, below the root directory for package development:
 #     inst/extdata/
 ps_load_internal_ps <- function() {
-  # Problem sets
+  # Problem sets   - Somewhat realistic
   ps_add(load_ps("P01.R"))
   ps_add(load_ps("P02.R"))
 
   # Test cases
-  ps_add(load_ps("T01.R"))
-  ps_add(load_ps("T02.R"))
-  ps_add(load_ps("T03.R"))
-  ps_add(load_ps("T04.R"))
-  ps_add(load_ps("T05.R"))
+  ps_add(load_ps("T01.R"))  # Assignment and atomic vectors
+  ps_add(load_ps("T02.R"))  # Vectors
+  ps_add(load_ps("T03.R"))  # Functions
+  ps_add(load_ps("T04.R"))  # Dataframes
 
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
@@ -164,7 +163,7 @@ get_env_vars <- function(short="") {
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
 #----------------------------------------------------------------------------#
-# Evaluates a code string and returns some details about the result
+# Evaluates a block of code and returns some details about the result
 eval_string_details <- function(code) {
   tryCatch(
     expr = {
@@ -234,7 +233,8 @@ eval_string_and_format <- function(code) {
   }
 }
 
-# This function formats some code
+# This function formats a code block
+# TODO: Make improvements
 format_code <- function(code_text, indent = cTAB_IN_SPACES) {
   t <- styler::style_text(code_text)
   t <- paste0(indent, t)
@@ -242,6 +242,8 @@ format_code <- function(code_text, indent = cTAB_IN_SPACES) {
   return(t)
 }
 
+# This function for an expected answer to a problem set
+# Note: id is the "internal id" (not the prompt id)
 expected_answer <- function(id) {
   code <- ps_get_expected_answer(id)
   return(eval_string_and_format(code))
@@ -406,14 +408,6 @@ DEFAULT_Check <- function(internal_id, result) {
 #     )
 # )
 #----------------------------------------------------------------------------#
-
-check_answers_from_ui <- function() {
-  t <- rstudioapi::getSourceEditorContext()
-  rstudioapi::documentSave(t$id)
-  learner_code <- readLines(rstudioapi::documentPath(t$id))
-  return(check_answers(learner_code))
-}
-
 check_answers <- function(learner_code) {
 
   # This structure is used hold feedback on the practice coding prompts.
@@ -462,6 +456,14 @@ check_answers <- function(learner_code) {
   return(practice_result)
 }
 
+# This function gives access to the learner's code in RStudio
+check_answers_from_ui <- function() {
+  t <- rstudioapi::getSourceEditorContext()
+  rstudioapi::documentSave(t$id)
+  learner_code <- readLines(rstudioapi::documentPath(t$id))
+  return(check_answers(learner_code))
+}
+
 # Create the name for a callback function.  The name follows this template:
 #     <var_name>.<short>_Check
 #
@@ -499,6 +501,8 @@ ps_get_prompt_id <- function(id) {
   return(ps$task_list[[id]]$prompt_id)
 }
 
+# This function returns all the expected variables - learners write code
+# to assign values to these variables
 ps_get_all_assignment_vars <- function() {
   ps <- ps_get_current()
   vars <- c()
@@ -510,6 +514,8 @@ ps_get_all_assignment_vars <- function() {
   return(vars)
 }
 
+# The a vector that contains values to check a function with
+# See @checks tag
 ps_get_checks <- function(id) {
   v <- c()
   ps <- ps_get_current()
@@ -519,8 +525,6 @@ ps_get_checks <- function(id) {
   }
   return(v)
 }
-
-
 
 # Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
@@ -536,6 +540,7 @@ ps_get_assignment_var <- function(id) {
   return(ps$task_list[[id]]$assignment_var)
 }
 
+# Variable names are mapped to internal ids in the practice sets
 ps_var_name_to_id <- function(var_name) {
   if (is.null(var_name)) {
     return(-1)
@@ -568,7 +573,6 @@ ps_get_prompt <- function(id) {
   return(t)
 }
 
-
 ps_get_expected_answer <- function(id) {
   ps <- ps_get_current()
 
@@ -590,7 +594,9 @@ ps_get_expected_answer <- function(id) {
 }
 
 # Hints -----
-
+#----------------------------------------------------------------------------#
+# Functions for handling hints
+#----------------------------------------------------------------------------#
 ps_num_hints <- function(id) {
   ps <- ps_get_current()
   hints <- ps$task_list[[id]]$hints
@@ -608,7 +614,9 @@ ps_get_formatted_hints <- function(id) {
 }
 
 # Answer code ----
-
+#----------------------------------------------------------------------------#
+# Functions setting and getting learner's answers
+#----------------------------------------------------------------------------#
 ps_update_learner_answer <- function(var_name, answer) {
   ps_id <- pkg.globals$gPRACTICE_SET_ID
   ps <- pkg.globals$gPRACTICE_SETS[[ps_id]]
@@ -648,6 +656,8 @@ number_of_prompts <- function() {
   return(num)
 }
 
+# This function is used to create a template script - learners can start
+# here and write code for each of the prompts
 format_practice_script <- function(id) {
   ps <- ps_get_current()
 
@@ -662,9 +672,6 @@ format_practice_script <- function(id) {
   }
 
   s <- ""
-  # if (pkg.globals$gUSER_NAME != "") {
-  #   s <- paste0("# Learner name: ", pkg.globals$gUSER_NAME, "\n")
-  # }
 
   lines_of_code <- paste0(cTAB_IN_SPACES, get_env_vars(), collapse="\n")
 
@@ -682,6 +689,8 @@ format_practice_script <- function(id) {
   return(t)
 }
 
+# Present the prompts in the viewer
+# TODO: Consider showing only the prompts that are incorrect
 format_prompts <- function(do_not_show = NULL) {
   ps <- ps_get_current()
   t_out <- ""
@@ -703,19 +712,6 @@ format_prompts <- function(do_not_show = NULL) {
       }
     }
   }
-
-  #   else {
-  #       if ((id %in% do_not_show) == FALSE) {
-  #         t <- paste0(
-  #           t, ps$task[[k]]$prompt_id, ": ",
-  #           ps$task[[k]]$prompt_msg,
-  #           " (", ps$task[[k]]$assignment_var, ")", "\n"
-  #         )
-  #       }
-  #     }
-  #   }
-  # }
-
 
   # for (k in 1: length(ps$task_list)) {
   #
@@ -877,7 +873,8 @@ format_result <- function(result) {
   return(t)
 }
 
-# A special format for instructors and grading - TBD
+# A special format for instructors and grading
+# TODO - Need to process the results and show teach the key info
 format_grading <- function(results) {
   t <- format_for_html_file(format_result(results))
   return(t)

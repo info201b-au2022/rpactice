@@ -2,7 +2,7 @@
 # Practice Set One Callbacks (for illustration)
 #----------------------------------------------------------------------------#
 
-## Callbacks ----
+# Callbacks ----
 #----------------------------------------------------------------------------#
 # These functions are used to check the learner's answers. These callbacks
 # are optional. If a callback is not provided, this function is called:
@@ -20,6 +20,7 @@
 #    num.P01_Check
 #----------------------------------------------------------------------------#
 
+# Practice Set P01 ----
 #----------------------------------------------------------------------------#
 # Examples for Practice Set P01
 #----------------------------------------------------------------------------#
@@ -29,6 +30,7 @@
 #
 # NOTE: There is no reason to implement this callback, since DEFAULT_Check
 #       implements this functionality.
+#
 t_01.P01_Check <- function(internal_id, result) {
   learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
   expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
@@ -45,6 +47,9 @@ t_01.P01_Check <- function(internal_id, result) {
 
 # Prompt: "What is 111 divided by 9? (num)
 # This callback shows that hints can be added programmatically within the callback.
+#
+# NOTE: There is no reason to implement this callback, since DEFAULT_Check
+#       implements this functionality.
 num.P01_Check <- function(internal_id, result) {
   learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
   expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
@@ -63,10 +68,18 @@ num.P01_Check <- function(internal_id, result) {
   return(result)
 }
 
+# Practice set T03 ----
 #----------------------------------------------------------------------------#
 # Examples for Practice Set T03
 #----------------------------------------------------------------------------#
-# Illustrates a function will two arguments
+# NOTE: This illustrates a callback in which the test is more complex -
+#       specifically, all combinations are two input arguments are tested
+#
+#       This capability is NOT currently available in the default callback,
+#       but it could be added quite easily:
+#          (1) Revise the mark-up to allow two checking variables
+#          (2) Update the default call back to handle this case
+#
 h.T03_Check <- function(internal_id, result) {
   checks_arg1 <- c(10, 20, 30, 0)
   checks_precision <- c(2, 4, 0)
@@ -79,10 +92,8 @@ h.T03_Check <- function(internal_id, result) {
   expected_code <- ps_get_expected_answer(internal_id)
   expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
 
-  print(learner_result)
 
   if (learner_result$type == "closure") {
-    print("composite")
 
     for (k in 1:length(checks_precision)) {
      t1 <- do.call(learner_result$scode, list(checks_arg1,checks_precision[k]))
