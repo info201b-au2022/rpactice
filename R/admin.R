@@ -228,7 +228,7 @@ admin.grade(short,t)
 #'
 #' @param short for the short name of the practice set
 #' @export
-admin.check_ps <- function(short) {
+admin.check <- function(short) {
   ps <- ps_get_by_short(short)
   if (is.null(ps)) {
     stop(paste0("Error. Practice set not found (", short, ")"))

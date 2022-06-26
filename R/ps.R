@@ -420,6 +420,20 @@ check_answers <- function() {
   t <- rstudioapi::getSourceEditorContext()
   rstudioapi::documentSave(t$id)
   learner_code <- readLines(rstudioapi::documentPath(t$id))
+  code_lines <- as.list(parse(text=learner_code))
+
+  # Get the learner's variables and code
+  for (k in 1:length(code_lines)) {
+    t <- get_var_name2(code_lines[k])
+    cat(paste0(k, " ", code_lines[k], "\n"), sep="")
+    cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
+    cat(paste0("   rhs: ", t$rhs, "\n"), sep="")
+
+    flatten <- paste0(t$rhs, collapse="\n")
+    ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
+  }
+  ps <- ps_get_current()
+  print(ps$task_list)
 
   # Get all of the variable names that need to be checked for correctness
   var_names <- ps_get_live_var_names()
@@ -435,13 +449,6 @@ check_answers <- function() {
   for (k in 1:length(var_names)) {
     var <- var_names[k]
     internal_id <- ps_var_name_to_id(var)
-
-    # Update the practice set data structure to include code used to
-    # answer each of the tasks
-    # answer_code <- get_answer(learner_code, var)
-    # ps <- ps_get_current()
-    # ps <- ps_update_learner_answer(ps, var, answer_code)
-    # ps_update_current(ps)
 
     if (is_callback_loaded(var) == TRUE) {
       practice_result <- do.call(get_callback_name(var), list(internal_id, practice_result))
@@ -604,6 +611,8 @@ ps_update_learner_answer <- function(var_name, answer) {
   ps <- pkg.globals$gPRACTICE_SETS[[ps_id]]
 
   id <- ps_var_name_to_id(var_name)
+  print(paste0(id, " ---- ", var_name))
+  print(paste0("",answer))
   if (id > 0) {
     ps$task_list[[id]]$learner_answer <- answer
     pkg.globals$gPRACTICE_SETS[[ps_id]] <- ps
@@ -613,12 +622,12 @@ ps_update_learner_answer <- function(var_name, answer) {
 }
 
 ps_get_learner_answer_by_id <- function(id) {
+  ps <- ps_get_current()
   t <- ps$task_list[[id]]$learner_answer
   return(t)
 }
 
 ps_get_learner_answer <- function(var_name) {
-  ps <- ps_get_current()
   id <- ps_var_name_to_id(var_name)
   reutrn(ps_get_learner_answer_by_id(id))
 }
@@ -771,16 +780,17 @@ format_answers <- function() {
 #----------------------------------------------------------------------------#
 result_good_msg <- function(id) {
   expected <- ps_get_expected_answer(id)
+  learner <- ps_get_learner_answer_by_id(id)
+  print(learner)
   answer <- expected_answer(id)
   t <- answer
   t <- paste0(
-    "<span style='color:green'>&#10004;</span>",
-    "Expected: \n",
-    "", format_code(expected),
-    "\n", "Your code: \n",
-    "", format_code(ps_get_learner_answer_by_id(id)),
-    "\n<span style='color:green'>   ", t,
-    "</span>"
+    "<span style='color:green'>&#10004;",
+    " ", t, "</span>\n",
+    "     <i>Your code</i>:",
+    "\n    ", format_code(learner),
+    "\n", "     <i>Expected</i>:",
+    "\n    ", format_code(expected)
   )
   return(t)
 }

@@ -30,7 +30,7 @@ create_ps_from_url <- function(url) {
 # NOTE: system.file is the preferred way to do this, so that the files
 #       are available in the package and while developing the package
 #----------------------------------------------------------------------------#
-load_ps <- function(fn, silent=TRUE) {
+load_ps <- function(fn, silent = TRUE) {
   filename <- system.file("extdata", fn, package = "pinfo201", mustWork = TRUE)
   ps <- read_ps_doc(filename)
   ps$ps_filename <- fn
@@ -68,22 +68,22 @@ trim_comment <- function(s) {
 #----------------------------------------------------------------------------#
 get_var_lhs <- function(s) {
   r <- get_var_name(s)
-  if (length(r)==0) {
+  if (length(r) == 0) {
     return(NULL)
   } else {
-  return(r$lhs)
+    return(r$lhs)
   }
 }
-  # if (is.null(s)) {
-  #   return (NULL)
-  # }
-  # if (str_detect(s, "<-")) {
-  #   p <- str_locate(s, "<-")
-  #   v <- str_trim(str_sub(s, 1, p[1, 1] - 1))
-  #   return(v)
-  # } else {
-  #   return(NULL)
-  # }
+# if (is.null(s)) {
+#   return (NULL)
+# }
+# if (str_detect(s, "<-")) {
+#   p <- str_locate(s, "<-")
+#   v <- str_trim(str_sub(s, 1, p[1, 1] - 1))
+#   return(v)
+# } else {
+#   return(NULL)
+# }
 
 #----------------------------------------------------------------------------#
 # Helper function to update the practice set data structure
@@ -346,7 +346,6 @@ check_ps <- function(ps, silent = FALSE) {
     message(paste0("   From filename: ", ps$ps_filename))
     message(paste0("   Number of prompts: ", N))
     message(paste0("1. Analyzing prompts:"))
-
   }
 
   # Check that all messages have been assigned something
@@ -386,27 +385,24 @@ check_ps <- function(ps, silent = FALSE) {
     var_name <- ps$task_list[[j]]$assignment_var
     if (var_name == "") {
       fixed <- FALSE
-      code <- ps$task_list[[j]]$expected_answer
-      for (k in length(code):1) {
-        t <- code[k]
-        v <- get_var_lhs(t)
-        if (!is.null(v)) {
-          if (!silent) {
-            message(paste0("   [", j, "] @var missing. Added variable: ", v))
-          }
-          ps$task_list[[j]]$assignment_var <- v
-          fixed <- TRUE
-          break
-        }
-      }
-      if (fixed == FALSE) {
+      code <- paste0(ps$task_list[[j]]$expected_answer, collapse = "\n")
+      v <- get_var_lhs(code)
+
+      if (!is.null(v)) {
         if (!silent) {
-          message(paste0("   [", j, "] @var missing: Is prompt a message?"))
-          message(paste0("      Prompt:", ps$task_list[[j]]$prompt_msg))
+          message(paste0("   [", j, "] @var missing. Added variable: ", v))
         }
-        ps$task_list[[j]]$is_note_msg <- TRUE
-        ps$task_list[[j]]$prompt_id <- "-"
+        ps$task_list[[j]]$assignment_var <- v
+        fixed <- TRUE
       }
+    }
+    if (fixed == FALSE) {
+      if (!silent) {
+        message(paste0("   [", j, "] @var missing: Is prompt a message?"))
+        message(paste0("      Prompt:", ps$task_list[[j]]$prompt_msg))
+      }
+      ps$task_list[[j]]$is_note_msg <- TRUE
+      ps$task_list[[j]]$prompt_id <- "-"
     }
   }
 

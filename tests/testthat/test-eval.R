@@ -118,3 +118,29 @@ t <- get_var_name(s)
 test_that("get_var_name", {
   expect_equal(t$lhs, "f3")
 })
+
+s <-
+"
+df4 <- cDF %>%
+  filter(C==TRUE) %>%
+  select(A,C)
+"
+t <- get_var_name(s)
+test_that("get_var_name", {
+  expect_equal(t$lhs, "df4")
+})
+
+s <- "
+df5_f <- function(test) {
+  cDF %>%
+    filter(C==test) %>%
+    select(A,C)
+}
+"
+t <- get_var_name(s)
+test_that("get_var_name", {
+  expect_equal(t$lhs, "df5_f")
+})
+
+
+#testthat::test_file("tests/testthat/test-eval.R")
