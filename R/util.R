@@ -61,7 +61,7 @@ ast_scan <- function(e, s, in_statement = TRUE) {
   lines_true <- c()
   lines_false <- c()
   for (k in 1:length(e)) {
-    if (length(e[[k]]) > 1) {
+    if (length(e[[k]]) > 0) {
       if (as.character(e[[k]][[1]]) %in% s) {
         lines_true <- append(lines_true, k)
       } else {
@@ -91,7 +91,13 @@ ast_get_assignments <- function(e1) {
   line_nums <- ast_scan(e1, "<-", FALSE)
   e2 <- ast_rm(e1,line_nums)
 
+  print(">>>>>>>>>>>>>")
+  print(e2)
+  print(deparse(e2))
+  print(">............")
+
   for(k in 1:length(e2)) {
+    print(k)
     t <- list(r=list(lhs=deparse(e2[[k]][[2]]), rhs=deparse(e2[[k]][[3]]), e=e2[[k]][[3]]))
     result <- append(result,t)
   }
@@ -149,7 +155,7 @@ ast_walk <- function(e, level = 1) {
   cat(paste(t, "walk\n"))
   level <- level + 1
   for (k in 1:length(e)) {
-    walk2(e[[k]], level)
+    ast_walk(e[[k]], level)
   }
   return(TRUE)
 }

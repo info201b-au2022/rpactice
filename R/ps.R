@@ -420,16 +420,17 @@ check_answers <- function() {
   t <- rstudioapi::getSourceEditorContext()
   rstudioapi::documentSave(t$id)
   learner_code <- readLines(rstudioapi::documentPath(t$id))
-  code_lines <- as.list(parse(text=learner_code))
+  learner_assignments <- ast_get_assignments(parse(text=learner_code))
 
   # Get the learner's variables and code
-  for (k in 1:length(code_lines)) {
-    t <- get_var_name2(code_lines[k])
-    #cat(paste0(k, " ", code_lines[k], "\n"), sep="")
-    #cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
-    #cat(paste0("   rhs: ", t$rhs, "\n"), sep="")
-
+  for (k in 1:length(learner_assignments)) {
+    t <- learner_assignments[[k]]
     flatten <- paste0(t$rhs, collapse="\n")
+
+    cat(paste0(k, " ", learner_code[k], "\n"), sep="")
+    cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
+    cat(paste0("   rhs: ", flatten, "\n"), sep="")
+
     ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
   }
   #ps <- ps_get_current()

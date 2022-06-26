@@ -68,7 +68,7 @@ trim_comment <- function(s) {
 #----------------------------------------------------------------------------#
 get_var_lhs <- function(s) {
   t <- paste0(s, collapse = "\n")
-  r <- get_var_name(t)
+  r <- ast_last_assignment(parse(text=t))
   if (length(r) == 0) {
     return(NULL)
   } else {

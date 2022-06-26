@@ -212,6 +212,7 @@ u <- 2; v <-3
 cat(t, u)
 w<- x <- 4
 y<-5
+practice.check()
 "
 e2 <- parse(text=t)
 r <- ast_get_assignments(e2)
