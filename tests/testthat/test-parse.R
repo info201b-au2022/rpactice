@@ -243,25 +243,24 @@ s <-
 #' @title This is a title
 
 # Prompt #1
-#' @id ?
+#' @id a
 #' @code
 t_01 <- 10 + 9 + 8
 #' @end
 
 # Prompt #2
-#' @id ?
+#' @id b
 #' @code
 t_02 <- 10 + 9 + 8 + 7 + 6 + 5
 #' @end
 
 # Prompt #3
-#' @id ?
+#' @id c
 #' @code
 t <- 1 + 4
 s <- t - 10
 t_03 <- 10 + 9 + 8 + 7 + 6 + 5
-print(s)
-print(t_03)
+#print('a')
 #' @end
 "
 t <- str_split(s,"\n")

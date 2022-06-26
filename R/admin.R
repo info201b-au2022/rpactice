@@ -13,7 +13,7 @@ admin <- function() {
   cat("Function                    Purpose\n")
   cat("admin()                     List the current admin functinons.\n")
   cat("admin.check_ps(short)       Check the integrity of a pracitce set file.\n")
-  cat("admin.grade(short, dir)     Grade all the work in the directory (dir) for a practice set (short).")
+  cat("admin.grade(short, dir)     Grade all the work in the directory (dir) for a practice set (short).\n")
   cat("admin.ls()                  List installed practice sets and basic info.\n")
   cat("admin.prompts(short)        List the practice prompts and results.\n")
   cat("admin.vars()                List all the variables that are 'alive'.\n")

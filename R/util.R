@@ -12,8 +12,11 @@
 #             z <- x + 1
 #             return(t)
 #           }"
+
 get_var_name <- function(s) {
-  return(get_var_name2(s))
+    return(get_var_name2(s))
+}
+
   # tryCatch(
   #   expr = {
   #     list_e <- as.list(parse(text = s))
@@ -28,7 +31,6 @@ get_var_name <- function(s) {
   #   }
   # )
   # return(list())
-}
 
 get_var_name2 <- function(e1) {
   tryCatch(
@@ -67,6 +69,10 @@ show_as_string <- function(expressions_v, k) {
   return(deparse(expressions_v[[k]]))
 }
 
+# t <- parse(text="t<-(a+b) / (c+d); print(0); u <- t[(a+b)/(c+d)]")
+# walk2(t)
+# Find all assignments at level-1
+# Choose the last assignment
 walk2 <- function(e, level = 1) {
   t <- str_sub("...............", 1, (level - 1) * 2)
   if (rlang::is_syntactic_literal(e)) {
@@ -74,14 +80,22 @@ walk2 <- function(e, level = 1) {
     return(TRUE)
   } else if (rlang::is_symbol(e)) {
     if (as.character(e) == "<-") {
-      cat(paste0(t, " ", "(<-: '", as.character(e), "')\n"), sep = "")
+      cat(paste0(t, " ", "(Got: '", as.character(e), "')\n"), sep = "")
+      return(TRUE)
+    } else if (as.character(e) == "print") {
+      cat(paste0(t," ", "(Got:", as.character(e), ")\n", sep=""))
+      return(TRUE)
     }
-    level <- level + 1
-    for (k in 1:length(e)) {
-      cat(paste(t, "walk"))
-      walk2(e[[k]], level)
+    else {
+      cat(paste0(t," ", "('", as.character(e), "')\n", sep=""))
+      return(TRUE)
     }
   }
+  cat(paste(t, "walk\n"))
+    level <- level + 1
+    for (k in 1:length(e)) {
+      walk2(e[[k]], level)
+    }
   return(TRUE)
 }
 

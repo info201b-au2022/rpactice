@@ -67,7 +67,8 @@ trim_comment <- function(s) {
 # Need something more robust ...
 #----------------------------------------------------------------------------#
 get_var_lhs <- function(s) {
-  r <- get_var_name(s)
+  t <- paste0(s, collapse = "\n")
+  r <- get_var_name(t)
   if (length(r) == 0) {
     return(NULL)
   } else {
@@ -382,12 +383,11 @@ check_ps <- function(ps, silent = FALSE) {
       next
     }
     # Check for a "good" assignment variable
+
     var_name <- ps$task_list[[j]]$assignment_var
     if (var_name == "") {
       fixed <- FALSE
-      code <- paste0(ps$task_list[[j]]$expected_answer, collapse = "\n")
-      v <- get_var_lhs(code)
-
+      v <- get_var_lhs(ps$task_list[[j]]$expected_answer)
       if (!is.null(v)) {
         if (!silent) {
           message(paste0("   [", j, "] @var missing. Added variable: ", v))
@@ -395,7 +395,7 @@ check_ps <- function(ps, silent = FALSE) {
         ps$task_list[[j]]$assignment_var <- v
         fixed <- TRUE
       }
-    }
+
     if (fixed == FALSE) {
       if (!silent) {
         message(paste0("   [", j, "] @var missing: Is prompt a message?"))
@@ -403,6 +403,7 @@ check_ps <- function(ps, silent = FALSE) {
       }
       ps$task_list[[j]]$is_note_msg <- TRUE
       ps$task_list[[j]]$prompt_id <- "-"
+    }
     }
   }
 

@@ -1,5 +1,5 @@
 
-# testthat::test_file("tests/testthat/test-eval.R")
+#
 
 
 statement <- "t <-1"
@@ -142,5 +142,27 @@ test_that("get_var_name", {
   expect_equal(t$lhs, "df5_f")
 })
 
+s <- "
+# hello:
+t <- 1 + 4
+s <- t - 10
+t_03 <- 10 + 9 + 8 + 7 + 6 + 5
+"
+t <- get_var_name(s)
+test_that("get_var_name", {
+  expect_equal(t$lhs, "t_03")
+})
+
+s <- "
+t <- 1 + 4
+s <- t - 10
+t_03 <- 10 + 9 + 8 + 7 + 6 + 5
+#print(0)
+#print(t_03)
+"
+t <- get_var_name(s)
+test_that("get_var_name", {
+  expect_equal(t$lhs, "t_03")
+})
 
 #testthat::test_file("tests/testthat/test-eval.R")

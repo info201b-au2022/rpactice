@@ -425,15 +425,15 @@ check_answers <- function() {
   # Get the learner's variables and code
   for (k in 1:length(code_lines)) {
     t <- get_var_name2(code_lines[k])
-    cat(paste0(k, " ", code_lines[k], "\n"), sep="")
-    cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
-    cat(paste0("   rhs: ", t$rhs, "\n"), sep="")
+    #cat(paste0(k, " ", code_lines[k], "\n"), sep="")
+    #cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
+    #cat(paste0("   rhs: ", t$rhs, "\n"), sep="")
 
     flatten <- paste0(t$rhs, collapse="\n")
     ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
   }
-  ps <- ps_get_current()
-  print(ps$task_list)
+  #ps <- ps_get_current()
+  #print(ps$task_list)
 
   # Get all of the variable names that need to be checked for correctness
   var_names <- ps_get_live_var_names()
