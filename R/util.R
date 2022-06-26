@@ -1,48 +1,3 @@
-# Variable names ----
-# The function returns the left- and right-hand side of an assignment
-# statement. For parsing errors, the function returns an empty list.
-#
-# In each of these cases, "t" is the lft  (see test-eval.R)
-#    "t <- 1"
-#    "t <- s <- 1"
-#    "s <-1; t <- 1"
-#    "s <-1\n t <- 1"
-#    "t <- function(a,b) {p <- 10; s <-100}"
-#    "t <- { s <- 1}"
-#    "t <- function(x) {
-#             z <- x + 1
-#             return(t)
-#           }"
-#
-# Note: We need to a solution for getting rid of print() and cat()
-#
-
-get_var_name <- function(s) {
-  return(get_var_name2(s))
-}
-
-get_var_name2 <- function(e1) {
-  tryCatch(
-    # Try
-    expr = {
-      if (typeof(e1) == "character") {
-        e1 <- parse(text = e1)
-      }
-      list_e <- as.list(e1)
-      e <- list_e[[length(list_e)]]
-      if (length(e) == 3) {
-        if (as.character(e[[1]]) == "<-") {
-          return(list(lhs = deparse(e[[2]]), rhs = deparse(e[[3]]), rhs_e = e[[3]]))
-        }
-      }
-      # Catch
-    }, error = function(e) {
-      return(list())
-    }
-  )
-  return(list())
-}
-
 # AST functions ----
 # This function returns a vector of the line numbers, where each statement matches
 # a particular function call. It can be used to answer questions such as:
@@ -69,17 +24,16 @@ ast_scan <- function(e, s, in_statement = TRUE) {
       }
     }
   }
-  if (in_statement) return(lines_true) else  return(lines_false)
+  if (in_statement) return(lines_true) else return(lines_false)
 }
 
 # All statements denoted by the line numbers in x will be removed and a
 # new expression will be returned
 ast_rm <- function(e, x) {
   e1 <- list()
-
   for (k in 1:length(e)) {
     if (!(k %in% x)) {
-      e1 <- append(e1, e[k])
+      e1 <- append(e1, e[k])   # Check: Why not [[k]] here?
     }
   }
   return(e1)
@@ -89,17 +43,11 @@ ast_rm <- function(e, x) {
 ast_get_assignments <- function(e1) {
   result <- list()
   line_nums <- ast_scan(e1, "<-", FALSE)
-  e2 <- ast_rm(e1,line_nums)
+  e2 <- ast_rm(e1, line_nums)
 
-  print(">>>>>>>>>>>>>")
-  print(e2)
-  print(deparse(e2))
-  print(">............")
-
-  for(k in 1:length(e2)) {
-    print(k)
-    t <- list(r=list(lhs=deparse(e2[[k]][[2]]), rhs=deparse(e2[[k]][[3]]), e=e2[[k]][[3]]))
-    result <- append(result,t)
+  for (k in 1:length(e2)) {
+    t <- list(r = list(lhs = deparse(e2[[k]][[2]]), rhs = deparse(e2[[k]][[3]]), e = e2[[k]][[3]]))
+    result <- append(result, t)
   }
   return(result)
 }
@@ -108,27 +56,7 @@ ast_get_assignments <- function(e1) {
 ast_last_assignment <- function(e1) {
   r <- ast_get_assignments(e1)
   k <- length(r)
-  if (k != 0)
-    return(r[[k]])
-  else
-    return(list())
-}
-
-ast_test <- function() {
-  t <-
-    "
-t <- 1
-u <- 2; v <-3
-cat(t, u)
-w<- x <- 4
-y<-5
-"
-e <- parse(text=t)
-r <- ast_get_assignments(e)
-print(r)
-
-
-return(TRUE)
+  if (k != 0) return(r[[k]]) else return(list())
 }
 
 # t <- parse(text="t<-(a+b) / (c+d); print(0); u <- t[(a+b)/(c+d)]")
@@ -159,6 +87,24 @@ ast_walk <- function(e, level = 1) {
   }
   return(TRUE)
 }
+
+ast_test <- function() {
+  t <-
+    "
+t <- 1
+u <- 2; v <-3
+cat(t, u)
+w<- x <- 4
+y<-5
+"
+  e <- parse(text = t)
+  r <- ast_get_assignments(e)
+  print(r)
+
+
+  return(TRUE)
+}
+
 
 ast_code <- function() {
   t <- parse(text = "t<-(a+b) / (c+d); print(g(x,b)); cat(10, 'aaa'); print('aa'); u <- t[(a+b)/(c+d)]; print('hello')")

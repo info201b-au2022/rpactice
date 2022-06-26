@@ -406,7 +406,15 @@ DEFAULT_Check <- function(internal_id, result) {
 #     )
 # )
 #----------------------------------------------------------------------------#
-check_answers <- function() {
+
+check_answers_from_ui <- function() {
+  t <- rstudioapi::getSourceEditorContext()
+  rstudioapi::documentSave(t$id)
+  learner_code <- readLines(rstudioapi::documentPath(t$id))
+  return(check_answers(learner_code))
+}
+
+check_answers <- function(learner_code) {
 
   # This structure is used hold feedback on the practice coding prompts.
   practice_result <- list(
@@ -416,25 +424,19 @@ check_answers <- function() {
     message_list = list()
   )
 
-  # Save the file being edited and get the script
-  t <- rstudioapi::getSourceEditorContext()
-  rstudioapi::documentSave(t$id)
-  learner_code <- readLines(rstudioapi::documentPath(t$id))
-  learner_assignments <- ast_get_assignments(parse(text=learner_code))
+  # Process learner code - NOTE: NEED TryCatch() stuff to handle errors
+  learner_assign_ops <- ast_get_assignments(parse(text=learner_code))
 
-  # Get the learner's variables and code
-  for (k in 1:length(learner_assignments)) {
-    t <- learner_assignments[[k]]
+  # Get the learner's variables and code - NOTE: Why flatten here?
+  for (k in 1:length(learner_assign_ops)) {
+    t <- learner_assign_ops[[k]]
     flatten <- paste0(t$rhs, collapse="\n")
-
-    cat(paste0(k, " ", learner_code[k], "\n"), sep="")
-    cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
-    cat(paste0("   rhs: ", flatten, "\n"), sep="")
-
     ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
+
+    # cat(paste0(k, " ", learner_code[k], "\n"), sep="")
+    # cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
+    # cat(paste0("   rhs: ", flatten, "\n"), sep="")
   }
-  #ps <- ps_get_current()
-  #print(ps$task_list)
 
   # Get all of the variable names that need to be checked for correctness
   var_names <- ps_get_live_var_names()
@@ -612,8 +614,6 @@ ps_update_learner_answer <- function(var_name, answer) {
   ps <- pkg.globals$gPRACTICE_SETS[[ps_id]]
 
   id <- ps_var_name_to_id(var_name)
-  print(paste0(id, " ---- ", var_name))
-  print(paste0("",answer))
   if (id > 0) {
     ps$task_list[[id]]$learner_answer <- answer
     pkg.globals$gPRACTICE_SETS[[ps_id]] <- ps
@@ -782,7 +782,7 @@ format_answers <- function() {
 result_good_msg <- function(id) {
   expected <- ps_get_expected_answer(id)
   learner <- ps_get_learner_answer_by_id(id)
-  print(learner)
+  #print(learner)
   answer <- expected_answer(id)
   t <- answer
   t <- paste0(
@@ -877,9 +877,10 @@ format_result <- function(result) {
   return(t)
 }
 
-# A special formatter is needed for instructors and grading
+# A special format for instructors and grading - TBD
 format_grading <- function(results) {
-  return(format_result(results))
+  t <- format_for_html_file(format_result(results))
+  return(t)
 }
 
 
@@ -895,14 +896,19 @@ print_to_console <- function(text) {
   cat(t)
 }
 
+format_for_html_file <- function(text) {
+  t <- "<head></head><body><pre>"
+  t <- paste0(t, text)
+  t <- paste0(t, "</pre></body>")
+  return(t)
+}
+
 print_to_viewer <- function(text, fn) {
   dir <- tempfile()
   dir.create(dir)
   html_file <- file.path(dir, paste0(fn, ".html"))
 
-  t <- "<head></head><body><pre>"
-  t <- paste0(t, text)
-  t <- paste0(t, "</pre></body>")
+  t <- format_for_html_file(text)
 
   write(t, html_file)
   rstudioapi::viewer(html_file, height = 400)

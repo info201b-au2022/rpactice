@@ -6,7 +6,7 @@
 #' Check into length() and sum()
 #' @end
 #' @initial-vars
-X <<- c(1,2,3,4)
+X <- c(1,2,3,4)
 #' @end
 
 #' @id ?

@@ -1,3 +1,4 @@
+# Reading practice sets ----
 #----------------------------------------------------------------------------#
 # These functions are used to read and process practice set input files
 #----------------------------------------------------------------------------#
@@ -16,8 +17,6 @@ create_ps_from_url <- function(url) {
   ps <- check_ps(ps)
   return(ps)
 }
-
-
 
 #----------------------------------------------------------------------------#
 # This function loads practice sets that are "internal" to the package. The
@@ -54,37 +53,21 @@ trim_comment <- function(s) {
 
 #----------------------------------------------------------------------------#
 # Find the variable name on left-hand side of an assignment statement
-# TODO: Test this for odd cases, including:
-#  a <- b <- 1   (Should get "a")
-#  a <- 1; b <- 1 (Should get "b")
-#
-# f3 <- function(x) {   (should be f3 NOT t)
-# t <- x + 1
-# return(t)
-# }
-#
-#
-# Need something more robust ...
 #----------------------------------------------------------------------------#
 get_var_lhs <- function(s) {
+  # s is a vector so turn it into a single string
   t <- paste0(s, collapse = "\n")
-  r <- ast_last_assignment(parse(text=t))
-  if (length(r) == 0) {
-    return(NULL)
-  } else {
-    return(r$lhs)
-  }
+  tryCatch(
+    expr = {
+      e <- parse(text=t)
+      r <- ast_last_assignment(e)
+      if (length(r) == 0) return(NULL) else return(r$lhs)
+    },
+    error = function(e) {
+      return(NULL)
+    }
+  )
 }
-# if (is.null(s)) {
-#   return (NULL)
-# }
-# if (str_detect(s, "<-")) {
-#   p <- str_locate(s, "<-")
-#   v <- str_trim(str_sub(s, 1, p[1, 1] - 1))
-#   return(v)
-# } else {
-#   return(NULL)
-# }
 
 #----------------------------------------------------------------------------#
 # Helper function to update the practice set data structure
@@ -106,7 +89,7 @@ update_list <- function(prompts, id, msg, var, check, code, h) {
 
 # Parsing practice sets ----
 #----------------------------------------------------------------------------#
-# Parse the pactice set document and produce the following structure:
+# Parse the practice set document and produce the following structure:
 #
 # practice_set <- list (
 #   ps_version = <string>
@@ -121,7 +104,7 @@ update_list <- function(prompts, id, msg, var, check, code, h) {
 #        prompt_msg = <string>
 #        assignment_var = <string>
 #        expected_answer = c(<string>, <string>, ...) // lines of code
-#        learner_answer = NULL
+#        learner_answer = NULL  // during checking, filled in with lines of code
 #        hints = c(<string>, <string>, ...)   // list of hints
 #     )
 #   )
@@ -343,7 +326,7 @@ check_ps <- function(ps, silent = FALSE) {
 
   if (!silent) {
     message("\nChecking practice set ... ")
-    message(paste0("   ", ps$ps_short, ":", ps$ps_title))
+    message(paste0("   ", ps$ps_short, ": ", ps$ps_title))
     message(paste0("   From filename: ", ps$ps_filename))
     message(paste0("   Number of prompts: ", N))
     message(paste0("1. Analyzing prompts:"))
@@ -454,7 +437,7 @@ check_ps <- function(ps, silent = FALSE) {
   # If an assignment ID has not been assigned make them up
   if (renumber) {
     if (!silent) {
-      message(paste0("   Found '?' or unassigned prompt ID. Renumbering prompt IDs."))
+      message(paste0("   Found '?' or nothing. Renumbering prompt IDs."))
     }
     new_id <- 1
     for (k in 1:N) {

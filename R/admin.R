@@ -12,8 +12,9 @@
 admin <- function() {
   cat("Function                    Purpose\n")
   cat("admin()                     List the current admin functinons.\n")
-  cat("admin.check_ps(short)       Check the integrity of a pracitce set file.\n")
+  cat("admin.check(short)          Check the integrity of a practice set file.\n")
   cat("admin.grade(short, dir)     Grade all the work in the directory (dir) for a practice set (short).\n")
+  cat("admin.grade_ui(short)       Select directory from ui\n")
   cat("admin.ls()                  List installed practice sets and basic info.\n")
   cat("admin.prompts(short)        List the practice prompts and results.\n")
   cat("admin.vars()                List all the variables that are 'alive'.\n")
@@ -152,7 +153,7 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
       "Practice set: ", short, "\n",
       "Directory:    ", dir, "\n", sep="")
 
-  cat("   ", "\tFilename\tName\t\tSummary\t\t\tWrong Answers(internal ids)\n", sep="")
+  cat("   ", "\tFilename\tName\t\tSummary\t\t\tWrong Answers (internal ids)\n", sep="")
 
   # File names only
   file_names <- list.files(dir, pattern = "*.R")
@@ -182,7 +183,7 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
     )
 
     # Check the answers and get the results
-    result <- check_answers()
+    result <- check_answers(code_v)
     t <-format_grading(result)
 
     # Write grading results

@@ -56,7 +56,7 @@ practice.questions <- function(do_not_show = NULL) {
 #' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
 #' @export
 practice.check <- function() {
-  results <- check_answers()
+  results <-  check_answers_from_ui()
   t <- format_result(results)
   print_output(t, "check")
   return(TRUE)
