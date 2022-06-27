@@ -1,29 +1,32 @@
-# T03: Answers to: Test cases: Functions
-practice.begin("T03")
+# T03: Test cases: Functions
+#    Test statements that return functions (including the @check tag)
+# ---
+practice.begin("T03", learner="[your name]")
 
-# a: Call function that is pre-installed (t01)
+# Initial variables
+g <- function(x) {return(x+1)}
+
+# a: Call the pre-installed function, g(x), with ten. Does this result make sense? (t01)
 t01 <- g(10)  #A: 11
 
-# b: Create a function that squares a number (squared)
+# b: Write a function, named `what_is_pi()`, which returns pi (3.1415). [f()] (what_is_pi)
+what_is_pi <- function() {
+  return(pi)
+}
+# c: Write a function, named `squared` that takes one numeric argument and squares the number. [f(arg1)] (squared)
 squared <- function(arg1) {
   s <- arg1^2
   return(s)
 }
 
-# c: Use the function (t02)
+# d: Use the function, `squared()`, to test that it works for the number 100. (t02)
 t02 <- squared(100)
 
-# d: Test a function with a vector of inputs (f)
-f <- function(arg1) {
-   t <- arg1 + 1
-   return(t)
+# e: Test a function with two arguments - correctness is tested with a callback (see g.T03_Check()) [f(arg1,arg2)] (h)
+h <- function(num, prec) {
+  rounded <- round(num + pi, prec)
+  return(rounded)
 }
-
-# e: Test a function with two arguments - and call a callback function (g)
-  h <- function(num, prec) {
-    rounded <- round(num + pi, prec)
-    return(rounded)
-  }
 
 practice.check()
 

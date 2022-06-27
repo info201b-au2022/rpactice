@@ -61,7 +61,7 @@ df4 <- cDF %>%
 
 #' @id ?
 #' @msg Write a function of filter rows by column C (which can be either FALSE or TRUE)
-#' @check list(f_checks=c(TRUE, FALSE))
+#' @check list(arg1=c(TRUE, FALSE))
 #' @code
 df5_f <- function(test) {
 cDF %>%

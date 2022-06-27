@@ -77,6 +77,9 @@ get_var_lhs <- function(s) {
 # Helper function to update the practice set data structure
 #----------------------------------------------------------------------------#
 update_list <- function(prompts, id, msg, var, check, code, h) {
+
+  # Turn var and assignment_var into a vector
+
   new_prompt <- list(task = list(
     prompt_id = id,
     is_note_msg = FALSE,
@@ -396,7 +399,7 @@ check_ps <- function(ps, silent = FALSE) {
     }
     # Check for a "good" assignment variable
 
-    var_name <- ps$task_list[[j]]$assignment_var
+    var_name <- ps$task_list[[j]]$assignment_var   #TODO: vector?
     if (var_name == "") {
       fixed <- FALSE
       v <- get_var_lhs(ps$task_list[[j]]$expected_answer)
@@ -422,7 +425,7 @@ check_ps <- function(ps, silent = FALSE) {
   # Check that a all variable names are unique - if not unique, try to fix
   var_list <- c()
   for (j in 1:N) {
-    v <- ps$task_list[[j]]$assignment_var
+    v <- ps$task_list[[j]]$assignment_var  #TODO: vector?
     duplicate <- FALSE
     old_v <- v
     if (v != "") {

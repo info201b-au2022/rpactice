@@ -29,8 +29,11 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("P02.R"))
 
   # Freeman & Ross exercises
-  ps_add(load_ps("FR-05-1.R"))
-  ps_add(load_ps("FR-06-1.R"))
+  ps_add(load_ps("DS-5-1.R"))  # Practice with basic R syntax
+  ps_add(load_ps("DS-6-1.R"))  # Calling built-in functions
+  ps_add(load_ps("DS-6-2.R"))  # Using built-in string functions
+  ps_add(load_ps("DS-6-3.R"))  # Writing and executing functions
+  ps_add(load_ps("DS-6-4.R"))  # Functions and conditionals
 
   # Test cases
   ps_add(load_ps("T01.R"))  # Assignment and atomic vectors
@@ -338,6 +341,7 @@ DEFAULT_Check <- function(internal_id, result) {
         print(">> Closure")
       }
 
+
       # Get the values that will be used to check the function
       checks <- ps_get_f_checks(internal_id)
 
@@ -505,28 +509,11 @@ is_callback_loaded <- function(var_name) {
   return(t)
 }
 
-# Prompts ----
+# Check sample data ----
 #----------------------------------------------------------------------------#
 # Functions for accessing information about the practice set
 # Note: id is an internal index
 #----------------------------------------------------------------------------#
-ps_get_prompt_id <- function(id) {
-  ps <- ps_get_current()
-  return(ps$task_list[[id]]$prompt_id)
-}
-
-# This function returns all the expected variables - learners write code
-# to assign values to these variables
-ps_get_all_assignment_vars <- function() {
-  ps <- ps_get_current()
-  vars <- c()
-  for (t in ps$task_list) {
-    if (t$assignment_var != "") {
-      vars <- append(vars, t$assignment_var)
-    }
-  }
-  return(vars)
-}
 
 # The a vector that contains values to check a function with
 # See @checks tag
@@ -552,7 +539,7 @@ ps_get_re_checks <- function (id) {
   t <- ps_get_checks(id)
   if (length(t) == 1) {
     if (cDEBUG) {
-    print(paste0("re: ", t$re))
+      print(paste0("re: ", t$re))
     }
     if (is.null(t$re)) {
       return("")
@@ -569,17 +556,42 @@ ps_get_f_checks <- function (id) {
   t <- ps_get_checks(id)
   if (length(t) == 1) {
     if (cDEBUG) {
-    print(paste0("f_checks: ", t$f_checks))
+      print(paste0("f_checks (arg1): ", t$arg1))
     }
-    if (is.null(t$f_checks)) {
+    if (is.null(t$arg1)) {
       return (c())
     }
     else {
-      return(t$f_checks)
+      return(t$arg1)
     }
   }
   return(c())
 }
+
+# Prompts ----
+#----------------------------------------------------------------------------#
+# Functions for accessing information about the practice set
+# Note: id is an internal index
+#----------------------------------------------------------------------------#
+ps_get_prompt_id <- function(id) {
+  ps <- ps_get_current()
+  return(ps$task_list[[id]]$prompt_id)
+}
+
+# This function returns all the expected variables - learners write code
+# to assign values to these variables
+ps_get_all_assignment_vars <- function() {
+  ps <- ps_get_current()
+  vars <- c()
+  for (t in ps$task_list) {
+    if (t$assignment_var != "") {
+      vars <- append(vars, t$assignment_var)
+    }
+  }
+  return(vars)
+}
+
+
 
 # Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
@@ -738,7 +750,7 @@ format_practice_script <- function(id) {
 
   t <- paste0(
     "# ", ps$ps_short, ": ", ps$ps_title, "\n",
-    "# ", ps$ps_descr, "\n", "",
+    "#   ", str_replace_all(ps$ps_descr, "\n", "\n#   "), "\n", "",
     s,
     "# ---\n",
     "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n\n",

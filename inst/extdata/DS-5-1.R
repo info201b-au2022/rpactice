@@ -1,7 +1,10 @@
 #' @version ps-1
-#' @short FR-05-1
-#' @title Book: 05: Exercise 1: Practice with basic R syntax
+#' @short DS-5-1
+#' @title Practice with basic R syntax
 #' @descr
+#' Exercise 5.1 from Programming Skills for Data Science by
+#' Micheal Freeman and Joel Ross. See:
+#' https://github.com/programming-for-data-science/book-exercises
 #' @end
 #' @initial-vars
 #' @end

@@ -1,7 +1,10 @@
 #' @version ps-1
-#' @short FR-06-1
-#' @title Book: 06: Exercise 1: Calling built-in functions
+#' @short DS-6-1
+#' @title Calling built-in functions
 #' @descr
+#' #' Exercise 6.1 from Programming Skills for Data Science by
+#' Micheal Freeman and Joel Ross. See:
+#' https://github.com/programming-for-data-science/book-exercises
 #' @end
 #' @initial-vars
 #' @end
