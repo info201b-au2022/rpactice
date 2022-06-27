@@ -24,10 +24,6 @@ cPACKAGE_ENVIR_NAME <- "package:pinfo201"
 # here, below the root directory for package development:
 #     inst/extdata/
 ps_load_internal_ps <- function() {
-  # Problem sets   - Somewhat realistic
-  ps_add(load_ps("P01.R"))
-  ps_add(load_ps("P02.R"))
-
   # Freeman & Ross exercises
   ps_add(load_ps("DS-5-1.R")) # Practice with basic R syntax
   ps_add(load_ps("DS-6-1.R")) # Calling built-in functions
@@ -40,6 +36,10 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("T02.R")) # Vectors
   ps_add(load_ps("T03.R")) # Functions
   ps_add(load_ps("T04.R")) # Dataframes
+
+  # Problem sets   - Somewhat realistic
+  ps_add(load_ps("P01.R"))
+  ps_add(load_ps("P02.R"))
 
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))

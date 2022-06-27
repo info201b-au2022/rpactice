@@ -362,8 +362,8 @@ check_tags <- function(t, silent = FALSE) {
       if (str_detect(t[k], "@var ")) {next}
       if (str_detect(t[k], "@version ")) {next}
 
-      message(paste0("Incorrect tag here:\n", t[k]))
-      stop("Check_tags: Being Strict")
+      # message(paste0("Incorrect tag here:\n", t[k]))
+      # stop("Check_tags: Being Strict")
 
       if (!silent) {
         message(paste0("Incorrect tag here:\n", t[k]))
