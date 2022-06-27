@@ -30,7 +30,7 @@ v1 <- X + 10
 #' @id ?
 #' @msg Create a function that squares a number
 #' @var squared
-#' @check c(1, 2, 3, 0, -1, -2, -3, NA)
+#' @check list(f_checks=c(1, 2, 3, 0, -1, -2, -3, NA))
 #' @code
 squared <- function(x) {
   t <- x^2

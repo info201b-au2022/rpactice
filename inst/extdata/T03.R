@@ -17,7 +17,7 @@ t01 <- g(10)  #A: 11
 #' @id ?
 #' @msg Write a function that squares a number
 #' @var squared
-#' @check c(1, 2, 3, 0, -1, -2, -3, NA)
+#' @check list(f_checks=c(1, 2, 3, 0, -1, -2, -3, NA))
 #' @code
 squared <- function(x) {
   t <- x^2

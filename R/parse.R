@@ -59,9 +59,13 @@ get_var_lhs <- function(s) {
   t <- paste0(s, collapse = "\n")
   tryCatch(
     expr = {
-      e <- parse(text=t)
+      e <- parse(text = t)
       r <- ast_last_assignment(e)
-      if (length(r) == 0) return(NULL) else return(r$lhs)
+      if (length(r) == 0) {
+        return(NULL)
+      } else {
+        return(r$lhs)
+      }
     },
     error = function(e) {
       return(NULL)
@@ -248,6 +252,22 @@ parse_ps <- function(t) {
       if (cDEBUG) {
         print(paste0("msg: ", msg))
       }
+      k <- k + 1
+      # Keep reading until we get to end or until @code or @id
+      while (k < length(t)) {
+        if (str_detect(t[k], "^#' @end")) {
+          break
+        }
+        if (str_detect(t[k], "^#' @code") ||
+            str_detect(t[k], "^#' @id") ||
+            str_detect(t[k], "^#' @check") ||
+            str_detect(t[k], "^#' @var")) {
+          k <- k - 1  # push the line back, so we can process this chunk on the next loop
+          break
+        }
+        msg <- paste0(msg, "\n", t[k])
+        k <- k + 1
+      }
 
       # Found the name of the variable for this prompt
     } else if (str_detect(t[k], "#' @var")) {
@@ -339,6 +359,12 @@ check_ps <- function(ps, silent = FALSE) {
     }
   }
 
+  # Remove R comments
+  for (k in 1:N) {
+    ps$task_list[[k]]$prompt_msg <-
+      str_replace_all(ps$task_list[[k]]$prompt_msg, "^#' ", "")
+  }
+
   # Check that the expected answer has some code
   for (k in 1:N) {
     if (length(ps$task_list[[k]]$expected_answer) == 0) {
@@ -379,14 +405,14 @@ check_ps <- function(ps, silent = FALSE) {
         fixed <- TRUE
       }
 
-    if (fixed == FALSE) {
-      if (!silent) {
-        message(paste0("   [", j, "] @var missing: Is prompt a message?"))
-        message(paste0("      Prompt:", ps$task_list[[j]]$prompt_msg))
+      if (fixed == FALSE) {
+        if (!silent) {
+          message(paste0("   [", j, "] @var missing: Is prompt a message?"))
+          message(paste0("      Prompt:", ps$task_list[[j]]$prompt_msg))
+        }
+        ps$task_list[[j]]$is_note_msg <- TRUE
+        ps$task_list[[j]]$prompt_id <- "-"
       }
-      ps$task_list[[j]]$is_note_msg <- TRUE
-      ps$task_list[[j]]$prompt_id <- "-"
-    }
     }
   }
 
@@ -450,6 +476,35 @@ check_ps <- function(ps, silent = FALSE) {
         }
         new_id <- new_id + 1
       }
+    }
+  }
+
+  if (!silent) {
+    message(paste0("3. Checking the checks:"))
+  }
+
+  for (k in 1:N) {
+    t <- ps$task_list[[k]]$checks_for_f
+
+    if (is.null(t)) {
+      ps$task_list[[k]]$checks_for_f <- ""
+    }
+
+    if (ps$task_list[[k]]$checks_for_f != "") {
+      tryCatch(
+        expr = {
+          e <- parse(text = ps$task_list[[k]]$checks_for_f)
+          if (!silent) {
+          message(paste0("   [", k, "] Checking: ", ps$task_list[[k]]$checks_for_f), " Good!")
+          }
+        },
+        error = function(e) {
+          if (!silent) {
+          message(paste0("   [", k, "] Syntax error: ", ps$task_list[[k]]$checks_for_f))
+          }
+          stop(paste0("   [", k, "] Syntax error: ", ps$task_list[[k]]$checks_for_f))
+        }
+      )
     }
   }
 

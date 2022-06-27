@@ -28,6 +28,10 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("P01.R"))
   ps_add(load_ps("P02.R"))
 
+  # Freeman & Ross exercises
+  ps_add(load_ps("FR-05-1.R"))
+  ps_add(load_ps("FR-06-1.R"))
+
   # Test cases
   ps_add(load_ps("T01.R"))  # Assignment and atomic vectors
   ps_add(load_ps("T02.R"))  # Vectors
@@ -299,7 +303,17 @@ DEFAULT_Check <- function(internal_id, result) {
           print(">> Atomic")
         }
 
-        if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
+        # Check for a regular expression
+        re <- ps_get_re_checks(internal_id)
+        good <- FALSE
+        if (re != "") {
+          good <- str_detect(learner_val, re)
+        }
+        else {
+          good <- identical(learner_val, expected_val, ignore.environment = TRUE)
+        }
+
+        if (good == TRUE) {
           result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
         } else {
           result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
@@ -325,7 +339,7 @@ DEFAULT_Check <- function(internal_id, result) {
       }
 
       # Get the values that will be used to check the function
-      checks <- ps_get_checks(internal_id)
+      checks <- ps_get_f_checks(internal_id)
 
       if (cDEBUG) {
         if (length(checks) == 0) {
@@ -520,10 +534,48 @@ ps_get_checks <- function(id) {
   v <- c()
   ps <- ps_get_current()
   checks <- ps$task_list[[id]]$checks_for_f
+  print(paste0("ps_get_checks: ", checks))
   if (checks != "") {
-    v <- eval(parse(text = checks))
+    tryCatch(
+      expr = {
+        v <- eval(parse(text = checks))
+      },
+      error = function(e) {
+        v <- c()
+      }
+    )
   }
   return(v)
+}
+
+# Try to get the Regular Expression for checking
+ps_get_re_checks <- function (id) {
+  t <- ps_get_checks(id)
+  if (length(t) == 1) {
+    print(paste0("re: ", t$re))
+    if (is.null(t$re)) {
+      return("")
+    }
+    else {
+      return(t$re)
+    }
+  }
+  return("")
+}
+
+# Try to get the list of function input tests
+ps_get_f_checks <- function (id) {
+  t <- ps_get_checks(id)
+  if (length(t) == 1) {
+    print(paste0("f_checks: ", t$f_checks))
+    if (is.null(t$f_checks)) {
+      return (c())
+    }
+    else {
+      return(t$f_checks)
+    }
+  }
+  return(c())
 }
 
 # Determine the assignment variables that a learner has initialized
@@ -673,16 +725,21 @@ format_practice_script <- function(id) {
 
   s <- ""
 
-  lines_of_code <- paste0(cTAB_IN_SPACES, get_env_vars(), collapse="\n")
+  lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, get_env_vars(), collapse="\n"))
+  t_lines_of_code <- ""
+  if (lines_of_code != "") {
+    t_lines_of_code <- paste0(
+    "# Initial variables\n",
+    lines_of_code, "\n\n")
+  }
 
   t <- paste0(
     "# ", ps$ps_short, ": ", ps$ps_title, "\n",
-    "# ", str_replace_all(ps$ps_descr, "\n", "\n# "), "\n",
+    "# ", str_replace_all(ps$ps_descr, "\n", "\n# "), "",
     s,
     "# ---\n",
     "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n",
-    "# Initial variables\n",
-    lines_of_code, "\n",
+    t_lines_of_code,
     t,
     "practice.check()\n"
   )

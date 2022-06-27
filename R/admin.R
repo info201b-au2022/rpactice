@@ -112,7 +112,7 @@ admin.vars <- function() {
   v <- ps_get_live_var_names()
   cat("Live variables: ", "\n", sep = "")
   for (k in 1:length(v)) {
-    cat("   ", k, ":[", v[k], "]:\t", sep = "")
+    cat("   ", k, ":[", v[k], "]:\t",  sep = "")
     cat("\n")
   }
   cat("Number: ", length(v), "\n")

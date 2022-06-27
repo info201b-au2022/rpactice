@@ -26,3 +26,4 @@ f <- function(arg1) {
   }
 
 practice.check()
+

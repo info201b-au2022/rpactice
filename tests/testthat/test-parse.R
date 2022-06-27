@@ -814,7 +814,7 @@ s =
 "
 #' @id a
 #' @msg A  function
-#' @check c(1, 1000, 10, 0, -1, NA)
+#' @check list(f_checks=c(1, 1000, 10, 0, -1, NA))
 #' @var f1
 #' @code
 function(x) {
@@ -825,7 +825,7 @@ function(x) {
 
 #' @id b
 #' @msg A  function
-#' @check c()
+#' @check list()
 #' @var f2
 #' @code
 function(x) {
@@ -852,9 +852,9 @@ ps <- check_ps(ps)
 
 test_that("parse_ps - @check input for functions", {
   expect_equal(ps$task_list[[1]]$prompt_id,"a")
-  expect_equal(ps$task_list[[1]]$checks_for_f,"c(1, 1000, 10, 0, -1, NA)")
+  expect_equal(ps$task_list[[1]]$checks_for_f,"list(f_checks=c(1, 1000, 10, 0, -1, NA))")
   expect_equal(ps$task_list[[2]]$prompt_id,"b")
-  expect_equal(ps$task_list[[2]]$checks_for_f,"c()")
+  expect_equal(ps$task_list[[2]]$checks_for_f,"list()")
   expect_equal(ps$task_list[[3]]$prompt_id,"c")
   expect_equal(ps$task_list[[3]]$checks_for_f,"")
 })
