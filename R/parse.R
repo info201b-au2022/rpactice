@@ -361,8 +361,11 @@ check_ps <- function(ps, silent = FALSE) {
 
   # Remove R comments
   for (k in 1:N) {
+    ps$task_list[[k]]$prompt_msg <- str_trim(
+      str_replace_all(ps$task_list[[k]]$prompt_msg, "#'", ""))
+
     ps$task_list[[k]]$prompt_msg <-
-      str_replace_all(ps$task_list[[k]]$prompt_msg, "^#' ", "")
+      str_replace(ps$task_list[[k]]$prompt_msg, "^\n", "")
   }
 
   # Check that the expected answer has some code

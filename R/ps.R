@@ -735,10 +735,10 @@ format_practice_script <- function(id) {
 
   t <- paste0(
     "# ", ps$ps_short, ": ", ps$ps_title, "\n",
-    "# ", str_replace_all(ps$ps_descr, "\n", "\n# "), "",
+    "# ", ps$ps_descr, "\n", "",
     s,
     "# ---\n",
-    "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n",
+    "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n\n",
     t_lines_of_code,
     t,
     "practice.check()\n"
