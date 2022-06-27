@@ -2,7 +2,7 @@
 #' @version ps-1
 #' @short P03
 #' @title Using vectors and basic functions
-#' @pdescr
+#' @descr
 #' Check into length() and sum()
 #' @end
 #' @initial-vars

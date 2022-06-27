@@ -39,10 +39,17 @@ squared <- function(x) {
 t02 <- squared(100)
 #' @end
 
-#'
-#' #' @id ?
-#' @msg Test a function with two arguments - correctness is tested with a callback (see g.T03_Check()) [f(arg1,arg2)]
-#' @var h
+#' @id ?
+#' @msg A function with two parameters
+#' @check list(arg1=c("aaa", "bbb", "ccc"), arg2=c("xxx", "aaa", "zzz"))
+#' @code
+f1 <- function(arg_one, arg_two) {
+  return (arg_one == arg_two)
+}
+#' @end
+
+#' @id ?
+#' @msg Callback: Test a function with two arguments - correctness is tested with a callback (see g.T03_Check()) [f(arg1,arg2)]
 #' @code
 h <- function(arg1, precision) {
   t <- round(arg1 + pi, precision)

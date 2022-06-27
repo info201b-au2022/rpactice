@@ -13,6 +13,8 @@
 #' @msg
 #' Define a function `add_three` that takes a single argument and
 #' returns a value 3 greater than the input.
+#' @end
+#' @check list(arg1=c(-10,0,10,NA))
 #' @code
 add_three <- function(value) {
    value + 3 # return the result
@@ -21,18 +23,19 @@ add_three <- function(value) {
 
 #' @id ?
 #' @msg
-#' Create a variable `ten` that is the result of passing 7 to your `add_three`
-#' function.
+#' Create a variable `ten` that is the result of passing 7 to your `add_three` function.
+#' @end
 #' @code
 ten <- add_three(7)
 #' @end
-
 
 #' @id ?
 #' @msg
 #' Define a function `imperial_to_metric` that takes in two arguments: a number
 #' of feet and a number of inches. The function should return the equivalent
 #' length in meters.
+#' @end
+#' @check list(arg1=c(4,5,100,0,NA), arg2=c(0,1,1.5,12.0,24))
 #' @code
 imperial_to_metric <- function(feet, inches) {
    total_inches <- feet * 12 + inches
@@ -44,9 +47,10 @@ imperial_to_metric <- function(feet, inches) {
 #' @id ?
 #' @msg
 #' Create a variable `height_in_meters` by passing your height in imperial to the
-#' `imperial_to_metric` function.
+#' `imperial_to_metric` function. For testing, assuming you are 5 feet 8 inches tall.
+#' @end
 #' @code
-height_in_meters <- imperial_to_metric(5, 11)
+height_in_meters <- imperial_to_metric(5, 8)
 #' @end
 
 

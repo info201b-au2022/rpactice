@@ -16,6 +16,7 @@
 #' than or equal to twice the length of the other.
 #' Hint: compare the length difference to the length of the smaller string
 #' @end
+#' @check list(arg1=c("12", "1234"), arg2=c("12345","12"))
 #' @code
 is_twice_as_long <- function(str1, str2) {
   diff <- abs(nchar(str1) - nchar(str2))
@@ -30,8 +31,6 @@ is_twice_as_long <- function(str1, str2) {
 #' to confirm that it works. Make sure to check when _either_ argument is twice
 #' as long, as well as when neither are!
 #' @end
-#' @code
-#' @end
 
 #' @id ?
 #' @msg
@@ -41,6 +40,7 @@ is_twice_as_long <- function(str1, str2) {
 #'   "Your second string is longer by N characters"
 #'   "Your strings are the same length!"
 #' @end
+#' @check list(arg1=c("dog", "elephant", "cat"), arg2=c("dog", "elephant", "cat"))
 #' @code
 describe_difference <- function(first, second) {
 diff <- nchar(first) - nchar(second)

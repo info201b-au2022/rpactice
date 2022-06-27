@@ -22,7 +22,12 @@ squared <- function(arg1) {
 # d: Use the function, `squared()`, to test that it works for the number 100. (t02)
 t02 <- squared(100)
 
-# e: Test a function with two arguments - correctness is tested with a callback (see g.T03_Check()) [f(arg1,arg2)] (h)
+# e: xxx
+f1 <- function(p1, p2) {
+  return (p1 == p2)
+}
+
+# f: Test a function with two arguments - correctness is tested with a callback (see g.T03_Check()) [f(arg1,arg2)] (h)
 h <- function(num, prec) {
   rounded <- round(num + pi, prec)
   return(rounded)

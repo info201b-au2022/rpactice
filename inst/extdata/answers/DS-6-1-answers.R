@@ -1,7 +1,7 @@
 # FR-06-1: Book: 06: Exercise 1: Calling built-in functions
 #
 # ---
-practice.begin("FR-06-1", learner="[your name]")
+practice.begin("DS-6-1", learner="[your name]")
 
 # a: Create a variable `my_name` that contains "Grace Hopper", a brilliant computer scientists. (my_name)
 my_name <- "Grace Hopper"

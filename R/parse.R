@@ -120,6 +120,8 @@ update_list <- function(prompts, id, msg, var, check, code, h) {
 parse_ps <- function(t) {
   cDEBUG <- FALSE
 
+  check_tags(t,TRUE)
+
   if (cDEBUG) {
     print(t)
   }
@@ -335,6 +337,39 @@ parse_ps <- function(t) {
   }
 
   return(ps)
+}
+
+check_tags <- function(t, silent = FALSE) {
+
+  if (!silent) {
+    message("\nChecking tags ... ")
+  }
+
+  for (k in 1:length(t)) {
+
+    if (str_detect(t[k], "^#' @") ) {
+      if (str_detect(t[k], "@check ")) {next}
+      if (str_detect(t[k], "@code")) {next}
+      if (str_detect(t[k], "@descr")) {next}
+      if (str_detect(t[k], "@end")) {next}
+      if (str_detect(t[k], "@id ")) {next}
+      if (str_detect(t[k], "@msg ")) {next}
+      if (str_detect(t[k], "@msg")) {next}
+      if (str_detect(t[k], "@initial-vars")) {next}
+      if (str_detect(t[k], "@hints")) {next}
+      if (str_detect(t[k], "@short ")) {next}
+      if (str_detect(t[k], "@title ")) {next}
+      if (str_detect(t[k], "@var ")) {next}
+      if (str_detect(t[k], "@version ")) {next}
+
+      message(paste0("Incorrect tag here:\n", t[k]))
+      stop("Check_tags: Being Strict")
+
+      if (!silent) {
+        message(paste0("Incorrect tag here:\n", t[k]))
+      }
+    }
+  }
 }
 
 #----------------------------------------------------------------------------#

@@ -35,8 +35,7 @@ intro <- substr(lyric,1,13)
 #' determine how many total letters there are!)
 #' @end
 #' @code
-len <- nchar(lyric)
-fruits <- substr(1,len)
+fruits <- substr(lyric,15,nchar(lyric))
 #' @end
 
 #' @id ?

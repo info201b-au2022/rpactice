@@ -29,17 +29,17 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("P02.R"))
 
   # Freeman & Ross exercises
-  ps_add(load_ps("DS-5-1.R"))  # Practice with basic R syntax
-  ps_add(load_ps("DS-6-1.R"))  # Calling built-in functions
-  ps_add(load_ps("DS-6-2.R"))  # Using built-in string functions
-  ps_add(load_ps("DS-6-3.R"))  # Writing and executing functions
-  ps_add(load_ps("DS-6-4.R"))  # Functions and conditionals
+  ps_add(load_ps("DS-5-1.R")) # Practice with basic R syntax
+  ps_add(load_ps("DS-6-1.R")) # Calling built-in functions
+  ps_add(load_ps("DS-6-2.R")) # Using built-in string functions
+  ps_add(load_ps("DS-6-3.R")) # Writing and executing functions
+  ps_add(load_ps("DS-6-4.R")) # Functions and conditionals
 
   # Test cases
-  ps_add(load_ps("T01.R"))  # Assignment and atomic vectors
-  ps_add(load_ps("T02.R"))  # Vectors
-  ps_add(load_ps("T03.R"))  # Functions
-  ps_add(load_ps("T04.R"))  # Dataframes
+  ps_add(load_ps("T01.R")) # Assignment and atomic vectors
+  ps_add(load_ps("T02.R")) # Vectors
+  ps_add(load_ps("T03.R")) # Functions
+  ps_add(load_ps("T04.R")) # Dataframes
 
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
@@ -156,11 +156,10 @@ set_env_vars <- function() {
   t <- lapply(ps$ps_initial_vars, set_initial_vars_doit)
 }
 
-get_env_vars <- function(short="") {
+get_env_vars <- function(short = "") {
   if (short == "") {
     ps <- ps_get_current()
-  }
-  else {
+  } else {
     ps <- ps_get_by_short(short)
   }
   return(ps$ps_initial_vars)
@@ -203,7 +202,7 @@ eval_string_and_format <- function(code) {
       if (length(result$value) == 1) {
         return(paste0("atomic: ", as.character(result$value)))
 
-      # Vector type
+        # Vector type
       } else {
         t <- paste0(result$value, collapse = " ")
         return(paste0("vector: ", t))
@@ -235,7 +234,7 @@ eval_string_and_format <- function(code) {
   } else {
     message("\nERROR: eval_string_and_format:\n", result$error)
     e <- str_replace_all(result$error[1], "\n", " ")
-    t <- paste0("Error: ", e )
+    t <- paste0("Error: ", e)
     return(t)
   }
 }
@@ -311,8 +310,7 @@ DEFAULT_Check <- function(internal_id, result) {
         good <- FALSE
         if (re != "") {
           good <- str_detect(learner_val, re)
-        }
-        else {
+        } else {
           good <- identical(learner_val, expected_val, ignore.environment = TRUE)
         }
 
@@ -341,35 +339,121 @@ DEFAULT_Check <- function(internal_id, result) {
         print(">> Closure")
       }
 
+      # print("Closure Learner ......")
+      # if(is.null(f)) {
+      #   print("FUNC: Zero parameter")
+      # } else if (length(f) == 1) {
+      #   print(paste0("FUNC: One paramter: ", f[1]))
+      # } else if (length(f) == 2) {
+      #   print(paste0("FUNC: Two paramters: ", f[1], " - ", f[2]))
+      # }
+      # print("Closure .............")
 
-      # Get the values that will be used to check the function
-      checks <- ps_get_f_checks(internal_id)
-
-      if (cDEBUG) {
-        if (length(checks) == 0) {
-          print("No checks")
-        } else {
-          t <- paste0(checks, collapse = " ")
-          print(paste0("Checks: ", t))
-        }
-      }
-
-      # Call the learner's function on each of the checks
-      learner_f_answers <- do.call(learner_result$scode, list(checks))
+      learner_formals <- names(formals(learner_result$scode))
 
       expected_code <- ps_get_expected_answer(internal_id)
       expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
-      expected_f_answers <- do.call(expected_function, list(checks))
+      expected_formals <- names(formals(expected_function))
 
-      if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
-        result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-      } else {
-        result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+      # Check that the function signatures are okay
+      signature_ok <- TRUE
+      if (is.null(learner_formals) && !is.null(expected_formals)) {
+        signature_ok <- FALSE
+      }
+      if (signature_ok) {
+        if (length(learner_formals) != length(expected_formals)) {
+          signature_ok <- FALSE
+        }
       }
 
-    # Check for dataframe
-    } else if (learner_result$type == "dataframe") {
+      # If the number of parameters differ from expected - not error message
+      if (signature_ok == FALSE) {
+        t <- result_main_message(result_error_msg(internal_id, TRUE))
+        t <- result_sub_message(t, "Check the number of arguments in your function")
+        result <- result_update(result, internal_id, FALSE, t)
+        return(result)
+      }
 
+      # A function with ZERO parameters
+      if (length(learner_formals) == 0) {
+        learner_f_answers <- do.call(learner_result$scode, list())
+        expected_f_answers <- do.call(expected_function, list())
+
+        if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
+          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+        } else {
+          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+        }
+        return(result)
+
+        # A function with ONE parameter
+      } else if (length(learner_formals) == 1) {
+        checks <- ps_get_arg1_checks(internal_id)
+        learner_f_answers <- do.call(learner_result$scode, list(checks))
+        expected_f_answers <- do.call(expected_function, list(checks))
+
+        if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
+          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+        } else {
+          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+        }
+        return(result)
+
+        # A function with TWO parameters
+      } else if (length(learner_formals) == 2) {
+        checks_arg1 <- ps_get_arg1_checks(internal_id)
+        checks_arg2 <- ps_get_arg2_checks(internal_id)
+
+        learner_answers <- c()
+        expected_answers <- c()
+        for (k in 1:length(checks_arg2)) {
+          t1 <- do.call(learner_result$scode, list(checks_arg1,checks_arg2[k]))
+          t2 <- do.call(expected_function, list(checks_arg1, checks_arg2[k]))
+
+          learner_answers <- append(learner_answers,t1)
+          expected_answers <- append(expected_answers,t2)
+        }
+
+        if (identical(learner_answers, expected_answers, ignore.environment = TRUE) == TRUE) {
+          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+        } else {
+          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+        }
+        return(result)
+
+        # A function with more than TWO parameters
+      } else {
+        t <- result_prompt_error(internal_id, "Practice Set Error: To many function parameters.")
+        result <- result_update(result, internal_id, FALSE, t)
+        return(result)
+      }
+
+
+      #
+      #       if (cDEBUG) {
+      #         if (length(checks) == 0) {
+      #           print("No checks")
+      #         } else {
+      #           t <- paste0(checks, collapse = " ")
+      #           print(paste0("Checks: ", t))
+      #         }
+      #       }
+      #
+      #       # Call the learner's function on each of the checks
+      #       learner_f_answers <- do.call(learner_result$scode, list(checks))
+      #
+      #       expected_code <- ps_get_expected_answer(internal_id)
+      #       expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
+      #       expected_f_answers <- do.call(expected_function, list(checks))
+      #
+      #       if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
+      #         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+      #       } else {
+      #         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+      #       }
+
+      # Check for dataframe
+    } else if (learner_result$type == "dataframe") {
       learner_val <- learner_result$value
 
       expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
@@ -380,7 +464,6 @@ DEFAULT_Check <- function(internal_id, result) {
       } else {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
       }
-
     } else {
       if (cDEBUG) {
         print(">> Type not handled")
@@ -437,12 +520,12 @@ check_answers <- function(learner_code) {
   )
 
   # Process learner code - NOTE: NEED TryCatch() stuff to handle errors
-  learner_assign_ops <- ast_get_assignments(parse(text=learner_code))
+  learner_assign_ops <- ast_get_assignments(parse(text = learner_code))
 
   # Get the learner's variables and code - NOTE: Why flatten here?
   for (k in 1:length(learner_assign_ops)) {
     t <- learner_assign_ops[[k]]
-    flatten <- paste0(t$rhs, collapse="\n")
+    flatten <- paste0(t$rhs, collapse = "\n")
     ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
 
     # cat(paste0(k, " ", learner_code[k], "\n"), sep="")
@@ -535,7 +618,7 @@ ps_get_checks <- function(id) {
 }
 
 # Try to get the Regular Expression for checking
-ps_get_re_checks <- function (id) {
+ps_get_re_checks <- function(id) {
   t <- ps_get_checks(id)
   if (length(t) == 1) {
     if (cDEBUG) {
@@ -543,8 +626,7 @@ ps_get_re_checks <- function (id) {
     }
     if (is.null(t$re)) {
       return("")
-    }
-    else {
+    } else {
       return(t$re)
     }
   }
@@ -552,17 +634,32 @@ ps_get_re_checks <- function (id) {
 }
 
 # Try to get the list of function input tests
-ps_get_f_checks <- function (id) {
+ps_get_arg1_checks <- function(id) {
   t <- ps_get_checks(id)
-  if (length(t) == 1) {
+  if (length(t) > 1) {
     if (cDEBUG) {
       print(paste0("f_checks (arg1): ", t$arg1))
     }
     if (is.null(t$arg1)) {
-      return (c())
-    }
-    else {
+      return(c())
+    } else {
       return(t$arg1)
+    }
+  }
+  return(c())
+}
+
+# Try to get the list of function input tests
+ps_get_arg2_checks <- function(id) {
+  t <- ps_get_checks(id)
+  if (length(t) == 2) {
+    if (cDEBUG) {
+      print(paste0("f_checks (arg2): ", t$arg2))
+    }
+    if (is.null(t$arg2)) {
+      return(c())
+    } else {
+      return(t$arg2)
     }
   }
   return(c())
@@ -740,12 +837,13 @@ format_practice_script <- function(id) {
 
   s <- ""
 
-  lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, get_env_vars(), collapse="\n"))
+  lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, get_env_vars(), collapse = "\n"))
   t_lines_of_code <- ""
   if (lines_of_code != "") {
     t_lines_of_code <- paste0(
-    "# Initial variables\n",
-    lines_of_code, "\n\n")
+      "# Initial variables\n",
+      lines_of_code, "\n\n"
+    )
   }
 
   t <- paste0(
@@ -850,7 +948,7 @@ format_answers <- function() {
 result_good_msg <- function(id) {
   expected <- ps_get_expected_answer(id)
   learner <- ps_get_learner_answer_by_id(id)
-  #print(learner)
+  # print(learner)
   answer <- expected_answer(id)
   t <- answer
   t <- paste0(
@@ -899,12 +997,12 @@ result_update <- function(result, id, is_correct, text) {
 
   result$message_list <- append(
     result$message_list,
-    list( message = list(
+    list(message = list(
       internal_id = id,
       prompt_id = ps_get_prompt_id(id),
       correct = is_correct,
-      msg_text = text)
-      )
+      msg_text = text
+    ))
   )
 
   return(result)
@@ -919,10 +1017,10 @@ format_result <- function(result) {
 
   t <- ""
   t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n", ps$ps_descr, "\n")
-  t <- paste0(t,"Learner name:\n<i>   ", result$user_name, "</i>" )
+  t <- paste0(t, "Learner name:\n<i>   ", result$user_name, "</i>")
   t <- paste0(t, "\n")
 
-  lines_of_code <- paste0(cTAB_IN_SPACES, get_env_vars(), collapse="\n")
+  lines_of_code <- paste0(cTAB_IN_SPACES, get_env_vars(), collapse = "\n")
   t <- paste0(t, paste0("Initial variables:\n", lines_of_code, "\n"))
 
   t <- paste0(t, "Checking code:\n   ", num_correct, "/", total, " complete.")
