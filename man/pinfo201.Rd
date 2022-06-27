@@ -18,7 +18,7 @@ for grading student work.
 \section{Practice sets}{
  The key idea is that an instructor creates a practice
   set, which comprises prompts, expected answers, and hints. Once \code{pinfo201} is
-  installed, practice sets can be loaded into RStudio and controlled with
+  installed, practice sets are loaded into RStudio and can be controlled with
   four Addin menu options:
   \itemize{
   \item 1. Begin Practice
@@ -30,10 +30,9 @@ for grading student work.
   They write code for one or more of the prompts. Then, the learner's code
   can be checked against the expected code
   (\code{3. Check Answers}). When the learner's answer differs from the expected
-  answer, zero or more hints are shown. Learners can also ask for the answers
-  to be shown (\code{4. Show Answers}).
+  answer, zero or more hints are shown.
 
-  Practice sets are written in \code{.R} files, with tagged comments.  Below
+  Instructors write practice sets in in \code{.R} files, with tagged comments.  Below
   is a practice set with four illustrative prompts:
 
   \preformatted{
@@ -89,27 +88,38 @@ for grading student work.
   #' @msg Next: Consider reading up on built-in mathematical functions.
 
 }
-Practice sets have a title and an unique identifier (\code{short}), which
-  is a short form for referring to a practice set. Optionally, one or more
-  variables can be initialized with the \code{initial-vars} tag. The idea is
-  that the prompts can require learners to use those variables. As can be seen
-  in the example, you can can also load any required libraries.
+Practice sets have a title and an unique identifier (\code{short}), which is
+a short form for referring to a practice set. Optionally, one or more
+variables can be initialized with the \code{initial-vars} tag. The idea is
+that the prompts can require learners to use those variables. As can be seen
+in the example, you can can also load any required libraries.
 
   The prompts comprise a unique ID, a message (the prompt), the expected answer,
   and a list of hints. If an \code{id} is "?" a set of unique IDs will be automatically
   generated, which simplifies the development of prompts. If an \code{id}
   is a dash ("-"), a message is formatted. This is a simple method for
-  organizing for guiding students through the prompts.
+  guiding students through the prompts.
 
   In addition, the \code{@checks} tag (see prompt id "c")
   can be used to check the implementation of a function. More complex function
   checking is possible by implementing prompt-specific callback functions (see below).
 
-  When a practice set consists of the correct answers to an assigned
-  problem set, \code{pinfo201} becomes an auto-grader, for helping teaching assistants
-  grade. Administrative functions are provided for this work.
+  That's it.
 
-   That's it.
+  #' @section Auto-grading:
+
+  Practice sets contain the correct answers to prompts.  Thus, if the practice set
+  is a graded assignment, \code{pinfo201} can be used to automatically grade the
+  assignment. Administrative functions are provided for this work - for example, this
+  function will grade all assignments, named \code{short}, that are located in the
+  directory, \code{dir}. Currently, the output is one html file for each assignment,
+  summarizing all correct and incorrect problems.
+
+  \preformatted{
+  admin.grade(short, dir)
+  }
+
+  Other admin functions are used to assist in the development of practice sets.
 }
 
 \section{What can be evaluated?}{
@@ -118,10 +128,10 @@ Practice sets have a title and an unique identifier (\code{short}), which
 Currently, \code{pinfo201} can evaluate statements with the following result types:
 \itemize{
 \item Special constants (NULL, NA, Inf, -Inf, and NaN)
-\item Atomic vectors (logical, integer, real, string)
-\item Vectors greater than length 1 (comprising logical, integer, real, and string types)
+\item Atomic vectors (logical, integer, real, complex, string)
+\item Vectors greater than length 1 (comprising logical, integer, real, complex, and string types)
 \item Data frames
-\item Functions  (functions with one argument can be automatically checked with @checks tag)
+\item Functions  (functions with one argument can be automatically checked with the @checks tag)
 }
 }
 
@@ -131,8 +141,7 @@ Currently, \code{pinfo201} can evaluate statements with the following result typ
 We plan to build in robust default approaches for evaluating expressions and giving
 learners feedback. To do so, we are currently exploring how to structure
 this package. At present, the framework can be extended with prompt-specific callback functions
-for checking a learner's code by, for example, examining the
-the abstract syntax trees of learners' code submissions. This is the current structure of
+for checking a learner's code by. This is the current structure of
 the checking callbacks:
 
 \preformatted{
@@ -140,7 +149,7 @@ the checking callbacks:
     learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
     expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
 
-    # Analyze learner's code (with an abstract syntax tree) and add feedback
+    # Analyze learner's code (e.g., with an abstract syntax tree) and add feedback
     # to the result
     #     add.message(result, message)
 

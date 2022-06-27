@@ -534,7 +534,6 @@ ps_get_checks <- function(id) {
   v <- c()
   ps <- ps_get_current()
   checks <- ps$task_list[[id]]$checks_for_f
-  print(paste0("ps_get_checks: ", checks))
   if (checks != "") {
     tryCatch(
       expr = {
@@ -552,7 +551,9 @@ ps_get_checks <- function(id) {
 ps_get_re_checks <- function (id) {
   t <- ps_get_checks(id)
   if (length(t) == 1) {
+    if (cDEBUG) {
     print(paste0("re: ", t$re))
+    }
     if (is.null(t$re)) {
       return("")
     }
@@ -567,7 +568,9 @@ ps_get_re_checks <- function (id) {
 ps_get_f_checks <- function (id) {
   t <- ps_get_checks(id)
   if (length(t) == 1) {
+    if (cDEBUG) {
     print(paste0("f_checks: ", t$f_checks))
+    }
     if (is.null(t$f_checks)) {
       return (c())
     }

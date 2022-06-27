@@ -10,6 +10,7 @@
 #'
 #' @export
 admin <- function() {
+  cat("\014") # Clear screen
   cat("Function                    Purpose\n")
   cat("admin()                     List the current admin functinons.\n")
   cat("admin.check(short)          Check the integrity of a practice set file.\n")
@@ -149,9 +150,12 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
     stop(paste0("Directory does not exist.\n", dir, ""), sep="")
   }
 
+  cat("\014admin.grade()\n") # Clear screen
+
   cat(
       "Practice set: ", short, "\n",
-      "Directory:    ", dir, "\n", sep="")
+      "Student work: ", dir, "\n",
+      "Summary:\n", sep="")
 
   cat("   ", "\tFilename\tName\t\tSummary\t\t\tWrong Answers (internal ids)\n", sep="")
 
@@ -204,6 +208,7 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
         wrongs, "\n",
         sep="")
   }
+  cat("See graded work in:\n   ", dir, "/<Filename.html>", sep="")
 }
 
 #' UI for selecting files to grade
