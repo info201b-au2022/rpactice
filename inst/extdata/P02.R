@@ -1,6 +1,6 @@
 #' Practice Set Example
 #' @version ps-1
-#' @short P03
+#' @short P02
 #' @title Using vectors and basic functions
 #' @descr
 #' Check into length() and sum()

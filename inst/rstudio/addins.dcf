@@ -3,13 +3,13 @@ Description: Select your practice set from a pulldown in the Viewer
 Binding: addin.a
 Interactive: true
 
-Name: 2-Show Prompts
-Description: Show the prompts in the Viewer
+Name: 2-Check Answers
+Description: Have RStudio check your answers
 Binding: addin.b
 Interactive: false
 
-Name: 3-Check Answers
-Description: Have RStudio check your answers
+Name: 2-Show Prompts
+Description: Show the prompts in the Viewer
 Binding: addin.c
 Interactive: false
 

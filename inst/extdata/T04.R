@@ -6,7 +6,7 @@
 #' @end
 #' @initial-vars
 library(dplyr)
-cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(T,F,T,T))
+cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(TRUE,FALSE,TRUE,TRUE))
 #' @end
 
 #' @id ?
@@ -63,9 +63,9 @@ df4 <- cDF %>%
 #' @msg Write a function of filter rows by column C (which can be either FALSE or TRUE)
 #' @check list(arg1=c(TRUE, FALSE))
 #' @code
-df5_f <- function(test) {
+df5_f <- function(f) {
 cDF %>%
-  filter(C==test) %>%
+  filter(C==f) %>%
   select(A,C)
 }
 #' @end

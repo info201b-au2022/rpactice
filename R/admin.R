@@ -5,8 +5,8 @@
 
 #' List the available admin functions
 #'
-#' Intended for teaching assistants and instructors only,
-#' \code{admin} simply lists all the available admin functions.
+#' Intended for teaching assistants and instructors only, \code{admin} simply
+#' lists all the available admin functions.
 #'
 #' @export
 admin <- function() {
@@ -14,7 +14,7 @@ admin <- function() {
   cat("Function                    Purpose\n")
   cat("admin()                     List the current admin functinons.\n")
   cat("admin.check(short)          Check the integrity of a practice set file.\n")
-  cat("admin.grade(short, dir)     Grade all the work in the directory (dir) for a practice set (short).\n")
+  cat("admin.grade(dir, short)     Grade all the work in the directory (dir) for a practice set (short).\n")
   cat("admin.grade_ui(short)       Select directory from ui\n")
   cat("admin.ls()                  List installed practice sets and basic info.\n")
   cat("admin.prompts(short)        List the practice prompts and results.\n")
@@ -23,10 +23,9 @@ admin <- function() {
 
 #' List installed practice sets
 #'
-#' Intended for teaching assistants and instructors only,
-#' \code{admin.ls()} simply lists all currently installed practice sets.
-#' At present, each of these practice sets will be available to
-#' learners.
+#' Intended for teaching assistants and instructors only, \code{admin.ls()}
+#' simply lists all currently installed practice sets. At present, each of these
+#' practice sets will be available to learners.
 #'
 #' @export
 #----------------------------------------------------------------------------#
@@ -46,10 +45,9 @@ admin.ls <- function() {
 
 #' Show the practice set prompts
 #'
-#' Intended for teaching assistants and instructors only,
-#' \code{admin.prompts()} shows all of the practice sets, including the
-#' written prompts and
-#' the expected answers
+#' Intended for teaching assistants and instructors only, \code{admin.prompts()}
+#' shows all of the practice sets, including the written prompts and the
+#' expected answers
 #'
 #' @param short for the short name of the practice set
 #'
@@ -99,11 +97,9 @@ admin.prompts <- function(short) {
 
 #' List practice set objects
 #'
-#'
-#' Intended for teaching assistants and instructors only,
-#' \code{admin.prompts()} lists all of the objects associated with
-#' the currently active practice set, including expected variables
-#' and callback functions for checking code.
+#' Intended for teaching assistants and instructors only, \code{admin.prompts()}
+#' lists all of the objects associated with the currently active practice set,
+#' including expected variables and callback functions for checking code.
 #'
 #' @export
 #----------------------------------------------------------------------------#
@@ -135,16 +131,15 @@ admin.vars <- function() {
 
 #' Evaluate a directory of practice sets
 #'
-#' Intended for teaching assistants and instructors only,
-#' \code{admin.grade()}, will check all of the practice sets
-#' within a directory. This function will be extended to
-#' provide auto-grader functionality.
+#' Intended for teaching assistants and instructors only, \code{admin.grade()},
+#' will check all of the practice sets within a directory. This function will be
+#' extended to provide auto-grader functionality.
 #'
 #' @param short for the short name of the practice set
 #' @param dir directory of practice sets to grade
 #'
 #' @export
-admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01") {
+admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01", short = "P01") {
 
   if (file.exists(dir) == FALSE) {
     stop(paste0("Directory does not exist.\n", dir, ""), sep="")
@@ -172,7 +167,9 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
     code_string <- paste0(code_v, collapse = "\n")
 
     # Get ready to evaluate a solution
-    practice.begin(short)
+    if (!is.null(short)) {
+      practice.begin(short)
+    }
 
     # Try to evaluate the code
     out <- tryCatch(
@@ -216,21 +213,21 @@ admin.grade <- function(short = "P01", dir = "~/Documents/_Code2/assignments/A01
 #' @param short for the short name of the practice set
 #'
 #' @export
-admin.grade_ui <- function(short = "P01") {
+admin.grade_ui <- function(short="P01") {
 
 t <- rstudioapi::selectDirectory(
   caption = "Select Directory",
   label = "Select",
   path = getActiveProject())
 
-admin.grade(short,t)
+admin.grade(t, short)
 }
 
 #' Check the integrity of practice set
 #'
-#' Intended for teaching assistants and instructors only,
-#' \code{admin.ps()} checks the integrity of a practice set. It loads
-#' the source file and provides feedback on the mark-up.
+#' Intended for teaching assistants and instructors only, \code{admin.ps()}
+#' checks the integrity of a practice set. It loads the source file and provides
+#' feedback on the mark-up.
 #'
 #' @param short for the short name of the practice set
 #' @export

@@ -22,18 +22,18 @@ for grading student work.
   four Addin menu options:
   \itemize{
   \item 1. Begin Practice
-  \item 2. Show Prompts
-  \item 3. Check Answers
+  \item 2. Check Answers
+  \item 3. Show Prompts
   \item 4. Show Answers}
 
-  Learners select from the available practice sets (\code{1. Begin Practice}).
-  They write code for one or more of the prompts. Then, the learner's code
-  can be checked against the expected code
-  (\code{3. Check Answers}). When the learner's answer differs from the expected
-  answer, zero or more hints are shown.
+  Learners select from the available practice sets (\code{1. Begin
+  Practice}). They write code for one or more of the prompts. When ready,
+  learners check their code (\code{2. Check Answers}). When the
+  learner's answer differs from the expected answer, zero or more hints are
+  shown.
 
-  Instructors write practice sets in in \code{.R} files, with tagged comments.  Below
-  is a practice set with four illustrative prompts:
+  Instructors write practice sets in \code{.R} files, with tagged comments. Here
+  is a practice set, with six illustrative prompts:
 
   \preformatted{
   #' @version ps-1
@@ -60,53 +60,87 @@ for grading student work.
   #' @end
 
   #' @id b
-  #' @msg Add 10 to each of the elements of vector X
+  #' @msg Add 10 to each of the elements of vector X.
   #' @code
   v1 <- X + 10
   #' @end
 
+  #' @id -
+  #' @msg Working with functions
+
   #' @id c
-  #' @msg Create a function that squares a number
+  #' @msg Write a function, named `what_is_pi` which returns pi (3.1415).
+  #' @var what_is_pi
+  #' @code
+  what_is_pi <- function() {
+     pi
+  }
+  #' @end
+
+  #' @id d
+  #' @msg Create a function that squares a number.
   #' @var squared
-  #' @check c(1, 2, 3, 0, -1, -2, -3, NA)
+  #' @check list(arg1 = c(1, 2, 3, 0, -1, -2, -3, NA))
   #' @code
   squared <- function(x) {
-  t <- x^2
+     t <- x^2
   return(t)
   }
   #' @end
 
-  #' @id ?
-  #' @msg Select rows from cDF, where C==TRUE. Show only A and C columns.
+  #' @id e
+  #' @msg
+  #' Define a function, named `imperial_to_metric`, that takes in two arguments: a
+  #' number of feet and a number of inches. The function should return the
+  #' equivalent length in meters.
+  #' @end
+  #' @check list(arg1 = c(4, 5, 100, 0, NA), arg2 = c(0, 1, 1.5, 12.0, 24))
   #' @code
-  #' df4 <- cDF %>%
-  #' filter(C==TRUE) %>%
-  #' select(A,C)
+  imperial_to_metric <- function(feet, inches) {
+     total_inches <- feet * 12 + inches
+     meters <- total_inches * 0.0254
+     meters
+  }
   #' @end
 
   #' @id -
-  #' @msg Next: Consider reading up on built-in mathematical functions.
+  #' @msg Working with dataframes
 
+  #' @id f
+  #' @msg Select rows from cDF, where C==TRUE. Show only A and C columns.
+  #' @code
+  df4 <- cDF %>%
+     filter(C==TRUE) %>%
+     select(A,C)
+  #' @end'
 }
+
 Practice sets have a title and an unique identifier (\code{short}), which is
 a short form for referring to a practice set. Optionally, one or more
-variables can be initialized with the \code{initial-vars} tag. The idea is
-that the prompts can require learners to use those variables. As can be seen
-in the example, you can can also load any required libraries.
+variables can be initialized with the \code{initial-vars} tag. Here, the idea is
+that prompts can require learners to use those variables. As can be seen
+in the example, specific libaries can also be loaded.
 
-  The prompts comprise a unique ID, a message (the prompt), the expected answer,
-  and a list of hints. If an \code{id} is "?" a set of unique IDs will be automatically
-  generated, which simplifies the development of prompts. If an \code{id}
-  is a dash ("-"), a message is formatted. This is a simple method for
-  guiding students through the prompts.
+The prompts comprise a unique ID, a message (the prompt), the expected
+answer, and a list of hints. If an \code{id} is "?" a set of unique IDs
+will be automatically generated, which simplifies the development of
+prompts. If an \code{id} is a dash ("-"), a message is formatted. This is a
+simple method for guiding students through the prompts.
 
-  In addition, the \code{@checks} tag (see prompt id "c")
-  can be used to check the implementation of a function. More complex function
-  checking is possible by implementing prompt-specific callback functions (see below).
+In addition, the \code{@checks} tag (see prompt id "d" and "e") can be used to
+check the implementation of a function. Currently, practice sets can ask
+learners to create functions with zero, one, or two arguments. For functions
+with two parameters, the function is tested on all all combinations of
+inputs, \code{arg1} and \code{arg2}.
 
-  That's it.
+More complex function checking is possible by implementing prompt-specific callback
+functions (see below).
 
-  #' @section Auto-grading:
+That's it.
+}
+
+\section{Auto-grading}{
+
 
   Practice sets contain the correct answers to prompts.  Thus, if the practice set
   is a graded assignment, \code{pinfo201} can be used to automatically grade the
@@ -125,13 +159,15 @@ in the example, you can can also load any required libraries.
 \section{What can be evaluated?}{
 
 
-Currently, \code{pinfo201} can evaluate statements with the following result types:
+Currently, \code{pinfo201} checks results, that is, the contents of variables, of the folloiwng
+types:
 \itemize{
 \item Special constants (NULL, NA, Inf, -Inf, and NaN)
 \item Atomic vectors (logical, integer, real, complex, string)
 \item Vectors greater than length 1 (comprising logical, integer, real, complex, and string types)
+\item Lists -- TBD
 \item Data frames
-\item Functions  (functions with one argument can be automatically checked with the @checks tag)
+\item Functions with zero, one, or two unnamed arguments (functions with one or two arguments can be automatically checked with the @check tag)
 }
 }
 
@@ -141,7 +177,7 @@ Currently, \code{pinfo201} can evaluate statements with the following result typ
 We plan to build in robust default approaches for evaluating expressions and giving
 learners feedback. To do so, we are currently exploring how to structure
 this package. At present, the framework can be extended with prompt-specific callback functions
-for checking a learner's code by. This is the current structure of
+for checking a learner's code, although this takes a good deal of effort. This is the current structure of
 the checking callbacks:
 
 \preformatted{

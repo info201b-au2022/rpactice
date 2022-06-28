@@ -37,7 +37,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("T03.R")) # Functions
   ps_add(load_ps("T04.R")) # Dataframes
 
-  # Problem sets   - Somewhat realistic
+  # Problem sets   - Additional examples
   ps_add(load_ps("P01.R"))
   ps_add(load_ps("P02.R"))
 
@@ -388,11 +388,19 @@ DEFAULT_Check <- function(internal_id, result) {
 
         # A function with ONE parameter
       } else if (length(learner_formals) == 1) {
+        learner_answers <- c()
+        expected_answers <- c()
         checks <- ps_get_arg1_checks(internal_id)
-        learner_f_answers <- do.call(learner_result$scode, list(checks))
-        expected_f_answers <- do.call(expected_function, list(checks))
 
-        if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
+        for (k in 1:length(checks)) {
+          t1 <- do.call(learner_result$scode, list(checks[k]))
+          t2 <- do.call(expected_function, list(checks[k]))
+
+          learner_answers <- append(learner_answers, t1)
+          expected_answers <- append(expected_answers, t2)
+        }
+
+        if (identical(learner_answers, expected_answers, ignore.environment = TRUE) == TRUE) {
           result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
         } else {
           result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
@@ -406,12 +414,14 @@ DEFAULT_Check <- function(internal_id, result) {
 
         learner_answers <- c()
         expected_answers <- c()
-        for (k in 1:length(checks_arg2)) {
-          t1 <- do.call(learner_result$scode, list(checks_arg1,checks_arg2[k]))
-          t2 <- do.call(expected_function, list(checks_arg1, checks_arg2[k]))
+        for (j in 1:length(checks_arg1)) {
+          for (k in 1:length(checks_arg2)) {
+            t1 <- do.call(learner_result$scode, list(checks_arg1[j], checks_arg2[k]))
+            t2 <- do.call(expected_function, list(checks_arg1[j], checks_arg2[k]))
 
-          learner_answers <- append(learner_answers,t1)
-          expected_answers <- append(expected_answers,t2)
+            learner_answers <- append(learner_answers, t1)
+            expected_answers <- append(expected_answers, t2)
+          }
         }
 
         if (identical(learner_answers, expected_answers, ignore.environment = TRUE) == TRUE) {
@@ -636,7 +646,7 @@ ps_get_re_checks <- function(id) {
 # Try to get the list of function input tests
 ps_get_arg1_checks <- function(id) {
   t <- ps_get_checks(id)
-  if (length(t) > 1) {
+  if (length(t) == 1) {
     if (cDEBUG) {
       print(paste0("f_checks (arg1): ", t$arg1))
     }

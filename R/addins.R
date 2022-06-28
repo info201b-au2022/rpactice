@@ -10,11 +10,11 @@ addin.a <- function() {
 }
 
 addin.b <- function() {
-  practice.questions()
+  practice.check()
 }
 
 addin.c <- function() {
-  practice.check()
+  practice.questions()
 }
 
 addin.d <- function() {
