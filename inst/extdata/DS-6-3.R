@@ -7,6 +7,7 @@
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
 #' @initial-vars
+X <- c(1,3,4)
 #' @end
 
 #' @id ?

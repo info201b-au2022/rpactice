@@ -1,5 +1,10 @@
 
-#
+
+
+statement <-  "seq(1:100)"
+r <- eval_string_details(statement)
+
+
 
 
 statement <- "t <-1"
@@ -76,19 +81,19 @@ test_that("Three statements with semi-colons.", {
 #----------------------------------------------------------------------------#
 t <- "m<-2; print(g(x,b)); cat(10, 'aaa'); print('aa'); u <- 1; print('hello')"
 line_nums <- ast_scan(parse(text=t), c("print", "cat"), FALSE)
-test_that("ast_scan", {
+test_that("ast functions", {
   expect_equal(line_nums, c(1,5))
 })
 
 t <- "m<-2; print(g(x,b)); cat(10, 'aaa'); print('aa'); u <- 1; print('hello')"
 line_nums <- ast_scan(parse(text=t), c("print", "cat"))
-test_that("ast_scan", {
+test_that("ast functions", {
   expect_equal(line_nums, c(2,3,4,6))
 })
 
 t <- "m<-2; print(g(x,b)); cat(10, 'aaa'); print('aa'); u <- 1; print('hello')"
 e2 <- ast_rm(parse(text=t),line_nums)
-test_that("get_var_name", {
+test_that("ast functions", {
   expect_equal(deparse(e2[[1]]), "m <- 2")
   expect_equal(deparse(e2[[2]]), "u <- 1")
 })
@@ -104,7 +109,7 @@ y<-5
 
 e2 <- parse(text=t)
 line_nums <- ast_scan(e2,"<-")
-test_that("get_var_name", {
+test_that("ast functions", {
   expect_equal(length(line_nums), 5)
   expect_equal(deparse(e2[[3]]), "v <- 3")
   expect_equal(deparse(e2[[5]]), "w <- x <- 4")
@@ -122,14 +127,14 @@ practice.check()
 "
 e2 <- parse(text=t)
 r <- ast_get_assignments(e2)
-test_that("get_var_name", {
+test_that("ast functions", {
   expect_equal(length(r), 5)
   expect_equal(r[[3]]$lhs, "v")
   expect_equal(r[[4]]$lhs, "w")
 })
 
 r <- ast_last_assignment(e2)
-test_that("get_var_name", {
+test_that("ast functions", {
   expect_equal(r$lhs, "y")
 })
 #testthat::test_file("tests/testthat/test-eval.R")

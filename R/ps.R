@@ -198,15 +198,21 @@ eval_string_and_format <- function(code) {
   if (result$ok == TRUE) {
     # Check for basic type
     if (result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+
       # Atomic types
       if (length(result$value) == 1) {
-        return(paste0("atomic: ", as.character(result$value)))
+        return(paste0("atomic [1]: ", as.character(result$value)))
 
-        # Vector type
+      # Vector type
       } else {
+        len <- length(result$value)
         t <- paste0(result$value, collapse = " ")
-        return(paste0("vector: ", t))
+        if (len > 20) {
+          t <- paste0(str_sub(t, 1, 20), " ...", sep="")
+        }
+        return(paste0("vector [", len, "]: ", t))
       }
+      as
       # Check for a function
     } else if (result$type == "closure") {
       args <- names(formals(result$value))
@@ -225,6 +231,11 @@ eval_string_and_format <- function(code) {
       if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
 
       return(paste0("dataframe: [", df_info_rows, " x ", df_info_cols, "]"))
+
+      # List type
+    } else if (result$type == "list") {
+      len <- length(result$value)
+      return(paste0("list: [", len, "]"))
 
       # A type that is not handled
     } else {
@@ -438,31 +449,7 @@ DEFAULT_Check <- function(internal_id, result) {
         return(result)
       }
 
-
-      #
-      #       if (cDEBUG) {
-      #         if (length(checks) == 0) {
-      #           print("No checks")
-      #         } else {
-      #           t <- paste0(checks, collapse = " ")
-      #           print(paste0("Checks: ", t))
-      #         }
-      #       }
-      #
-      #       # Call the learner's function on each of the checks
-      #       learner_f_answers <- do.call(learner_result$scode, list(checks))
-      #
-      #       expected_code <- ps_get_expected_answer(internal_id)
-      #       expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
-      #       expected_f_answers <- do.call(expected_function, list(checks))
-      #
-      #       if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
-      #         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-      #       } else {
-      #         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-      #       }
-
-      # Check for dataframe
+    # Check for dataframe
     } else if (learner_result$type == "dataframe") {
       learner_val <- learner_result$value
 
@@ -474,6 +461,20 @@ DEFAULT_Check <- function(internal_id, result) {
       } else {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
       }
+
+    # list
+    } else if (learner_result$type == "list") {
+      learner_val <- learner_result$value
+
+      expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
+      expected_val <- expected_result$value
+
+      if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
+        result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+      } else {
+        result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+      }
+
     } else {
       if (cDEBUG) {
         print(">> Type not handled")
@@ -567,10 +568,21 @@ check_answers <- function(learner_code) {
   return(practice_result)
 }
 
+clear_viewer_pane <- function() {
+  dir <- tempfile()
+  dir.create(dir)
+  TextFile <- file.path(dir, "blank.html")
+  writeLines("", con = TextFile)
+  rstudioapi::viewer(TextFile)
+}
+
+
 # This function gives access to the learner's code in RStudio
 check_answers_from_ui <- function() {
   t <- rstudioapi::getSourceEditorContext()
-  rstudioapi::documentSave(t$id)
+  print(t)
+  rstudioapi::documentSave(NULL)
+  print(rstudioapi::documentPath(t$id))
   learner_code <- readLines(rstudioapi::documentPath(t$id))
   return(check_answers(learner_code))
 }

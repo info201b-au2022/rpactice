@@ -110,8 +110,8 @@
 #'   #' @id f
 #'   #' @msg Select rows from cDF, where C==TRUE. Show only A and C columns.
 #'   #' @code
-#'   df4 <- cDF %>%
-#'      filter(C==TRUE) %>%
+#'   df4 <- cDF %%>%%
+#'      filter(C==TRUE) %%>%%
 #'      select(A,C)
 #'   #' @end'
 #' }
@@ -189,7 +189,7 @@
 #'
 #' @section Auto-grading:
 #'
-#' \code{pinfo201} can be used for auto-grading assistance. This package function, for
+#' \code{pinfo201} can be used for auto-grading assistance. This function, for
 #' example, will grade all assignments that are located in the directory,
 #' \code{dir}:
 #'

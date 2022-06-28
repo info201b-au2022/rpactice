@@ -41,7 +41,7 @@ for efficiently grading student work.
   #' @descr
   #' This file illustrates the essentials of specifying a practice set. It is
   #' intended to informally show what kinds of prompts can be presented to
-  #' students and what kind of testing can be accomplished.
+  #' students and what can be tested.
   #' @end
   #' @initial-vars
   library(dplyr)
@@ -117,8 +117,8 @@ for efficiently grading student work.
   #' @id f
   #' @msg Select rows from cDF, where C==TRUE. Show only A and C columns.
   #' @code
-  df4 <- cDF %>%
-     filter(C==TRUE) %>%
+  df4 <- cDF %%>%%
+     filter(C==TRUE) %%>%%
      select(A,C)
   #' @end'
 }
@@ -132,7 +132,7 @@ also be loaded.
 
 The prompts comprise an ID, a message (the prompt), the expected
 answer, and a list of hints. If an \code{id} is "?" a set of prompt IDs
-will be automatically generated, which simplifies the development of
+will automatically be generated, which simplifies the development of
 prompts. If an \code{id} is a dash ("-"), a message is formatted. This is a
 simple method for guiding students through the prompts.
 
@@ -161,7 +161,7 @@ This package is oriented toward checking data values.
 Currently, \code{pinfo201} does not model the structure of student's code nor
 its execution. For example, the package cannot be used evaluate the
 correctness of a task like this:
-\preformatted{Use cat() to output two variables a and b}.
+\preformatted{Use cat() to output two variables a and b.}
 It can, however, be used to evaluate the following:
 \preformatted{Create a string from two variables, `a` and `b, and assign the string to `out`.}
 This said, the building blocks are in place for
