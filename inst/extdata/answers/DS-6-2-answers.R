@@ -33,10 +33,8 @@ fruits_o <- gsub("a","o", fruits)
 # f: Create a new variable `lyric_e` that is the `intro` combined with the new
 #    `fruits_e` ending. Print out this variable. (lyric_e)
 lyric_e <- paste(intro, fruits_e)
-print(fruits_e)
 
 # Note: Without making a new variable, print out the `intro` combined with the new
 #    `fruits_o` ending.
-print(paste(intro, fruits_o))
 
 practice.check()

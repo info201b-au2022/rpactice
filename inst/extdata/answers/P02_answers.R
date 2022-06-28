@@ -10,4 +10,3 @@ t_05 <- floor(5.1)
 t_06 <- log10(10000)
 practice.answers()
 practice.check()
-
