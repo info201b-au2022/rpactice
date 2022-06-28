@@ -3,7 +3,7 @@
 #    Micheal Freeman and Joel Ross. See:
 #    https://github.com/programming-for-data-science/book-exercises
 # ---
-practice.begin("DS-6-4", learner="[your name]")
+practice.begin("DS-6-4", learner="Dave H.")
 
 # a: Define a function `is_twice_as_long` that takes in two character strings, and
 #    returns whether or not (e.g., a boolean) the length of one argument is greater

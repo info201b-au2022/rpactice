@@ -1,7 +1,7 @@
 # PS-Example: Example practice set
 #    An example that illustrates the essentials of practice sets.
 # ---
-practice.begin("PS-Example", learner="[your name]")
+practice.begin("PS-Example", learner="Dave H.")
 
 # Initial variables
 library(dplyr)
