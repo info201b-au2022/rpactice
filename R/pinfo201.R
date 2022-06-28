@@ -7,12 +7,12 @@
 #'
 #' \code{pinfo201} is a package for practicing basic R programming. It is intended for
 #' learners who are just beginning. In addition, \code{pinfo201} provides functions
-#' for grading student work.
+#' for efficiently grading student work.
 #'
 #' @section Practice sets: The key idea is that an instructor creates a practice
 #'   set, which comprises prompts, expected answers, and hints. Once \code{pinfo201} is
-#'   installed, practice sets are loaded into RStudio and can be controlled with
-#'   four Addin menu options:
+#'   installed, practice sets are loaded into RStudio and can be controlled with an
+#'   Addins menu. The \code{pinfo201} menu includes these options:
 #'   \itemize{
 #'   \item 1. Begin Practice
 #'   \item 2. Check Answers
@@ -32,7 +32,9 @@
 #'   #' @short PS-Example
 #'   #' @title Example practice set
 #'   #' @descr
-#'   #' An example that illustrates the essentials of practice sets.
+#'   #' This file illustrates the essentials of specifying a practice set. It is
+#'   #' intended to informally show what kinds of prompts can be presented to
+#'   #' students and what kind of testing can be accomplished.
 #'   #' @end
 #'   #' @initial-vars
 #'   library(dplyr)
@@ -41,7 +43,7 @@
 #'   #' @end
 #'
 #'   #' @id a
-#'   #' @msg Add ten, nine, and eight together.
+#'   #' @msg Add ten, nine, and eight together. Assign the result to `sum1`.
 #'   #' @code
 #'   sum1 <- 10 + 9 + 8
 #'   #' @end
@@ -52,16 +54,16 @@
 #'   #' @end
 #'
 #'   #' @id b
-#'   #' @msg Add 10 to each of the elements of vector X.
+#'   #' @msg Add 10 to each of the elements of vector `X`.
 #'   #' @code
 #'   v1 <- X + 10
 #'   #' @end
 #'
 #'   #' @id -
-#'   #' @msg Working with functions
+#'   #' @msg Working with functions.
 #'
 #'   #' @id c
-#'   #' @msg Write a function, named `what_is_pi` which returns pi (3.1415).
+#'   #' @msg Write a function, named `what_is_pi`, which returns pi (3.1415).
 #'   #' @var what_is_pi
 #'   #' @code
 #'   what_is_pi <- function() {
@@ -70,7 +72,7 @@
 #'   #' @end
 #'
 #'   #' @id d
-#'   #' @msg Create a function that squares a number.
+#'   #' @msg Write a function, named `squared(x)`, which squares a number.
 #'   #' @var squared
 #'   #' @check list(arg1 = c(1, 2, 3, 0, -1, -2, -3, NA))
 #'   #' @code
@@ -107,11 +109,12 @@
 #'   #' @end'
 #' }
 #'
-#' Practice sets have a title and an unique identifier (\code{short}), which is
-#' a short form for referring to a practice set. Optionally, one or more
-#' variables can be initialized with the \code{initial-vars} tag. Here, the idea is
-#' that prompts can require learners to use those variables. As can be seen
-#' in the example, specific libaries can also be loaded.
+#' Practice sets have a title and an identifier (\code{short}), which is a short
+#' form for referring to a practice set. These short identifiers must be unique.
+#' Optionally, one or more variables can be initialized with the
+#' \code{initial-vars} tag. Here, the idea is that prompts can require learners
+#' to use those variables. As can be seen in the example, specific libaries can
+#' also be loaded.
 #'
 #' The prompts comprise a unique ID, a message (the prompt), the expected
 #' answer, and a list of hints. If an \code{id} is "?" a set of unique IDs
@@ -122,52 +125,60 @@
 #' In addition, the \code{@checks} tag (see prompt id "d" and "e") can be used to
 #' check the implementation of a function. Currently, practice sets can ask
 #' learners to create functions with zero, one, or two arguments. For functions
-#' with two parameters, the function is tested on all all combinations of
+#' with two parameters, the function is tested on all combinations of
 #' inputs, \code{arg1} and \code{arg2}.
 #'
-#' More complex function checking, including checking functions with
-#' three or more arguments, is possible by implementing prompt-specific callback
+#' More complex function checking, including checking functions with three or
+#' more arguments, is possible by implementing prompt-specific callback
 #' functions (see below).
 #'
-#' That's it.
+#' Basically, that's it.
+#'
+#' One limitation: This package is oriented toward checking data values.
+#' Currently, \code{pinfo201} does not model the structure of student's code nor
+#' its execution. For example, the package cannot be used evaluate the
+#' correctness of a task like this: \preformatted{ Use cat() to output two
+#' variables a and b}. It can, however, be used to evaluate the following:
+#' \preformmated{Create a string out of the two variables, a and b, and assign
+#' the string to output.} This said, the building blocks are in place for
+#' analyzing a student's code through abstract syntax trees -- this is an area
+#' of interest.
 #'
 #' @section Auto-grading:
 #'
 #'   Practice sets contain the correct answers to prompts. Thus, if the practice
 #'   set is a graded assignment, \code{pinfo201} can be used to automatically
-#'   grade the assignment.
-#'
-#'   Administrative functions are provided for this work - for example, this
-#'   function will grade all assignments, named \code{short}, that are located in the
-#'   directory, \code{dir}. Currently, the output is one html file for each assignment,
-#'   summarizing all correct and incorrect problems.
+#'   grade the assignment. This administrative function, for example, will grade
+#'   all assignments that are located in the directory, \code{dir}:
 #'
 #'   \preformatted{
-#'   admin.grade(short, dir)
+#'   admin.grade(dir)
 #'   }
+#'
+#'   Currently, the output is one \code{.html} file per student \code{.R} file, with
+#'   each output file summarizing correct and incorrect solutions.
 #'
 #'   Other admin functions are used to assist in the development of practice sets.
 #'
 #' @section What can be evaluated?:
 #'
-#' Currently, \code{pinfo201} checks results, that is, the contents of variables, of the folloiwng
-#' types:
+#' Currently, \code{pinfo201} is able to check the following data types:
 #' \itemize{
 #' \item Special constants (NULL, NA, Inf, -Inf, and NaN)
-#' \item Atomic vectors (logical, integer, real, complex, string)
-#' \item Vectors greater than length 1 (comprising logical, integer, real, complex, and string types)
+#' \item Atomic vectors (scalars) (logical, numeric, integer, complex, charactter types)
+#' \item Vectors greater than length 1 (comprising logical, numeric, integer, complex, and character types)
 #' \item Lists -- TBD
 #' \item Data frames
-#' \item Functions with zero, one, or two unnamed arguments (functions with one or two arguments can be automatically checked with the @check tag)
+#' \item Functions with zero, one, or two unnamed arguments (with the @check tag)
 #' }
 #'
 #' @section Checking callbacks:
 #'
-#' We plan to build in robust default approaches for evaluating expressions and giving
-#' learners feedback. To do so, we are currently exploring how to structure
-#' this package. At present, the framework can be extended with prompt-specific callback functions
-#' for checking a learner's code, although this takes a good deal of effort. This is the current structure of
-#' the checking callbacks:
+#' At present, the framework can be extended with prompt-specific callback
+#' functions for checking a learner's code, although this takes a good deal of
+#' effort. Thus, if you need to test a function with 3 or more parameters or
+#' test a data structure in some specific ways, you can write a checking
+#' callback function. This is the current structure of the checking callbacks:
 #'
 #'\preformatted{
 #'   <funct_name>_Check <- function(internal_id, result) {

@@ -10,8 +10,7 @@ admin.prompts(short)
 \item{short}{for the short name of the practice set}
 }
 \description{
-Intended for teaching assistants and instructors only,
-\code{admin.prompts()} shows all of the practice sets, including the
-written prompts and
-the expected answers
+Intended for teaching assistants and instructors only, \code{admin.prompts()}
+shows all of the practice sets, including the written prompts and the
+expected answers
 }

@@ -28,9 +28,8 @@ for grading student work.
 
   Learners select from the available practice sets (\code{1. Begin
   Practice}). They write code for one or more of the prompts. When ready,
-  learners check their code (\code{2. Check Answers}). When the
-  learner's answer differs from the expected answer, zero or more hints are
-  shown.
+  learners check their code (\code{2. Check Answers}). If the learner's answer
+  differs from the expected answer, hints, if available, are shown.
 
   Instructors write practice sets in \code{.R} files, with tagged comments. Here
   is a practice set, with six illustrative prompts:
@@ -56,7 +55,7 @@ for grading student work.
   #' @hints
   #' Do you use the math plus operator (+)?
   #' Do you use the assignment operator (<-)?
-  #' Is the variable name (sum1) correct?
+  #' Is the expected variable name (sum1) used?
   #' @end
 
   #' @id b
@@ -133,7 +132,8 @@ learners to create functions with zero, one, or two arguments. For functions
 with two parameters, the function is tested on all all combinations of
 inputs, \code{arg1} and \code{arg2}.
 
-More complex function checking is possible by implementing prompt-specific callback
+More complex function checking, including checking functions with
+three or more arguments, is possible by implementing prompt-specific callback
 functions (see below).
 
 That's it.
@@ -142,9 +142,11 @@ That's it.
 \section{Auto-grading}{
 
 
-  Practice sets contain the correct answers to prompts.  Thus, if the practice set
-  is a graded assignment, \code{pinfo201} can be used to automatically grade the
-  assignment. Administrative functions are provided for this work - for example, this
+  Practice sets contain the correct answers to prompts. Thus, if the practice
+  set is a graded assignment, \code{pinfo201} can be used to automatically
+  grade the assignment.
+
+  Administrative functions are provided for this work - for example, this
   function will grade all assignments, named \code{short}, that are located in the
   directory, \code{dir}. Currently, the output is one html file for each assignment,
   summarizing all correct and incorrect problems.

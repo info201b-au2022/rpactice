@@ -2,7 +2,9 @@
 #' @short PS-Example
 #' @title Example practice set
 #' @descr
-#' An example that illustrates the essentials of practice sets.
+#' This file illustrates the essentials of specifying a practice set. It is
+#' intended to informally show what kinds of prompts can be presented to
+#' students and what kind of testing can be accomplished.
 #' @end
 #' @initial-vars
 library(dplyr)

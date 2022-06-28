@@ -7,6 +7,6 @@
 admin()
 }
 \description{
-Intended for teaching assistants and instructors only,
-\code{admin} simply lists all the available admin functions.
+Intended for teaching assistants and instructors only, \code{admin} simply
+lists all the available admin functions.
 }

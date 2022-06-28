@@ -10,7 +10,7 @@ admin.check(short)
 \item{short}{for the short name of the practice set}
 }
 \description{
-Intended for teaching assistants and instructors only,
-\code{admin.ps()} checks the integrity of a practice set. It loads
-the source file and provides feedback on the mark-up.
+Intended for teaching assistants and instructors only, \code{admin.ps()}
+checks the integrity of a practice set. It loads the source file and provides
+feedback on the mark-up.
 }
