@@ -646,7 +646,7 @@ ps_get_re_checks <- function(id) {
 # Try to get the list of function input tests
 ps_get_arg1_checks <- function(id) {
   t <- ps_get_checks(id)
-  if (length(t) == 1) {
+  if (length(t) > 0) {
     if (cDEBUG) {
       print(paste0("f_checks (arg1): ", t$arg1))
     }

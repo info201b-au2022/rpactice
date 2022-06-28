@@ -65,7 +65,7 @@ fruits_o <- gsub("a","o", fruits)
 #' @end
 #' @code
 lyric_e <- paste(intro, fruits_e)
-print(fruits_e)
+#print(fruits_e)
 #' @end
 
 #' @id -
@@ -74,5 +74,5 @@ print(fruits_e)
 #' `fruits_o` ending.
 #' @end
 #' @code
-print(paste(intro, fruits_o))
+#print(paste(intro, fruits_o))
 #' @end

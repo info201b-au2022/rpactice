@@ -11,7 +11,7 @@ my_name <- "Grace Hopper"
 name_length <- nchar(my_name)
 
 # Note: Print the number of letters in the variable `my_name`.
-print(name_length)
+# print(name_length)
 
 # c: Create a variable `now_doing` that is the name followed by "is programming!"
 #    Use the `paste()` function. (now_doing)

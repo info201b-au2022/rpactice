@@ -51,23 +51,12 @@ t06 <- ((t01 - 12) == 0) # TRUE
 #' @id ?
 #' @msg Using an initial variable (initialized by practice set)
 #' @code
-t04a <- sum(c(6,12,18) == ((X + X) * 3)) == 3 # TRUE
+t07 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
 #' @end
 #
 #' @id ?
 #' @msg Calling a function, f(x), (initialized by the practice set)
 #' @code
-t04b <- (f(10) == 11) # TRUE
+t08 <- (f(10) == 11) # TRUE
 #' @end
 
-#' @id ?
-#' @msg Update an initial variable
-#' @code
-X <- 10
-#' @end
-
-#' @id ?
-#' @msg Is it retrieved correctly?
-#' @code
-t05 <- (10 == X) #TRUE
-#' @end

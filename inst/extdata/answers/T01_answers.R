@@ -29,15 +29,10 @@ t04 <- t04a - 100
 t06 <- ((t01 - 12) == 0) # TRUE
 
 # f: Using an initial variable (initialized by practice set) (t04a)
-t04a <- sum(c(6,12,18) == ((X + X) * 3)) == 3 # TRUE
+t07 <- sum(c(6,12,18) == ((X + X) * 3)) == 3 # TRUE
 
 # g: Calling a function, f(x), (initialized by the practice set) (t04b)
-t04b <- (f(10) == 11) # TRUE
-
-# h: Update an initial variable (X)
-X <- 10
-
-# i: Is it retrieved correctly? (t05)
-t05 <- (10 == X) #TRUE
+t08 <- (f(10) == 11) # TRUE
 
 practice.check()
+

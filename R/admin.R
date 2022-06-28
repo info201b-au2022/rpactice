@@ -152,7 +152,8 @@ admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01", short = "P01
       "Student work: ", dir, "\n",
       "Summary:\n", sep="")
 
-  cat("   ", "\tFilename\tName\t\tSummary\t\t\tWrong Answers (internal ids)\n", sep="")
+  t <- sprintf("%-30s %-20s %-15s %-15s", "Filename", "Name", "Summary", "Wrong Answers (internal ids)\n")
+  cat("        ", t, sep="")
 
   # File names only
   file_names <- list.files(dir, pattern = "*.R")
@@ -197,13 +198,22 @@ admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01", short = "P01
     # Collect some basic feedback
     wrongs <- paste0(result$incorrect_v, collapse=" ")
 
+    t <- sprintf("%-30s %-20s %-15s %-15s",
+                 file_names[k],
+                 result$user_name,
+                 paste0(result$num_correct, " of ",
+                        (result$num_incorrect+result$num_correct)),
+                 wrongs
+                 )
+    cat("[", k, "]\t", t, "\n", sep="")
+
     # A brief summary
-    cat("[", k, "]\t", file_names[k], "\t",
-        result$user_name, "\t",
-        result$num_correct, " of ",
-        (result$num_incorrect+result$num_correct), " correct\t\t",
-        wrongs, "\n",
-        sep="")
+    # cat("[", k, "]\t", file_names[k], "\t",
+    #     result$user_name, "\t",
+    #     result$num_correct, " of ",
+    #     (result$num_incorrect+result$num_correct), " correct\t\t",
+    #     wrongs, "\n",
+    #     sep="")
   }
   cat("See graded work in:\n   ", dir, "/<Filename.html>", sep="")
 }
