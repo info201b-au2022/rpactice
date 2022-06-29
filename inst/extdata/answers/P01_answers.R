@@ -45,5 +45,3 @@ t_11 <- -7 / 0
 # m: In R, NaN means 'Not a Number'. What is 0 / 0? (t_12)
 t_12 <- 0 / 0
 
-practice.check()
-

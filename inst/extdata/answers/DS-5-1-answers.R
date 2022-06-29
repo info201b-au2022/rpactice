@@ -26,5 +26,4 @@ too_expensive <- total_cost > 1000
 # h: Create a variable `max_puppies`, which is the number of puppies you can afford for $1,000 (max_puppies)
 max_puppies <- 1000%/%puppy_price
 
-practice.check()
 

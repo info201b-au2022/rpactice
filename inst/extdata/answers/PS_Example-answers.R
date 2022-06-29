@@ -41,6 +41,3 @@ library(dplyr)
    df4 <- cDF %>%
      filter(C==TRUE) %>%
      select(A,C)
-
-practice.check()
-

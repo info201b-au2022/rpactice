@@ -47,5 +47,3 @@ describe_difference <- function(first, second) {
 describe_difference("dog", "elephant")
 describe_difference("elephant", "dog")
 describe_difference("dog", "cat")
-
-practice.check()

@@ -20,4 +20,3 @@ t04 <- t03[t03 > 4] #A: c(6 8)
 
 # e: Add two vectors (X initialized in problem set) (t05)
 t05 <- X + t01 #A: c(2,4,6,8)
-practice.check()

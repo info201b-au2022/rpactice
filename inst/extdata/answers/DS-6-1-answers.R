@@ -51,4 +51,3 @@ sum_round <- sum(round_1,round_2)
 # h: Which is bigger, `round_sum` or `sum_round`? Assign your answer to the variable `bigger`. (You can use the `max()` function!) (bigger)
 bigger <- max(sum_round, round_sum)
 
-practice.check()

@@ -35,6 +35,4 @@ df5_f <- function(test) {
     select(A,C)
 }
 
-practice.check()
-
 

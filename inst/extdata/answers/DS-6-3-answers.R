@@ -27,4 +27,3 @@ imperial_to_metric <- function(f, i) {
 #    `imperial_to_metric` function. For testing, assuming you are 5 feet 8 inches tall. (height_in_meters)
 height_in_meters <- imperial_to_metric(5,8)
 
-practice.check()

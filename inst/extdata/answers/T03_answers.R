@@ -33,5 +33,3 @@ h <- function(num, prec) {
   return(rounded)
 }
 
-practice.check()
-
