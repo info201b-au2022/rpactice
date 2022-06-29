@@ -335,11 +335,11 @@ parse_ps <- function(t, silient = TRUE) {
   return(ps)
 }
 
-
+# Integrity checking ----
 #----------------------------------------------------------------------------#
-# Xxx xxx
+# This function runs through a practice set specification and checks
+# its integrity.
 #----------------------------------------------------------------------------#
-
 check_file_integrity <- function(filename, silient = FALSE, detailed = FALSE) {
   if (!file.exists(filename)) {
     return()
@@ -400,9 +400,8 @@ check_file_integrity <- function(filename, silient = FALSE, detailed = FALSE) {
   }
 }
 
-
 #----------------------------------------------------------------------------#
-# Xxx xxx
+# It checks that are all tags are known
 #----------------------------------------------------------------------------#
 check_tags <- function(t, silient = FALSE, detailed = FALSE) {
   any_errors <- FALSE
