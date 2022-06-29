@@ -10,7 +10,12 @@ addin.a <- function() {
 }
 
 addin.b <- function() {
-  practice.check()
+  results <- check_answers_from_ui()
+  if (!is.null(results)) {
+    t <- format_result(results)
+    print_output(t, "check")
+  }
+  return(TRUE)
 }
 
 addin.c <- function() {

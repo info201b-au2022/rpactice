@@ -5,7 +5,7 @@
 #   1. Find all assignment statements -- ast_scan (e, "<-", TRUE)
 #   2. Find all print or cat statements -- ast_scan(e, c("print", "cat"), TRUE)
 #
-# When the argument in_statement is FALSE, the function it will return all line numbers that
+# When the argument in_statement is FALSE, the function  will return all line numbers that
 # do NOT satisfy the condition.
 #
 # Example:
@@ -15,26 +15,36 @@
 ast_scan <- function(e, s, in_statement = TRUE) {
   lines_true <- c()
   lines_false <- c()
-  for (k in 1:length(e)) {
-    if (length(e[[k]]) > 0) {
-      if (as.character(e[[k]][[1]]) %in% s) {
-        lines_true <- append(lines_true, k)
-      } else {
-        lines_false <- append(lines_false, k)
+
+  if (length(e) > 0) {
+    for (k in 1:length(e)) {
+      if (length(e[[k]]) > 0) {
+        if (as.character(e[[k]][[1]]) %in% s) {
+          lines_true <- append(lines_true, k)
+        } else {
+          lines_false <- append(lines_false, k)
+        }
       }
     }
   }
-  if (in_statement) return(lines_true) else return(lines_false)
+
+  if (in_statement) {
+    return(lines_true)
+  } else {
+    return(lines_false)
+  }
 }
 
 # All statements denoted by the line numbers in x will be removed and a
 # new expression will be returned
 ast_rm <- function(e, x) {
   e1 <- list()
+  if (length(e) > 0 ) {
   for (k in 1:length(e)) {
     if (!(k %in% x)) {
-      e1 <- append(e1, e[k])   # Check: Why not [[k]] here?
+      e1 <- append(e1, e[k]) # Check: Why not [[k]] here?
     }
+  }
   }
   return(e1)
 }
@@ -52,11 +62,37 @@ ast_get_assignments <- function(e1) {
   return(result)
 }
 
+ast_get_begin <- function(e1) {
+  line_nums <- ast_scan(e1, "practice.begin")
+  if (length(line_nums) == 0) {
+    return(list())
+  }
+
+  begin_expr <- e1[[line_nums[length(line_nums)]]]
+  if (length(begin_expr) == 0) {
+    return (list())
+  }
+
+
+  e2 <- ast_rm(e1, line_nums)
+
+
+  for (k in 1:length(e2)) {
+    t <- list(r = list(lhs = deparse(e2[[k]][[2]]), rhs = deparse(e2[[k]][[3]]), e = e2[[k]][[3]]))
+    result <- append(result, t)
+  }
+  return(result)
+}
+
 # In a block of code, return the last assignment statement
 ast_last_assignment <- function(e1) {
   r <- ast_get_assignments(e1)
   k <- length(r)
-  if (k != 0) return(r[[k]]) else return(list())
+  if (k != 0) {
+    return(r[[k]])
+  } else {
+    return(list())
+  }
 }
 
 # t <- parse(text="t<-(a+b) / (c+d); print(0); u <- t[(a+b)/(c+d)]")
@@ -87,6 +123,23 @@ ast_walk <- function(e, level = 1) {
   }
   return(TRUE)
 }
+
+
+expr_type <- function(x) {
+  if (rlang::is_syntactic_literal(x)) {
+    "constant"
+  } else if (is.symbol(x)) {
+    "symbol"
+  } else if (is.call(x)) {
+    "call"
+  } else if (is.pairlist(x)) {
+    "pairlist"
+  } else {
+    typeof(x)
+  }
+}
+
+
 
 ast_test <- function() {
   t <-

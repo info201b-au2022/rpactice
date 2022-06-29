@@ -12,7 +12,7 @@ X <- c(1,2,3)
 #' @msg Basic expressions
 
 #' @id ?
-#' @msg An expression (implicit variable)
+#' @msg An expression (implicit variable) [t01 <- sqrt((1+2+3)^2)*2  # 12]
 #' @code
 t01 <- sqrt((1+2+3)^2)*2  # 12
 #' @end

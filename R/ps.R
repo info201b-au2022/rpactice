@@ -32,6 +32,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("DS-6-4.R")) # Functions and conditionals
 
   # Test cases
+  ps_add(load_ps("T00.R")) # Supreme simplicity for debugging
   ps_add(load_ps("T01.R")) # Assignment and atomic vectors
   ps_add(load_ps("T02.R")) # Vectors
   ps_add(load_ps("T03.R")) # Functions
@@ -203,12 +204,12 @@ eval_string_and_format <- function(code) {
       if (length(result$value) == 1) {
         return(paste0("atomic [1]: ", as.character(result$value)))
 
-      # Vector type
+        # Vector type
       } else {
         len <- length(result$value)
         t <- paste0(result$value, collapse = " ")
         if (len > 20) {
-          t <- paste0(str_sub(t, 1, 20), " ...", sep="")
+          t <- paste0(str_sub(t, 1, 20), " ...", sep = "")
         }
         return(paste0("vector [", len, "]: ", t))
       }
@@ -449,7 +450,7 @@ DEFAULT_Check <- function(internal_id, result) {
         return(result)
       }
 
-    # Check for dataframe
+      # Check for dataframe
     } else if (learner_result$type == "dataframe") {
       learner_val <- learner_result$value
 
@@ -462,7 +463,7 @@ DEFAULT_Check <- function(internal_id, result) {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
       }
 
-    # list
+      # list
     } else if (learner_result$type == "list") {
       learner_val <- learner_result$value
 
@@ -474,7 +475,6 @@ DEFAULT_Check <- function(internal_id, result) {
       } else {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
       }
-
     } else {
       if (cDEBUG) {
         print(">> Type not handled")
@@ -538,10 +538,6 @@ check_answers <- function(learner_code) {
     t <- learner_assign_ops[[k]]
     flatten <- paste0(t$rhs, collapse = "\n")
     ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
-
-    # cat(paste0(k, " ", learner_code[k], "\n"), sep="")
-    # cat(paste0("   lhs: ", t$lhs, "\n"), sep="")
-    # cat(paste0("   rhs: ", flatten, "\n"), sep="")
   }
 
   # Get all of the variable names that need to be checked for correctness
@@ -558,7 +554,6 @@ check_answers <- function(learner_code) {
   for (k in 1:length(var_names)) {
     var <- var_names[k]
     internal_id <- ps_var_name_to_id(var)
-
     if (is_callback_loaded(var) == TRUE) {
       practice_result <- do.call(get_callback_name(var), list(internal_id, practice_result))
     } else {
@@ -576,15 +571,20 @@ clear_viewer_pane <- function() {
   rstudioapi::viewer(TextFile)
 }
 
-
 # This function gives access to the learner's code in RStudio
 check_answers_from_ui <- function() {
   t <- rstudioapi::getSourceEditorContext()
-  print(t)
-  rstudioapi::documentSave(NULL)
-  print(rstudioapi::documentPath(t$id))
-  learner_code <- readLines(rstudioapi::documentPath(t$id))
-  return(check_answers(learner_code))
+  if (t$path == "") {
+    showDialog("Check", "Please save your .R file. It must be saved before checking your practice set.")
+    return(NULL)
+  } else {
+    rstudioapi::documentSave(t$id)
+    print(rstudioapi::documentPath(t$id))
+    learner_code <- readLines(rstudioapi::documentPath(t$id))
+    print(learner_code)
+    eval(parse(text = learner_code), envir = .GlobalEnv)
+    return(check_answers(learner_code))
+  }
 }
 
 # Create the name for a callback function.  The name follows this template:
@@ -876,7 +876,7 @@ format_practice_script <- function(id) {
     "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n\n",
     t_lines_of_code,
     t,
-    "practice.check()\n"
+    "\n"
   )
   return(t)
 }

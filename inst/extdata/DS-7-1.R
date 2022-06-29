@@ -11,92 +11,94 @@
 
 #' @id ?
 #' @msg
-# Create a vector `names` that contains your name and the names of 2 people
-# next to you. Print the vector.
+#' Create a vector `names` that contains the names of three people,
+#' namely "Alex," "Drew," and "Jordan." Be sure to print out the vector
+#' with the command `print(names)`.
 #' @end
 #' @code
-xxx
+names <- c("Alex", "Drew", "Jordan")
 #' @end
 
 #' @id ?
 #' @msg
-# Use the colon operator : to create a vector `n` of numbers from 10:49
+#' Use the colon operator : to create a vector, named `n`, of numbers from 10 to 49.
 #' @end
 #' @code
-xxx
+n <- 10:49
 #' @end
 
 #' @id ?
 #' @msg
-# Use the `length()` function to get the number of elements in `n`
+#' Use the `length()` function to get the number of elements in `n`.  Assign the length
+#' to the variable n_len
 #' @end
 #' @code
-xxx
+n_len <- length(n)
 #' @end
 
 #' @id ?
 #' @msg
-# Add 1 to each element in `n` and print the result
+#' Add 1 to each element in `n`. Assign this new vector to `n1`.
 #' @end
 #' @code
-xxx
+n1 <- n + 1
 #' @end
 
 #' @id ?
 #' @msg
-# Create a vector `m` that contains the numbers 10 to 1 (in that order).
-# Hint: use the `seq()` function
+#' Create a vector `m` that contains the numbers 10 to 1 (in that order).
+#' Hint: use the `seq()` function.
 #' @end
 #' @code
-xxx
+m <- seq(10,1)
 #' @end
 
 #' @id ?
 #' @msg
-# Subtract `m` FROM `n`. Note the recycling!
+#' Subtract `m` FROM `n`. Assign the new vector to v1. Note the recycling!
 #' @end
 #' @code
-xxx
+v1 <- n - m
 #' @end
 
 #' @id ?
 #' @msg
-# Use the `seq()` function to produce a range of numbers from -5 to 10 in `0.1`
-# increments. Store it in a variable `x_range`
+#' Use the `seq()` function to produce a range of numbers from -5 to 10 in `0.1`
+#' increments. Store it in a variable `x_range`
 #' @end
 #' @code
-xxx
+x_range <- seq(-5, 10, 0.1)
 #' @end
 
 #' @id ?
 #' @msg
-# Create a vector `sin_wave` by calling the `sin()` function on each element
-# in `x_range`.
+#' Create a vector `sin_wave` by calling the `sin()` function on each element
+#' in `x_range`. `
 #' @end
 #' @code
-xxx
+sin_wave <- sin(x_range)
 #' @end
 
 #' @id ?
 #' @msg
-# Create a vector `cos_wave` by calling the `cos()` function on each element
-# in `x_range`.
+#' Create a vector `cos_wave` by calling the `cos()` function on each element
+#' in `x_range`.
 #' @end
 #' @code
-xxx
+cos_wave <- cos(x_range)
 #' @end
 
 #' @id ?
 #' @msg
-# Create a vector `wave` by multiplying `sin_wave` and `cos_wave` together, then
-# adding `sin_wave` to the product
+#' Create a vector `wave` by multiplying `sin_wave` and `cos_wave` together, then
+#' adding `sin_wave` to the product
 #' @end
 #' @code
-xxx
+wave <- (sin_wave * cos_wave) + sin_wave
 #' @end
 
 #' @id -
 #' @msg
-# Use the `plot()` function to plot your `wave`!
+#' Use the `plot()` function to plot your `wave`!
 #' @end
 

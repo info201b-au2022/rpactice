@@ -54,25 +54,25 @@ test_that("Syntax areas", {
 statement <- "list(a=1, b=TRUE)"
 t <- eval_string_and_format(statement)
 test_that("Lists are currently unhandled", {
-  expect_equal(t, "Type unhandled: list")
+  expect_equal(t, "list: [2]")
 })
 
 statement <- "t <- 1; x <- t + 1; y <- x + 1"
 t <- eval_string_and_format(statement)
 test_that("Three statements with semi-colons.", {
-  expect_equal(t, "atomic: 3")
+  expect_equal(t, "atomic [1]: 3")
 })
 
 statement <- c("t <- 1", "x <- t + 1", "y <- x + 1")
 t <- eval_string_and_format(statement)
 test_that("Three statements in a vector.", {
-  expect_equal(t, "atomic: 3")
+  expect_equal(t, "atomic [1]: 3")
 })
 
 statement <- "t <- 1\n x <- t + 1\n y <- x + 1"
 t <- eval_string_and_format(statement)
 test_that("Three statements with semi-colons.", {
-  expect_equal(t, "atomic: 3")
+  expect_equal(t, "atomic [1]: 3")
 })
 
 
@@ -118,6 +118,25 @@ test_that("ast functions", {
 
 t <-
   "
+practice.begin()
+t <- 1
+u <- 2; v <-3
+cat(t, u)
+w<- x <- 4
+y<-5
+practice.check()
+"
+e2 <- parse(text=t)
+r <- ast_get_assignments(e2)
+test_that("ast functions", {
+  expect_equal(length(r), 5)
+  expect_equal(r[[3]]$lhs, "v")
+  expect_equal(r[[4]]$lhs, "w")
+})
+
+t <-
+  "
+practice.begin()
 t <- 1
 u <- 2; v <-3
 cat(t, u)
@@ -137,4 +156,43 @@ r <- ast_last_assignment(e2)
 test_that("ast functions", {
   expect_equal(r$lhs, "y")
 })
+
+t <-
+"
+practice.begin()
+t <- 1
+u <- 2; v <-3
+cat(t, u)
+w<- x <- 4
+y<-5
+practice.check()
+"
+e2 <- parse(text=t)
+r <- ast_scan(e2,c("practice.begin", "practice.check", "practice.answers", "practice.qustions", "load_url"))
+test_that("ast functions", {
+  expect_equal(length(r),2)
+  expect_equal(r[1], 1)
+  expect_equal(r[2], 8)
+})
+
+t <-"
+practice.begin()
+practice.check()
+practice.questions()
+practice.answers()
+practice.load_url()"
+e2 <- parse(text=t)
+r <- ast_scan(e2,c("practice.begin", "practice.check", "practice.answers", "practice.questions", "practice.load_url"))
+test_that("ast functions", {
+  expect_equal(length(r),5)
+})
+
+t <-""
+e2 <- parse(text=t)
+r <- ast_scan(e2,c("practice.begin", "practice.check", "practice.answers", "practice.questions", "practice.load_url"))
+test_that("ast functions", {
+  expect_equal(length(e2),0)
+  expect_equal(length(r),0)
+})
+
 #testthat::test_file("tests/testthat/test-eval.R")
