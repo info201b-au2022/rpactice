@@ -844,7 +844,7 @@ number_of_prompts <- function() {
 
 # This function is used to create a template script - learners can start
 # here and write code for each of the prompts
-format_practice_script <- function(id) {
+format_practice_script <- function(id, show_answers=FALSE) {
   ps <- ps_get_current()
 
   t <- ""
@@ -853,8 +853,17 @@ format_practice_script <- function(id) {
     if (task$is_note_msg == TRUE) {
       t <- paste0(t, "# Note: ", msg, "\n\n")
     } else {
-      t <- paste0(t, "# ", task$prompt_id, ": ", msg, " (", task$assignment_var, ")", "\n\n")
+      t <- paste0(t, "# ", task$prompt_id, ": ", msg, " (", task$assignment_var, ")", "\n")
     }
+
+    # This will show the answers -- Useful to generating answer files
+    if (show_answers==TRUE) {
+      s <- paste0(task$expected_answer, collapse="\n")
+      t <- paste0(t, s, "\n\n")
+    } else {
+      t <- paste0(t, "\n")
+    }
+
   }
 
   s <- ""
