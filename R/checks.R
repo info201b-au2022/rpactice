@@ -94,13 +94,12 @@ h.T03_Check <- function(internal_id, result) {
 
 
   if (learner_result$type == "closure") {
-
     for (k in 1:length(checks_precision)) {
-     t1 <- do.call(learner_result$scode, list(checks_arg1,checks_precision[k]))
-     t2 <- do.call(expected_function, list(checks_arg1, checks_precision[k]))
+      t1 <- do.call(learner_result$scode, list(checks_arg1, checks_precision[k]))
+      t2 <- do.call(expected_function, list(checks_arg1, checks_precision[k]))
 
-     learner_answers <- append(learner_answers,t1)
-     expected_answers <- append(expected_answers,t2)
+      learner_answers <- append(learner_answers, t1)
+      expected_answers <- append(expected_answers, t2)
     }
 
     if (identical(learner_answers, expected_answers, ignore.environment = TRUE) == TRUE) {
@@ -111,6 +110,41 @@ h.T03_Check <- function(internal_id, result) {
     return(result)
   }
 }
+
+# Practice Set DS-7-3 ----
+word_bin.DS_7_3_Check <- function(internal_id, result) {
+  checks_arg1 <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
+  bound1 <- c("a", "f", "m", "z")
+  bound2 <- c("a", "f", "m", "z")
+
+  learner_answers <- c()
+  expected_answers <- c()
+
+  learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
+
+  expected_code <- ps_get_expected_answer(internal_id)
+  expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
+
+  if (learner_result$type == "closure") {
+    for (j in 1:length(bound1)) {
+      for (k in 1:length(bound2)) {
+        t1 <- do.call(learner_result$scode, list(checks_arg1, bound1[j], bound2[k]))
+        t2 <- do.call(expected_function, list(checks_arg1, bound1[j], bound2[k]))
+
+        learner_answers <- append(learner_answers, t1)
+        expected_answers <- append(expected_answers, t2)
+      }
+    }
+
+    if (identical(learner_answers, expected_answers, ignore.environment = TRUE) == TRUE) {
+      result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+    } else {
+      result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+    }
+    return(result)
+  }
+}
+
 
 # The remaining tasks are handled by the default callback function,
 # which is named DEFAULT_Check() (see "practice-201.R")

@@ -2,7 +2,7 @@
 #' @short DS-7-3
 #' @title Vector practice
 #' @descr
-#' Exercise 6.4 from Programming Skills for Data Science by
+#' Exercise 7.3 from Programming Skills for Data Science by
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
@@ -14,7 +14,7 @@
 #' Create a vector `words` of 6 (or more) words. You can Google for a "random word generator" if you wish!
 #' @end
 #' @code
-words <- c("Convivial", "Love", "Excitment", "Mountains", "Fast", "Bicycles", "Stars")
+words <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
 #' @end
 
 #' @id ?
@@ -37,7 +37,7 @@ words_of_the_day <- paste0("\"", words, "\" is the word of the day!", collpase =
 #' of the word!
 #' @end
 #' @code
-xxx
+a_f_words <- words[substring(words, 1, 1) <= "f"]
 #' @end
 
 #' @id ?
@@ -46,7 +46,7 @@ xxx
 #' "g" through "m"
 #' @end
 #' @code
-xxx
+g_m_words <- words[words >= "g" & substring(words, 1, 1) <= "m"]
 #' @end
 
 #' @id ?
@@ -55,8 +55,11 @@ xxx
 #' and two letters. The function should return a vector of words that go between
 #' those letters alphabetically.
 #' @end
+#' @check list(cset={})
 #' @code
-xxx
+word_bin <- function(words, start, end){
+  words[words >= start & substring(words, 1, 1) <= end]
+}
 #' @end
 
 

@@ -251,6 +251,45 @@ eval_string_and_format <- function(code) {
   }
 }
 
+signature_ok <- function(check_code, expected_code) {
+
+  print(check_code)
+  print(expected_code)
+
+  tryCatch(
+    expr = {
+      check_function <- eval(parse(text = paste0(check_code, collapse = "\n")))
+      expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
+    },
+    error = function(e) {
+      stop("signature_ok: ERROR")
+      return(-2)
+    }
+  )
+
+  check_formals <- names(formals(check_function))
+  expected_formals <- names(formals(expected_function))
+
+  # Check that the function signatures are okay
+  signature_ok <- TRUE
+  if (is.null(check_formals) && !is.null(expected_formals)) {
+    signature_ok <- FALSE
+  }
+  if (signature_ok) {
+    if (length(check_formals) != length(expected_formals)) {
+      signature_ok <- FALSE
+    }
+  }
+
+  num_args <- -1
+  if (signature_ok) {
+  num_args <- length(check_formals)
+  }
+
+  return(num_args)
+}
+
+
 # This function formats a code block
 # TODO: Make improvements
 format_code <- function(code_text, indent = cTAB_IN_SPACES) {
@@ -361,25 +400,30 @@ DEFAULT_Check <- function(internal_id, result) {
       # }
       # print("Closure .............")
 
-      learner_formals <- names(formals(learner_result$scode))
+      # learner_formals <- names(formals(learner_result$scode))
+      #
+      # expected_code <- ps_get_expected_answer(internal_id)
+      # expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
+      # expected_formals <- names(formals(expected_function))
+      #
+      # # Check that the function signatures are okay
+      # signature_ok <- TRUE
+      # if (is.null(learner_formals) && !is.null(expected_formals)) {
+      #   signature_ok <- FALSE
+      # }
+      # if (signature_ok) {
+      #   if (length(learner_formals) != length(expected_formals)) {
+      #     signature_ok <- FALSE
+      #   }
+      # }
 
       expected_code <- ps_get_expected_answer(internal_id)
       expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
-      expected_formals <- names(formals(expected_function))
 
-      # Check that the function signatures are okay
-      signature_ok <- TRUE
-      if (is.null(learner_formals) && !is.null(expected_formals)) {
-        signature_ok <- FALSE
-      }
-      if (signature_ok) {
-        if (length(learner_formals) != length(expected_formals)) {
-          signature_ok <- FALSE
-        }
-      }
+      num_args <- signature_ok(learner_result$scode, expected_code)
 
-      # If the number of parameters differ from expected - not error message
-      if (signature_ok == FALSE) {
+      # If the number of parameters differ from expected - note error message
+      if (num_args < 0) {
         t <- result_main_message(result_error_msg(internal_id, TRUE))
         t <- result_sub_message(t, "Check the number of arguments in your function")
         result <- result_update(result, internal_id, FALSE, t)
@@ -387,7 +431,7 @@ DEFAULT_Check <- function(internal_id, result) {
       }
 
       # A function with ZERO parameters
-      if (length(learner_formals) == 0) {
+      if (num_args == 0) {
         learner_f_answers <- do.call(learner_result$scode, list())
         expected_f_answers <- do.call(expected_function, list())
 
@@ -399,15 +443,15 @@ DEFAULT_Check <- function(internal_id, result) {
         return(result)
 
         # A function with ONE parameter
-      } else if (length(learner_formals) == 1) {
+      } else if (num_args == 1) {
         learner_answers <- c()
         expected_answers <- c()
+
         checks <- ps_get_arg1_checks(internal_id)
 
         for (k in 1:length(checks)) {
           t1 <- do.call(learner_result$scode, list(checks[k]))
           t2 <- do.call(expected_function, list(checks[k]))
-
           learner_answers <- append(learner_answers, t1)
           expected_answers <- append(expected_answers, t2)
         }
@@ -420,17 +464,17 @@ DEFAULT_Check <- function(internal_id, result) {
         return(result)
 
         # A function with TWO parameters
-      } else if (length(learner_formals) == 2) {
+      } else if (num_args == 2) {
+        learner_answers <- c()
+        expected_answers <- c()
+
         checks_arg1 <- ps_get_arg1_checks(internal_id)
         checks_arg2 <- ps_get_arg2_checks(internal_id)
 
-        learner_answers <- c()
-        expected_answers <- c()
         for (j in 1:length(checks_arg1)) {
           for (k in 1:length(checks_arg2)) {
             t1 <- do.call(learner_result$scode, list(checks_arg1[j], checks_arg2[k]))
             t2 <- do.call(expected_function, list(checks_arg1[j], checks_arg2[k]))
-
             learner_answers <- append(learner_answers, t1)
             expected_answers <- append(expected_answers, t2)
           }
@@ -596,7 +640,9 @@ check_answers_from_ui <- function() {
 # Typical examples: t_01.P01_Check | circle_area.P01_Check
 
 get_callback_name <- function(var_name) {
-  t <- paste0(var_name, ".", ps_get_short(), "_Check")
+  t <- ps_get_short()
+  t <- str_replace_all(t, "-", "_")
+  t <- paste0(var_name, ".", t, "_Check")
   return(t)
 }
 
@@ -709,8 +755,6 @@ ps_get_all_assignment_vars <- function() {
   }
   return(vars)
 }
-
-
 
 # Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
@@ -844,7 +888,7 @@ number_of_prompts <- function() {
 
 # This function is used to create a template script - learners can start
 # here and write code for each of the prompts
-format_practice_script <- function(id, show_answers=FALSE) {
+format_practice_script <- function(id, show_answers = FALSE) {
   ps <- ps_get_current()
 
   t <- ""
@@ -857,13 +901,12 @@ format_practice_script <- function(id, show_answers=FALSE) {
     }
 
     # This will show the answers -- Useful to generating answer files
-    if (show_answers==TRUE) {
-      s <- paste0(task$expected_answer, collapse="\n")
+    if (show_answers == TRUE) {
+      s <- paste0(task$expected_answer, collapse = "\n")
       t <- paste0(t, s, "\n\n")
     } else {
       t <- paste0(t, "\n")
     }
-
   }
 
   s <- ""

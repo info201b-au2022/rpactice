@@ -63,10 +63,11 @@ even <- seq(2,100,2)
 #' @id ?
 #' @msg
 #' Using the `all()` function and `%%` (modulo) operator, confirm that all of the
-#' numbers in your `even` vector are even.
+#' numbers in your `even` vector are even. Assign your answer to the
+#' variable, `even_check`.
 #' @end
 #' @code
-all(seq(2,100,2) %% 2 == 0)
+even_check <- all(seq(2,100,2) %% 2 == 0)
 #' @end
 
 #' @id ?
