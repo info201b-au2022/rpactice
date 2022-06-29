@@ -84,7 +84,7 @@ sin_wave <- sin(x_range)
 #' Create a vector `cos_wave` by calling the `cos()` function on each element
 #' in `x_range`.
 #' @end
-#' @code
+#' @codes
 cos_wave <- cos(x_range)
 #' @end
 

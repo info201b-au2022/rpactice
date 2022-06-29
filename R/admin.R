@@ -11,11 +11,11 @@
 #' @export
 admin <- function() {
   cat("\014") # Clear screen
-  cat("Function                    Purpose\n")
-  cat("admin()                     List the current admin functinons.\n")
+  cat(crayon::red("Function\t\t   "),                   crayon::red("Purpose"), "\n")
+  cat("admin()                     List the current admin functions\n")
   cat("admin.check(short)          Check the integrity of a practice set file.\n")
-  cat("admin.grade(dir, short)     Grade all the work in the directory (dir) for a practice set (short).\n")
-  cat("admin.grade_ui(short)       Select directory from ui\n")
+  cat("admin.grade(dir)            Grade all the work in the directory (dir).\n")
+  cat("admin.grade_ui()            Select a directory (dir) from a file dialog.\n")
   cat("admin.ls()                  List installed practice sets and basic info.\n")
   cat("admin.prompts(short)        List the practice prompts and results.\n")
   cat("admin.vars()                List all the variables that are 'alive'.\n")
@@ -24,8 +24,8 @@ admin <- function() {
 #' List installed practice sets
 #'
 #' Intended for teaching assistants and instructors only, \code{admin.ls()}
-#' simply lists all currently installed practice sets. At present, each of these
-#' practice sets will be available to learners.
+#' simply lists all currently installed practice sets. Each of these
+#' practice sets are available to learners.
 #'
 #' @export
 #----------------------------------------------------------------------------#
@@ -132,14 +132,12 @@ admin.vars <- function() {
 #' Evaluate a directory of practice sets
 #'
 #' Intended for teaching assistants and instructors only, \code{admin.grade()},
-#' will check all of the practice sets within a directory. This function will be
-#' extended to provide auto-grader functionality.
+#' will check all of the practice sets within a directory.
 #'
-#' @param short for the short name of the practice set
 #' @param dir directory of practice sets to grade
 #'
 #' @export
-admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01", short = "P01") {
+admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01") {
 
   if (file.exists(dir) == FALSE) {
     stop(paste0("Directory does not exist.\n", dir, ""), sep="")
@@ -148,7 +146,6 @@ admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01", short = "P01
   cat("\014admin.grade()\n") # Clear screen
 
   cat(
-      "Practice set: ", short, "\n",
       "Student work: ", dir, "\n",
       "Summary:\n", sep="")
 
@@ -166,11 +163,6 @@ admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01", short = "P01
     # Get the learners code from a file
     code_v <- readLines(file_list[k])
     code_string <- paste0(code_v, collapse = "\n")
-
-    # Get ready to evaluate a solution
-    if (!is.null(short)) {
-      practice.begin(short)
-    }
 
     # Try to evaluate the code
     out <- tryCatch(
@@ -218,19 +210,17 @@ admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01", short = "P01
   cat("See graded work in:\n   ", dir, "/<Filename.html>", sep="")
 }
 
-#' UI for selecting files to grade
-#'
-#' @param short for the short name of the practice set
+#' UI for selecting a directory to grade
 #'
 #' @export
-admin.grade_ui <- function(short="P01") {
+admin.grade_ui <- function() {
 
 t <- rstudioapi::selectDirectory(
   caption = "Select Directory",
   label = "Select",
   path = getActiveProject())
 
-admin.grade(t, short)
+admin.grade(t)
 }
 
 #' Check the integrity of practice set
@@ -241,10 +231,11 @@ admin.grade(t, short)
 #'
 #' @param short for the short name of the practice set
 #' @export
-admin.check <- function(short) {
-  ps <- ps_get_by_short(short)
-  if (is.null(ps)) {
-    stop(paste0("Error. Practice set not found (", short, ")"))
-  }
-  temp_ps <- load_ps(ps$ps_filename, silent = FALSE)
+admin.check <- function(fn, silient=FALSE, detailed=FALSE) {
+  check_file_integrity(fn, silient, detailed)
+  # ps <- ps_get_by_short(short)
+  # if (is.null(ps)) {
+  #   stop(paste0("Error. Practice set not found (", short, ")"))
+  # }
+  # temp_ps <- load_ps(ps$ps_filename, silent = FALSE)
 }

@@ -32,7 +32,7 @@ create_ps_from_url <- function(url) {
 load_ps <- function(fn, silent = TRUE) {
   filename <- system.file("extdata", fn, package = "pinfo201", mustWork = TRUE)
   ps <- read_ps_doc(filename)
-  ps$ps_filename <- fn
+  ps$ps_filename <- filename
   ps <- check_ps(ps, silent)
   return(ps)
 }
@@ -117,12 +117,8 @@ update_list <- function(prompts, id, msg, var, check, code, h) {
 #   )
 # )
 #----------------------------------------------------------------------------#
-parse_ps <- function(t) {
-  cDEBUG <- FALSE
-
-  check_tags(t,TRUE)
-
-  if (cDEBUG) {
+parse_ps <- function(t, silient = TRUE) {
+  if (!silient) {
     print(t)
   }
 
@@ -147,7 +143,7 @@ parse_ps <- function(t) {
 
   while (k <= length(t)) {
     rec <- t[k]
-    if (cDEBUG) {
+    if (!silient) {
       print(paste0("line: ", k, ": ", t[k]))
     }
 
@@ -160,7 +156,7 @@ parse_ps <- function(t) {
     # Found the practice set title
     if (str_detect(t[k], "^#' @title")) {
       ps_title_p <- str_trim(str_sub(t[k], 10, str_length(t[k])))
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("ps_title: ", ps_title_p))
       }
     }
@@ -168,7 +164,7 @@ parse_ps <- function(t) {
     # Found the practice set version
     else if (str_detect(t[k], "^#' @version")) {
       ps_version_p <- str_trim(str_sub(t[k], 12, str_length(t[k])))
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("ps_version: ", ps_version_p))
       }
     }
@@ -176,7 +172,7 @@ parse_ps <- function(t) {
     # Found the practice set short title
     else if (str_detect(t[k], "^#' @short")) {
       ps_short_p <- str_trim(str_sub(t[k], 10, str_length(t[k])))
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("ps_short: ", ps_short_p))
       }
     }
@@ -193,7 +189,7 @@ parse_ps <- function(t) {
         k <- k + 1
       }
       ps_descr_p <- paste0(v, collapse = "\n")
-      if (cDEBUG) {
+      if (!silient) {
         print(ps_descr_p)
       }
     }
@@ -215,7 +211,7 @@ parse_ps <- function(t) {
         ps_initial_vars_p <- append(ps_initial_vars_p, t[k])
         k <- k + 1
       }
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("ps_initial_vars: ", ps_initial_vars_p, collpase = "\n"))
       }
     }
@@ -247,14 +243,14 @@ parse_ps <- function(t) {
         )
       }
       id <- str_trim(str_sub(t[k], 7, str_length(t[k])))
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("id: ", id))
       }
 
       # Found the message for this prompt
     } else if (str_detect(t[k], "^#' @msg")) {
       msg <- str_trim(str_sub(t[k], 8, str_length(t[k])))
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("msg: ", msg))
       }
       k <- k + 1
@@ -264,10 +260,10 @@ parse_ps <- function(t) {
           break
         }
         if (str_detect(t[k], "^#' @code") ||
-            str_detect(t[k], "^#' @id") ||
-            str_detect(t[k], "^#' @check") ||
-            str_detect(t[k], "^#' @var")) {
-          k <- k - 1  # push the line back, so we can process this chunk on the next loop
+          str_detect(t[k], "^#' @id") ||
+          str_detect(t[k], "^#' @check") ||
+          str_detect(t[k], "^#' @var")) {
+          k <- k - 1 # push the line back, so we can process this chunk on the next loop
           break
         }
         msg <- paste0(msg, "\n", t[k])
@@ -277,14 +273,14 @@ parse_ps <- function(t) {
       # Found the name of the variable for this prompt
     } else if (str_detect(t[k], "#' @var")) {
       var <- str_trim(str_sub(t[k], 8, str_length(t[k])))
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("var: ", var))
       }
 
       # Found the check information
     } else if (str_detect(t[k], "#' @check")) {
       check <- str_trim(str_sub(t[k], 10, str_length(t[k])))
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("check: ", check))
       }
 
@@ -298,7 +294,7 @@ parse_ps <- function(t) {
         code <- append(code, t[k])
         k <- k + 1
       }
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("Code: ", code))
       }
 
@@ -312,7 +308,7 @@ parse_ps <- function(t) {
         hints <- append(hints, trim_comment(t[k]))
         k <- k + 1
       }
-      if (cDEBUG) {
+      if (!silient) {
         print(paste0("hints:", hints))
       }
     }
@@ -339,35 +335,156 @@ parse_ps <- function(t) {
   return(ps)
 }
 
-check_tags <- function(t, silent = FALSE) {
 
-  if (!silent) {
-    message("\nChecking tags ... ")
+#----------------------------------------------------------------------------#
+# Xxx xxx
+#----------------------------------------------------------------------------#
+
+check_file_integrity <- function(filename, silient = FALSE, detailed = FALSE) {
+  if (!file.exists(filename)) {
+    return()
+  }
+  file_list <- c()
+  if (dir.exists(filename)) {
+    file_list <- list.files(filename, pattern = "*.R", full.names = TRUE)
+  } else {
+    file_list <- append(file_list, filename)
   }
 
-  for (k in 1:length(t)) {
-
-    if (str_detect(t[k], "^#' @") ) {
-      if (str_detect(t[k], "@check ")) {next}
-      if (str_detect(t[k], "@code")) {next}
-      if (str_detect(t[k], "@descr")) {next}
-      if (str_detect(t[k], "@end")) {next}
-      if (str_detect(t[k], "@id ")) {next}
-      if (str_detect(t[k], "@msg ")) {next}
-      if (str_detect(t[k], "@msg")) {next}
-      if (str_detect(t[k], "@initial-vars")) {next}
-      if (str_detect(t[k], "@hints")) {next}
-      if (str_detect(t[k], "@short ")) {next}
-      if (str_detect(t[k], "@title ")) {next}
-      if (str_detect(t[k], "@var ")) {next}
-      if (str_detect(t[k], "@version ")) {next}
-
-      # message(paste0("Incorrect tag here:\n", t[k]))
-      # stop("Check_tags: Being Strict")
-
-      if (!silent) {
-        message(paste0("Incorrect tag here:\n", t[k]))
+  for (k in 1:length(file_list)) {
+    tryCatch(
+      expr = {
+        t <- readLines(file_list[k])
+      },
+      error = function(e) {
+        stop(paste0("check_file_integrity:\nFilename: ", file_list[k], "\n", e))
       }
+    )
+
+    # Checking tags ...
+    if (!silient) {
+      message("\n1. Checking tags ...")
+      message("   Filename: ", file_list[k], "")
+
+      if (detailed) {
+        message("Lines")
+      }
+      check_tags(t, silient, detailed)
+    }
+
+    if (!silient) {
+      message("Done step 1.\n")
+    }
+
+    # Parsing the file
+    if (!silient) {
+      message("2. Parsing file ...")
+      message("   Filename: ", file_list[k], "")
+    }
+    ps <- parse_ps(t)
+    ps$ps_filename <- file_list[k]
+
+    if (!silient) {
+      message("Done step 2.\n")
+    }
+
+    # Checking the output
+    if (!silient) {
+      message("3. Checking practice set integrity ... ")
+    }
+    ps <- check_ps(ps, silient)
+
+    if (!silient) {
+      message("Done step 3.\n")
+    }
+  }
+}
+
+
+#----------------------------------------------------------------------------#
+# Xxx xxx
+#----------------------------------------------------------------------------#
+check_tags <- function(t, silient = FALSE, detailed = FALSE) {
+  any_errors <- FALSE
+  prompts_will_be_renumbered <- 0
+  msg_prompts <- 0
+  num_prompts <- 1
+
+  for (k in 1:length(t)) {
+    if (!silient && detailed) {
+      message(paste0("   [", k, "]: ", t[k], ""))
+    }
+
+    if (str_detect(t[k], "^#' @")) {
+      if (str_detect(t[k], "^#' @check ")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @code$")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @descr")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @end$")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @id \\?$")) {
+        num_prompts <- num_prompts + 1
+        prompts_will_be_renumbered <- prompts_will_be_renumbered + 1
+        next
+      }
+      if (str_detect(t[k], "^#' @id -$")) {
+        num_prompts <- num_prompts + 1
+        msg_prompts <- msg_prompts + 1
+        next
+      }
+      if (str_detect(t[k], "^#' @id ")) {
+        num_prompts <- num_prompts + 1
+        next
+      }
+      if (str_detect(t[k], "^#' @msg ")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @msg")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @initial-vars$")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @hints$")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @short ")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @title ")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @var ")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @version ")) {
+        next
+      }
+      any_errors <- TRUE
+
+      message(paste0(">>> Unrecognized tag:"))
+      message(paste0("   [", k, "] ", t[k], "\n"))
+    }
+  }
+
+  if (!silient) {
+    if (any_errors == FALSE) {
+      message(paste0("   Summary: All tags appear good."))
+    } else {
+      message(paste0("   Summary: Erroneous tags found."))
+    }
+    message(paste0("   Summary: Num prompts: ", num_prompts))
+    message(paste0("   Summary: Num message prompts: ", msg_prompts))
+    if (prompts_will_be_renumbered > 0) {
+      message(paste0("   Summary: Prompt IDs will be renumbered: Yes."))
+    } else {
+      message(paste0("   Summary: Prompt IDs will be renumbered: No."))
     }
   }
 }
@@ -383,11 +500,10 @@ check_ps <- function(ps, silent = FALSE) {
   N <- length(ps$task_list)
 
   if (!silent) {
-    message("\nChecking practice set ... ")
     message(paste0("   ", ps$ps_short, ": ", ps$ps_title))
     message(paste0("   From filename: ", ps$ps_filename))
     message(paste0("   Number of prompts: ", N))
-    message(paste0("1. Analyzing prompts:"))
+    message(paste0("A. Analyzing prompts:"))
   }
 
   # Check that all messages have been assigned something
@@ -400,7 +516,8 @@ check_ps <- function(ps, silent = FALSE) {
   # Remove R comments
   for (k in 1:N) {
     ps$task_list[[k]]$prompt_msg <- str_trim(
-      str_replace_all(ps$task_list[[k]]$prompt_msg, "#'", ""))
+      str_replace_all(ps$task_list[[k]]$prompt_msg, "#'", "")
+    )
 
     ps$task_list[[k]]$prompt_msg <-
       str_replace(ps$task_list[[k]]$prompt_msg, "^\n", "")
@@ -434,7 +551,7 @@ check_ps <- function(ps, silent = FALSE) {
     }
     # Check for a "good" assignment variable
 
-    var_name <- ps$task_list[[j]]$assignment_var   #TODO: vector?
+    var_name <- ps$task_list[[j]]$assignment_var # TODO: vector?
     if (var_name == "") {
       fixed <- FALSE
       v <- get_var_lhs(ps$task_list[[j]]$expected_answer)
@@ -460,7 +577,7 @@ check_ps <- function(ps, silent = FALSE) {
   # Check that a all variable names are unique - if not unique, try to fix
   var_list <- c()
   for (j in 1:N) {
-    v <- ps$task_list[[j]]$assignment_var  #TODO: vector?
+    v <- ps$task_list[[j]]$assignment_var # TODO: vector?
     duplicate <- FALSE
     old_v <- v
     if (v != "") {
@@ -498,7 +615,7 @@ check_ps <- function(ps, silent = FALSE) {
   }
 
   if (!silent) {
-    message(paste0("2. Checking prompt IDs:"))
+    message(paste0("B. Checking prompt IDs:"))
   }
 
   # If an assignment ID has not been assigned make them up
@@ -521,8 +638,10 @@ check_ps <- function(ps, silent = FALSE) {
   }
 
   if (!silent) {
-    message(paste0("3. Checking the checks:"))
+    message(paste0("C. Checking the checks:"))
   }
+
+  no_checks_found <- TRUE
 
   for (k in 1:N) {
     t <- ps$task_list[[k]]$checks_for_f
@@ -532,16 +651,17 @@ check_ps <- function(ps, silent = FALSE) {
     }
 
     if (ps$task_list[[k]]$checks_for_f != "") {
+      no_checks_found <- FALSE
       tryCatch(
         expr = {
           e <- parse(text = ps$task_list[[k]]$checks_for_f)
           if (!silent) {
-          message(paste0("   [", k, "] Checking: ", ps$task_list[[k]]$checks_for_f), " Good!")
+            message(paste0("   [", k, "] Checking: ", ps$task_list[[k]]$checks_for_f), " Good!")
           }
         },
         error = function(e) {
           if (!silent) {
-          message(paste0("   [", k, "] Syntax error: ", ps$task_list[[k]]$checks_for_f))
+            message(paste0("   [", k, "] Syntax error: ", ps$task_list[[k]]$checks_for_f))
           }
           stop(paste0("   [", k, "] Syntax error: ", ps$task_list[[k]]$checks_for_f))
         }
@@ -550,7 +670,9 @@ check_ps <- function(ps, silent = FALSE) {
   }
 
   if (!silent) {
-    message(paste0("Done checking."))
+    if (no_checks_found) {
+      message("   No checks found.")
+    }
   }
 
   return(ps)
