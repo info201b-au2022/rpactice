@@ -39,6 +39,12 @@ ps_load_internal_ps <- function() {
   #ps_add(load_ps("DS-8-1.R")) # Creating and accessing lists
   #ps_add(load_ps("DS-8-2.R")) # Using `*apply()` function
 
+  #ps_add(load_ps("DS-10-1.R")) # Creating data frames
+  #ps_add(load_ps("DS-10-2.R")) # Working with data frames
+  #ps_add(load_ps("DS-10-3.R")) # Working with built-in data sets
+  #ps_add(load_ps("DS-10-4.R")) # External data sets: Gates Foundation Educational Grants
+  #ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
+
   # Test cases
   ps_add(load_ps("T00.R")) # Supreme simplicity for debugging
   ps_add(load_ps("T01.R")) # Assignment and atomic vectors
