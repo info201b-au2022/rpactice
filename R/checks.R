@@ -113,9 +113,7 @@ h.T03_Check <- function(internal_id, result) {
 
 # Practice Set DS-7-3 ----
 word_bin.DS_7_3_Check <- function(internal_id, result) {
-
-    learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
-
+  learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
   expected_code <- ps_get_expected_answer(internal_id)
   expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
 
@@ -155,7 +153,6 @@ word_bin.DS_7_3_Check <- function(internal_id, result) {
     return(result)
   }
 }
-
 
 # The remaining tasks are handled by the default callback function,
 # which is named DEFAULT_Check() (see "practice-201.R")

@@ -1,0 +1,53 @@
+<head></head><body><pre><b>DS-6-1: Calling built-in functions</b>
+ #' Exercise 6.1 from Programming Skills for Data Science by
+ Micheal Freeman and Joel Ross. See:
+ https://github.com/programming-for-data-science/book-exercises
+Learner name:
+<i>   [your name]</i>
+Initial variables:
+   
+Checking code:
+   8/8 complete. Good work! &#128512;
+a: <span style='color:green'>&#10004; atomic [1]: Grace Hopper</span>
+     <i>Your code</i>:
+       my_name <- "Grace Hopper"
+     <i>Expected</i>:
+       my_name <- "Grace Hopper"
+b: <span style='color:green'>&#10004; atomic [1]: 12</span>
+     <i>Your code</i>:
+       name_length <- nchar(my_name)
+     <i>Expected</i>:
+       name_length <- nchar(my_name)
+c: <span style='color:green'>&#10004; atomic [1]: Grace Hopper is programming!</span>
+     <i>Your code</i>:
+       now_doing <- paste(my_name, "is programming!")
+     <i>Expected</i>:
+       now_doing <- paste(my_name, "is programming!")
+d: <span style='color:green'>&#10004; atomic [1]: GRACE HOPPER IS PROGRAMMING!</span>
+     <i>Your code</i>:
+       now_doing.a <- str_to_upper(now_doing)
+     <i>Expected</i>:
+       now_doing.a <- str_to_upper(now_doing)
+e: <span style='color:green'>&#10004; atomic [1]: 8.9578893214042</span>
+     <i>Your code</i>:
+       raw_sum <- fav_1 + fav_2
+     <i>Expected</i>:
+       raw_sum <- sum(fav_1, fav_2)
+f: <span style='color:green'>&#10004; atomic [1]: 9</span>
+     <i>Your code</i>:
+       round_sum <- round(raw_sum, 1)
+     <i>Expected</i>:
+       round_sum <- round(raw_sum, 1)
+g: <span style='color:green'>&#10004; atomic [1]: 9</span>
+     <i>Your code</i>:
+       sum_round <- sum(round_1, round_2)
+     <i>Expected</i>:
+       sum_round <- round(fav_1, 1) + round(fav_2, 1)
+h: <span style='color:green'>&#10004; atomic [1]: 9</span>
+     <i>Your code</i>:
+       bigger <- max(sum_round, round_sum)
+     <i>Expected</i>:
+       bigger <- max(round_sum, sum_round)
+
+ Correct: 1 - 2 - 4 - 5 - 9 - 10 - 12 - 13
+ Incorrect: </pre></body>

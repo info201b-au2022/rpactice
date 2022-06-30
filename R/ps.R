@@ -221,7 +221,6 @@ eval_string_and_format <- function(code) {
         }
         return(paste0("vector [", len, "]: ", t))
       }
-      as
       # Check for a function
     } else if (result$type == "closure") {
       args <- names(formals(result$value))
@@ -261,8 +260,8 @@ eval_string_and_format <- function(code) {
 
 signature_ok <- function(check_code, expected_code) {
 
-  print(check_code)
-  print(expected_code)
+  # print(check_code)
+  # print(expected_code)
 
   tryCatch(
     expr = {

@@ -4,15 +4,12 @@
 \alias{admin.grade}
 \title{Evaluate a directory of practice sets}
 \usage{
-admin.grade(dir = "~/Documents/_Code2/assignments/A01", short = "P01")
+admin.grade(filename)
 }
 \arguments{
-\item{dir}{directory of practice sets to grade}
-
-\item{short}{for the short name of the practice set}
+\item{filename}{either a directory for a particular file}
 }
 \description{
 Intended for teaching assistants and instructors only, \code{admin.grade()},
-will check all of the practice sets within a directory. This function will be
-extended to provide auto-grader functionality.
+will check all of the practice sets within a directory.
 }

@@ -1,0 +1,68 @@
+<head></head><body><pre><b>DS-7-2: Indexing and filtering vectors</b>
+ Exercise 7.2 from Programming Skills for Data Science by
+ Micheal Freeman and Joel Ross. See:
+ https://github.com/programming-for-data-science/book-exercises
+Learner name:
+<i>   [your name]</i>
+Initial variables:
+   
+Checking code:
+   11/13 complete. More work to do.
+a: <span style='color:green'>&#10004; vector [11]: 10 11 12 13 14 15 16 17 18 19 20</span>
+     <i>Your code</i>:
+       first_ten <- 10:20
+     <i>Expected</i>:
+       first_ten <- 10:20
+b: <span style='color:green'>&#10004; vector [10]: 21 22 23 24 25 26 27 28 29 30</span>
+     <i>Your code</i>:
+       next_ten <- seq(21, 30, 1)
+     <i>Expected</i>:
+       next_ten <- seq(21, 30, 1)
+c: <span style='color:green'>&#10004; vector [21]: 10 11 12 13 14 15 16 ...</span>
+     <i>Your code</i>:
+       all_numbers <- append(first_ten, next_ten)
+     <i>Expected</i>:
+       all_numbers <- append(first_ten, next_ten)
+d: <span style='color:green'>&#10004; atomic [1]: 20</span>
+     <i>Your code</i>:
+       eleventh <- all_numbers[11]
+     <i>Expected</i>:
+       eleventh <- all_numbers[11]
+e: <span style='color:green'>&#10004; vector [4]: 11 12 13 14</span>
+     <i>Your code</i>:
+       some_numbers <- all_numbers[2:5]
+     <i>Expected</i>:
+       some_numbers <- all_numbers[2:5]
+f: <span style='color:green'>&#10004; vector [50]: 2 4 6 8 10 12 14 16  ...</span>
+     <i>Your code</i>:
+       even <- seq(2, 100, 2)
+     <i>Expected</i>:
+       even <- seq(2, 100, 2)
+g: <span style='color:green'>&#10004; atomic [1]: TRUE</span>
+     <i>Your code</i>:
+       even_check <- all(seq(2, 100, 2) %% 2 == 0)
+     <i>Expected</i>:
+       even_check <- all(seq(2, 100, 2) %% 2 == 0)
+h: <span style='color:green'>&#10004; vector [7]: 8 6 7 5 3 0 9</span>
+     <i>Your code</i>:
+       phone_numbers <- c(8, 6, 7, 5, 3, 0, 9)
+     <i>Expected</i>:
+       phone_numbers <- c(8, 6, 7, 5, 3, 0, 9)
+i: <span style='color:green'>&#10004; vector [3]: 8 6 7</span>
+     <i>Your code</i>:
+       prefix <- phone_numbers[1:3]
+     <i>Expected</i>:
+       prefix <- phone_numbers[1:3]
+j: <span style='color:green'>&#10004; vector [3]: 5 3 0</span>
+     <i>Your code</i>:
+       small <- phone_numbers[phone_numbers <= 5]
+     <i>Expected</i>:
+       small <- phone_numbers[phone_numbers <= 5]
+k: <span style='color:green'>&#10004; vector [4]: 8 6 7 9</span>
+     <i>Your code</i>:
+       large <- phone_numbers[phone_numbers > 5]
+     <i>Expected</i>:
+       large <- phone_numbers[phone_numbers > 5]
+
+ Correct: 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - 10 - 11
+ Incorrect: </pre></body>

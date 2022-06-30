@@ -4,10 +4,14 @@
 \alias{admin.check}
 \title{Check the integrity of practice set}
 \usage{
-admin.check(short)
+admin.check(filename, silient = FALSE, detailed = FALSE)
 }
 \arguments{
-\item{short}{for the short name of the practice set}
+\item{filename}{the file to be checked}
+
+\item{silient}{output messsages}
+
+\item{detailed}{show (or do not show) detailed messages}
 }
 \description{
 Intended for teaching assistants and instructors only, \code{admin.ps()}

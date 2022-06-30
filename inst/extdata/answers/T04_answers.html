@@ -1,0 +1,69 @@
+<head></head><body><pre><b>T04: Test cases: Dataframes</b>
+ Test statements that return dataframes
+Learner name:
+<i>   DGH Testing</i>
+Initial variables:
+   library(dplyr)
+   cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(TRUE,FALSE,TRUE,TRUE))
+Checking code:
+   9/9 complete. Good work! &#128512;
+a: <span style='color:green'>&#10004; atomic [1]: 4</span>
+     <i>Your code</i>:
+       number_of_rows <- nrow(cDF)
+     <i>Expected</i>:
+       number_of_rows <- nrow(cDF)
+b: <span style='color:green'>&#10004; atomic [1]: 3</span>
+     <i>Your code</i>:
+       number_of_cols <- ncol(cDF)
+     <i>Expected</i>:
+       number_of_cols <- ncol(cDF)
+c: <span style='color:green'>&#10004; vector [3]: A B C</span>
+     <i>Your code</i>:
+       col_names <- colnames(cDF)
+     <i>Expected</i>:
+       col_names <- colnames(cDF)
+d: <span style='color:green'>&#10004; vector [4]: a b c d</span>
+     <i>Your code</i>:
+       col2 <- cDF[, 2]
+     <i>Expected</i>:
+       col2 <- cDF[, 2]
+e: <span style='color:green'>&#10004; dataframe: [1 row x 3 columns]</span>
+     <i>Your code</i>:
+       df1 <- cDF[1, ]
+     <i>Expected</i>:
+       df1 <- cDF[1, ]
+f: <span style='color:green'>&#10004; dataframe: [4 rows x 2 columns]</span>
+     <i>Your code</i>:
+       df2 <- dplyr::select(cDF, A, C)
+     <i>Expected</i>:
+       df2 <- dplyr::select(cDF, A, C)
+g: <span style='color:green'>&#10004; dataframe: [4 rows x 2 columns]</span>
+     <i>Your code</i>:
+       df3 <- cDF %>% dplyr::select(A, C)
+     <i>Expected</i>:
+       df3 <- cDF %>% dplyr::select(A, C)
+h: <span style='color:green'>&#10004; dataframe: [3 rows x 2 columns]</span>
+     <i>Your code</i>:
+       df4 <- cDF %>%
+     filter(C == TRUE) %>%
+     select(A, C)
+     <i>Expected</i>:
+       df4 <- cDF %>%
+     filter(C == TRUE) %>%
+     select(A, C)
+i: <span style='color:green'>&#10004; funct: function(f) {...}</span>
+     <i>Your code</i>:
+       df5_f <- function(test) {
+     cDF %>%
+       filter(C == test) %>%
+       select(A, C)
+   }
+     <i>Expected</i>:
+       df5_f <- function(f) {
+     cDF %>%
+       filter(C == f) %>%
+       select(A, C)
+   }
+
+ Correct: 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9
+ Incorrect: </pre></body>

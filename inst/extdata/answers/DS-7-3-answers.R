@@ -34,7 +34,6 @@ word_bin <- function(words, start, end){
 
 # Note: Use your `word_bin` function to determine which of your words start with "e"
 #    through "q". Put the result in the variable `word_bin_test1`
-
 word_bin_test <- word_bin(words, "e", "q")
 
 

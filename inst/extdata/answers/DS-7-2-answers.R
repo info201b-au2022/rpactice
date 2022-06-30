@@ -8,7 +8,6 @@ practice.begin("DS-7-2", learner="[your name]")
 # a: Create a vector `first_ten` that has the values 10 through 20 in it (using
 #    the : operator). (first_ten)
 first_ten <- 10:20
-print(first_ten)
 
 # b: Create a vector `next_ten` that has the values 21 through 30 in it (using the
 #    seq() function). (next_ten)

@@ -15,7 +15,8 @@ admin <- function() {
   cat("admin()                     List the current admin functions\n")
   cat("admin.check([fn|dir])       Check the integrity of a practice set file.\n")
   cat("admin.grade(dir)            Grade all the work in the directory (dir).\n")
-  cat("admin.grade_ui()            Select a directory (dir) from a file dialog.\n")
+  cat("admin.grade_ui_dir()        Select a directory (dir) from a file dialog.\n")
+  cat("admin.grade_ui_file()      Select a directory (dir) from a file dialog.\n")
   cat("admin.ls()                  List installed practice sets and basic info.\n")
   cat("admin.prompts(short)        List the practice prompts and results.\n")
   cat("admin.vars()                List all the variables that are 'alive'.\n")
@@ -136,29 +137,36 @@ admin.vars <- function() {
 #' Intended for teaching assistants and instructors only, \code{admin.grade()},
 #' will check all of the practice sets within a directory.
 #'
-#' @param dir directory of practice sets to grade
+#' @param filename either a directory for a particular file
 #'
 #' @export
-admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01") {
+admin.grade <- function(filename) {
 
-  if (file.exists(dir) == FALSE) {
+  if (!file.exists(filename)) {
     stop(paste0("Directory does not exist.\n", dir, ""), sep="")
   }
 
-  cat("\014admin.grade()\n") # Clear screen
+  file_list <- c()
+  file_names <- c()
+  dir <- ""
+  if (dir.exists(filename)) {
+    file_list <- list.files(filename, pattern = "*.R", full.names = TRUE)
+    file_names <- list.files(filename, pattern = "*.R")
+    dir <- filename
+  } else {
+    file_list <- append(file_list, filename)
+    file_names <- append(file_names, basename(filename))
+    dir <- dirname(filename)
+  }
 
+  cat("\014admin.grade()\n") # Clear screen
   cat(
-      "Student work: ", dir, "\n",
+      "Directory: ", dir, "\n",
+      "Student work: ", filename, "\n",
       "Summary:\n", sep="")
 
   t <- sprintf("%-30s %-20s %-15s %-15s", "Filename", "Name", "Summary", "Wrong Answers (internal ids)\n")
   cat("        ", t, sep="")
-
-  # File names only
-  file_names <- list.files(dir, pattern = "*.R")
-
-  # Full directory paths and file names
-  file_list <- list.files(dir, pattern = "*.R", full.names = TRUE)
 
   for (k in 1:length(file_list)) {
 
@@ -209,20 +217,44 @@ admin.grade <- function(dir = "~/Documents/_Code2/assignments/A01") {
     #     wrongs, "\n",
     #     sep="")
   }
-  cat("See graded work in:\n   ", dir, "/<Filename.html>", sep="")
+  cat("See graded work in:\n   ", filename, "/<Filename.html>", sep="")
 }
 
 #' UI for selecting a directory to grade
 #'
 #' @export
-admin.grade_ui <- function() {
+admin.grade_ui_dir <- function() {
 
 t <- rstudioapi::selectDirectory(
-  caption = "Select Directory",
+  caption = "Select a Directory of Files to Grade",
   label = "Select",
-  path = getActiveProject())
+  path = paste0(getActiveProject(),"/inst/extdata")
+)
 
-admin.grade(t)
+if(is.null(t)) {
+  return(TRUE)
+} else {
+  return (admin.grade(t))
+}
+}
+
+#' UI for selecting a directory to grade
+#'
+#' @export
+admin.grade_ui_file <- function() {
+
+  t <- rstudioapi::selectFile(
+    caption = "Select an Answer File to Grade",
+    label = "Select",
+    filter = "R Files (*.R)",
+    path = paste0(getActiveProject(),"/inst/extdata/answers")
+)
+
+  if(is.null(t)) {
+    return(TRUE)
+  } else {
+    return (admin.grade(t))
+  }
 }
 
 #' Check the integrity of practice set
@@ -231,10 +263,12 @@ admin.grade(t)
 #' checks the integrity of a practice set. It loads the source file and provides
 #' feedback on the mark-up.
 #'
-#' @param short for the short name of the practice set
+#' @param filename the file to be checked
+#' @param silient output messsages
+#' @param detailed show (or do not show) detailed messages
 #' @export
-admin.check <- function(fn, silient=FALSE, detailed=FALSE) {
-  check_file_integrity(fn, silient, detailed)
+admin.check <- function(filename, silient=FALSE, detailed=FALSE) {
+  check_file_integrity(filename, silient, detailed)
   # ps <- ps_get_by_short(short)
   # if (is.null(ps)) {
   #   stop(paste0("Error. Practice set not found (", short, ")"))

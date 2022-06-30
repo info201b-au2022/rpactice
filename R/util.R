@@ -16,10 +16,10 @@ ast_scan <- function(e, s, in_statement = TRUE) {
   lines_true <- c()
   lines_false <- c()
 
-  print(">>>>>>")
-  print(s)
-  print(str(e))
-  print(">>>>>")
+  # print(">>>>>>")
+  # print(s)
+  # print(str(e))
+  # print(">>>>>")
 
   if (length(e) > 0) {
     for (k in 1:length(e)) {

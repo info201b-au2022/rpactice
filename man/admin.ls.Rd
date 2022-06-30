@@ -8,6 +8,6 @@ admin.ls()
 }
 \description{
 Intended for teaching assistants and instructors only, \code{admin.ls()}
-simply lists all currently installed practice sets. At present, each of these
-practice sets will be available to learners.
+simply lists all currently installed practice sets. Each of these
+practice sets are available to learners.
 }

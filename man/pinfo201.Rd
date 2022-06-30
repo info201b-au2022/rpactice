@@ -202,7 +202,7 @@ is checked and feedback (an \code{html} document ) is displayed in the RStudio V
 \section{Auto-grading}{
 
 
-\code{pinfo201} can be used for auto-grading assistance. This package function, for
+\code{pinfo201} can be used for auto-grading assistance. This function, for
 example, will grade all assignments that are located in the directory,
 \code{dir}:
 

@@ -1,0 +1,50 @@
+<head></head><body><pre><b>DS-7-3: Vector practice</b>
+ Exercise 7.3 from Programming Skills for Data Science by
+ Micheal Freeman and Joel Ross. See:
+ https://github.com/programming-for-data-science/book-exercises
+Learner name:
+<i>   [your name]</i>
+Initial variables:
+   
+Checking code:
+   6/6 complete. Good work! &#128512;
+a: <span style='color:green'>&#10004; vector [7]: convivial love excitment mountains fast bicycles stars</span>
+     <i>Your code</i>:
+       words <- c(
+     "convivial", "love", "excitment", "mountains", "fast", "bicycles",
+     "stars"
+   )
+     <i>Expected</i>:
+       words <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
+b: <span style='color:green'>&#10004; vector [7]: "convivial" is the word of the day! "love" is the word of the day! "excitment" is the word of the day! "mountains" is the word of the day! "fast" is the word of the day! "bicycles" is the word of the day! "stars" is the word of the day!</span>
+     <i>Your code</i>:
+       words_of_the_day <- paste0("\"", words, "\" is the word of the day!", collpase = "")
+     <i>Expected</i>:
+       words_of_the_day <- paste0("\"", words, "\" is the word of the day!", collpase = "")
+c: <span style='color:green'>&#10004; vector [4]: convivial excitment fast bicycles</span>
+     <i>Your code</i>:
+       a_f_words <- words[substring(words, 1, 1) <= "f"]
+     <i>Expected</i>:
+       a_f_words <- words[substring(words, 1, 1) <= "f"]
+d: <span style='color:green'>&#10004; vector [2]: love mountains</span>
+     <i>Your code</i>:
+       g_m_words <- words[words >= "g" & substring(words, 1, 1) <= "m"]
+     <i>Expected</i>:
+       g_m_words <- words[words >= "g" & substring(words, 1, 1) <= "m"]
+e: <span style='color:green'>&#10004; funct: function(words, start, end) {...}</span>
+     <i>Your code</i>:
+       word_bin <- function(words, start, end) {
+     words[words >= start & substring(words, 1, 1) <= end]
+   }
+     <i>Expected</i>:
+       word_bin <- function(words, start, end) {
+     words[words >= start & substring(words, 1, 1) <= end]
+   }
+f: <span style='color:green'>&#10004; vector [4]: love excitment mountains fast</span>
+     <i>Your code</i>:
+       word_bin_test <- word_bin(words, "e", "q")
+     <i>Expected</i>:
+       word_bin_test <- word_bin(words, "e", "q")
+
+ Correct: 1 - 2 - 3 - 4 - 5 - 6
+ Incorrect: </pre></body>
