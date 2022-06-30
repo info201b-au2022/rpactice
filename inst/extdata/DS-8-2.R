@@ -9,14 +9,14 @@
 #' @initial-vars
 #' @end
 
-
 #' @id ?
 #' @msg
 #' Create a *list* of 10 random numbers. Use the `runif()` function to make a
-#' vector of random numbers, then use `as.list()` to convert that to a list
+#' vector of random numbers, then use `as.list()` to convert that to a list.
+#' Assign your list to a variable named `nums`.
 #' @end
 #' @code
-xxx
+nums <- as.list(runif(10, 1, 100))
 #' @end
 
 #' @id ?
@@ -25,17 +25,28 @@ xxx
 #' the nearest 0.1 (one decimal place)
 #' @end
 #' @code
-xxx
+lapply(nums, round, 1)
 #' @end
 
 #' @id ?
 #' @msg
-#' Create a variable 'sentence' that contains a sentence of text (something
-#' longish). Make the sentence lowercase; you can use a function to help.
+#' Create a variable, named `sentence`, that contains a sentence of text (something
+#' longish). For the purpose of evaluating your code, use this sentence:
+#' "I do not like green eggs and ham. I do not like them, Sam-I-Am".
 #' @end
 #' @code
-xxx
+sentence <- "I do not like green eggs and ham. I do not like them, Sam-I-Am"
 #' @end
+
+#' @id ?
+#' @msg
+#' Create a variable, named `sentence_lcase`, that converts the string to all
+#' lower case.
+#' @end
+#' @code
+sentence_lcase <- tolower("I do not like green eggs and ham. I do not like them, Sam-I-Am")
+#' @end
+#'
 
 #' @id ?
 #' @msg
@@ -44,7 +55,7 @@ xxx
 #' Note: this will return a _list_ with 1 element (which is the vector of letters)
 #' @end
 #' @code
-xxx
+letters_list <- strsplit(sentence_lcase, "")
 #' @end
 
 #' @id ?
@@ -52,7 +63,7 @@ xxx
 #' Extract the vector of letters from the resulting list
 #' @end
 #' @code
-xxx
+letters <- letters_list[[1]]
 #' @end
 
 #' @id ?
@@ -60,7 +71,7 @@ xxx
 #' Use the `unique()` function to get a vector of unique letters
 #' @end
 #' @code
-xxx
+letters_unique <- unique(letters)
 #' @end
 
 #' @id ?
@@ -71,16 +82,18 @@ xxx
 #' Hint: use a filter operation!
 #' @end
 #' @code
-xxx
+count_occurrences <- function(letter, all_letters) {
+  length(all_letters[all_letters == letter])
+}
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
 #' Call your `count_occurrences()` function to see how many times the letter 'e'
 #' is in your sentence.
 #' @end
 #' @code
-xxx
+count_occurrences("e", letters)
 #' @end
 
 #' @id ?
@@ -90,13 +103,13 @@ xxx
 #' Convert the result into a list (using `as.list()`).
 #' @end
 #' @code
-xxx
+frequencies <- as.list(sapply(letters_unique, count_occurrences, letters))
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
 #' Print the resulting list of frequencies
 #' @end
-#' @code
-xxx
+#' #' @code
+count_occurrences("e", letters)
 #' @end

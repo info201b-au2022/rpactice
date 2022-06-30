@@ -36,8 +36,8 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("DS-7-2.R")) # Indexing and filtering vectors
   ps_add(load_ps("DS-7-3.R")) # Vector practice
 
-  # ps_add(load_ps("DS-8-1.R")) # Creating and accessing lists
-  # ps_add(load_ps("DS-8-2.R")) # Using `*apply()` function
+  #ps_add(load_ps("DS-8-1.R")) # Creating and accessing lists
+  #ps_add(load_ps("DS-8-2.R")) # Using `*apply()` function
 
   # Test cases
   ps_add(load_ps("T00.R")) # Supreme simplicity for debugging
