@@ -13,12 +13,14 @@ admin <- function() {
   cat("\014") # Clear screen
   cat(crayon::red("Function\t\t   "),                   crayon::red("Purpose"), "\n")
   cat("admin()                     List the current admin functions\n")
-  cat("admin.check(short)          Check the integrity of a practice set file.\n")
+  cat("admin.check([fn|dir])       Check the integrity of a practice set file.\n")
   cat("admin.grade(dir)            Grade all the work in the directory (dir).\n")
   cat("admin.grade_ui()            Select a directory (dir) from a file dialog.\n")
   cat("admin.ls()                  List installed practice sets and basic info.\n")
   cat("admin.prompts(short)        List the practice prompts and results.\n")
   cat("admin.vars()                List all the variables that are 'alive'.\n")
+  cat("---\n")
+  cat("/Users/dhendry/Documents/_Code2/pinfo201/inst/extdata")
 }
 
 #' List installed practice sets

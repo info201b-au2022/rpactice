@@ -115,6 +115,18 @@ test_that("ast functions", {
   expect_equal(deparse(e2[[5]]), "w <- x <- 4")
 })
 
+t <-
+"
+t[1] <- 10
+"
+
+e2 <- parse(text=t)
+line_nums <- ast_scan(e2,"<-")
+test_that("ast functions", {
+  expect_equal(length(line_nums), 1)
+  expect_equal(deparse(e2[[1]]), "t[1] <- 10")
+})
+
 
 t <-
   "
@@ -133,6 +145,27 @@ test_that("ast functions", {
   expect_equal(r[[3]]$lhs, "v")
   expect_equal(r[[4]]$lhs, "w")
 })
+
+t <-
+"
+t[3] <- 'aaa'
+phone_numbers3[phone_numbers3%%2==1] <- 0
+u <- 10
+"
+
+e2 <- parse(text=t)
+r <- ast_get_assignments(e2)
+test_that("ast functions", {
+  expect_equal(length(r), 3)
+  expect_equal(r[[1]]$lhs, "t")
+  expect_equal(r[[1]]$rhs, "\"aaa\"")
+  expect_equal(r[[2]]$lhs, "phone_numbers3")
+  expect_equal(r[[2]]$rhs, "0")
+  expect_equal(r[[3]]$lhs, "u")
+  expect_equal(r[[3]]$rhs, "10")
+})
+
+
 
 t <-
   "

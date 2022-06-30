@@ -62,12 +62,11 @@ word_bin <- function(words, start, end){
 }
 #' @end
 
-
 #' @id ?
 #' @msg
 #' Use your `word_bin` function to determine which of your words start with "e"
-#' through "q"
+#' through "q". Assign the answer to variable `word_bin_test`.
 #' @end
 #' @code
-xxx
+word_bin_test <- word_bin(words, "e", "q")
 #' @end

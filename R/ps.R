@@ -26,10 +26,18 @@ cPACKAGE_ENVIR_NAME <- "package:pinfo201"
 ps_load_internal_ps <- function() {
   # Freeman & Ross exercises
   ps_add(load_ps("DS-5-1.R")) # Practice with basic R syntax
+
   ps_add(load_ps("DS-6-1.R")) # Calling built-in functions
   ps_add(load_ps("DS-6-2.R")) # Using built-in string functions
   ps_add(load_ps("DS-6-3.R")) # Writing and executing functions
   ps_add(load_ps("DS-6-4.R")) # Functions and conditionals
+
+  ps_add(load_ps("DS-7-1.R")) # Creating and operating on vectors
+  ps_add(load_ps("DS-7-2.R")) # Indexing and filtering vectors
+  ps_add(load_ps("DS-7-3.R")) # Vector practice
+
+  # ps_add(load_ps("DS-8-1.R")) # Creating and accessing lists
+  # ps_add(load_ps("DS-8-2.R")) # Using `*apply()` function
 
   # Test cases
   ps_add(load_ps("T00.R")) # Supreme simplicity for debugging

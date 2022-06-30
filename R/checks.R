@@ -113,19 +113,30 @@ h.T03_Check <- function(internal_id, result) {
 
 # Practice Set DS-7-3 ----
 word_bin.DS_7_3_Check <- function(internal_id, result) {
-  checks_arg1 <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
-  bound1 <- c("a", "f", "m", "z")
-  bound2 <- c("a", "f", "m", "z")
 
-  learner_answers <- c()
-  expected_answers <- c()
-
-  learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
+    learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
 
   expected_code <- ps_get_expected_answer(internal_id)
   expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
 
   if (learner_result$type == "closure") {
+    checks_arg1 <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
+    bound1 <- c("a", "f", "m", "z")
+    bound2 <- c("a", "f", "m", "z")
+
+    learner_answers <- c()
+    expected_answers <- c()
+
+    num_args <- signature_ok(learner_result$scode, expected_code)
+
+    # If the number of parameters differ from expected - note error message
+    if (num_args < 0) {
+      t <- result_main_message(result_error_msg(internal_id, TRUE))
+      t <- result_sub_message(t, "Check the number of arguments in your function")
+      result <- result_update(result, internal_id, FALSE, t)
+      return(result)
+    }
+
     for (j in 1:length(bound1)) {
       for (k in 1:length(bound2)) {
         t1 <- do.call(learner_result$scode, list(checks_arg1, bound1[j], bound2[k]))

@@ -16,6 +16,11 @@ ast_scan <- function(e, s, in_statement = TRUE) {
   lines_true <- c()
   lines_false <- c()
 
+  print(">>>>>>")
+  print(s)
+  print(str(e))
+  print(">>>>>")
+
   if (length(e) > 0) {
     for (k in 1:length(e)) {
       if (length(e[[k]]) > 0) {
@@ -39,12 +44,12 @@ ast_scan <- function(e, s, in_statement = TRUE) {
 # new expression will be returned
 ast_rm <- function(e, x) {
   e1 <- list()
-  if (length(e) > 0 ) {
-  for (k in 1:length(e)) {
-    if (!(k %in% x)) {
-      e1 <- append(e1, e[k]) # Check: Why not [[k]] here?
+  if (length(e) > 0) {
+    for (k in 1:length(e)) {
+      if (!(k %in% x)) {
+        e1 <- append(e1, e[k]) # Check: Why not [[k]] here?
+      }
     }
-  }
   }
   return(e1)
 }
@@ -52,11 +57,29 @@ ast_rm <- function(e, x) {
 # In a block of code, return all assignment statements
 ast_get_assignments <- function(e1) {
   result <- list()
+
+  if (is.null(e1)) {
+    return(result)
+  }
+
   line_nums <- ast_scan(e1, "<-", FALSE)
   e2 <- ast_rm(e1, line_nums)
 
   for (k in 1:length(e2)) {
-    t <- list(r = list(lhs = deparse(e2[[k]][[2]]), rhs = deparse(e2[[k]][[3]]), e = e2[[k]][[3]]))
+
+    # This is the usual case: x <- val -- we want to return x
+    var_name <- e2[[k]][[2]]
+    e_t <- e2[[k]][[3]]
+
+    # This case: X[...] <- val -- we what to return X
+    if (length(e2[[k]][[2]]) > 2) {
+      if (e2[[k]][[2]][[1]] == "[") {
+        var_name <- e2[[k]][[2]][[2]]
+        e_t <- e2[[k]][[3]]
+      }
+    }
+
+    t <- list(r = list(lhs = deparse(var_name), rhs = deparse(e_t), e = NULL))
     result <- append(result, t)
   }
   return(result)
@@ -70,7 +93,7 @@ ast_get_begin <- function(e1) {
 
   begin_expr <- e1[[line_nums[length(line_nums)]]]
   if (length(begin_expr) == 0) {
-    return (list())
+    return(list())
   }
 
 

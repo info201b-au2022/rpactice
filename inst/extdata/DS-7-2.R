@@ -2,7 +2,7 @@
 #' @short DS-7-2
 #' @title Indexing and filtering vectors
 #' @descr
-#' Exercise 6.4 from Programming Skills for Data Science by
+#' Exercise 7.2 from Programming Skills for Data Science by
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
@@ -83,7 +83,7 @@ phone_numbers <- c(8,6,7,5,3,0,9)
 #' Create a vector `prefix` that has the first three elements of `phone_numbers`.
 #' @end
 #' @code
-prefix <- prefix[1:3]
+prefix <- phone_numbers[1:3]
 #' @end
 
 #' @id ?
@@ -109,6 +109,7 @@ large <- phone_numbers[phone_numbers > 5]
 #' Assign `phone_numbers` to the variable `phone_numbers2`.
 #' Replace the values in `phone_numbers2` that are larger than 5 with the number 5.
 #' @end
+#' #' @var phone_numbers2
 #' @code
 phone_numbers2 <- phone_numbers
 phone_numbers2[phone_numbers2 > 5] <- 5
@@ -119,6 +120,8 @@ phone_numbers2[phone_numbers2 > 5] <- 5
 #' Assign `phone_numbers2` to the variable `phone_numbers3`. Replace every odd-numbered
 #' value in `phone_numbers3` with the number 0.
 #' @end
+#' @var phone_numbers3
 #' @code
+phone_numbers3 <- phone_numbers
 phone_numbers3[phone_numbers3%%2==1] <- 0
 #' @end
