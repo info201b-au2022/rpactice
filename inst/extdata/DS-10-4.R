@@ -9,7 +9,7 @@
 
 #' @id ?
 #' @msg
-#' Use the `read.csv()` functoin to read the data from the `data/gates_money.csv`
+#' Use the `read.csv()` function to read the data from the `data/gates_money.csv`
 #' file into a variable called `grants` using the `read.csv()`
 #' Be sure to set your working directory in RStudio, and do NOT treat strings as
 #' factors!
@@ -45,13 +45,15 @@ organization <- grants$organization
 is.vector(organization)
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
 #' Now you can ask some interesting questions about the dataset
 #' @end
-#' @id ?
+
+#' @id -
 #' @msg
 #' What was the mean grant value?
+#' @end
 
 #' @code
 mean_spending <- mean(grants$total_amount)

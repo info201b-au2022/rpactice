@@ -16,7 +16,7 @@ admin <- function() {
   cat("admin.check([fn|dir])       Check the integrity of a practice set file.\n")
   cat("admin.grade(dir)            Grade all the work in the directory (dir).\n")
   cat("admin.grade_ui_dir()        Select a directory (dir) from a file dialog.\n")
-  cat("admin.grade_ui_file()      Select a directory (dir) from a file dialog.\n")
+  cat("admin.grade_ui_file()       Select a directory (dir) from a file dialog.\n")
   cat("admin.ls()                  List installed practice sets and basic info.\n")
   cat("admin.prompts(short)        List the practice prompts and results.\n")
   cat("admin.vars()                List all the variables that are 'alive'.\n")
@@ -82,7 +82,8 @@ admin.prompts <- function(short) {
       }
       cat(k, "[-] ", m, sep = "")
     } else {
-      r <- eval_string_and_format(task$expected_answer)
+      #r <- eval_string_and_format(task$expected_answer)
+      r <- eval_string_and_format(task$assignment_var)
       if (nchar(r) > 65) {
         r <- substr(r, 1, 60)
         r <- paste0(r, "...")
@@ -208,17 +209,10 @@ admin.grade <- function(filename) {
                  wrongs
                  )
     cat("[", k, "]\t", t, "\n", sep="")
-
-    # A brief summary
-    # cat("[", k, "]\t", file_names[k], "\t",
-    #     result$user_name, "\t",
-    #     result$num_correct, " of ",
-    #     (result$num_incorrect+result$num_correct), " correct\t\t",
-    #     wrongs, "\n",
-    #     sep="")
   }
+
   cat("See graded work in:\n   ", filename, "/<Filename.html>", sep="")
-}
+  }
 
 #' UI for selecting a directory to grade
 #'
@@ -264,14 +258,9 @@ admin.grade_ui_file <- function() {
 #' feedback on the mark-up.
 #'
 #' @param filename the file to be checked
-#' @param silient output messsages
+#' @param silient output messages
 #' @param detailed show (or do not show) detailed messages
 #' @export
 admin.check <- function(filename, silient=FALSE, detailed=FALSE) {
   check_file_integrity(filename, silient, detailed)
-  # ps <- ps_get_by_short(short)
-  # if (is.null(ps)) {
-  #   stop(paste0("Error. Practice set not found (", short, ")"))
-  # }
-  # temp_ps <- load_ps(ps$ps_filename, silent = FALSE)
 }

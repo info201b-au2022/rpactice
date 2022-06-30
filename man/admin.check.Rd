@@ -9,7 +9,7 @@ admin.check(filename, silient = FALSE, detailed = FALSE)
 \arguments{
 \item{filename}{the file to be checked}
 
-\item{silient}{output messsages}
+\item{silient}{output messages}
 
 \item{detailed}{show (or do not show) detailed messages}
 }

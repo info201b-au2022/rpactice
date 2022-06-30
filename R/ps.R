@@ -325,14 +325,14 @@ expected_answer <- function(id) {
 #----------------------------------------------------------------------------#
 
 DEFAULT_Check <- function(internal_id, result) {
-  cDEBUG <- FALSE
+  cDEBUG <- TRUE
   if (cDEBUG) {
     print("--- DEFAULT_Check")
     print(paste0("internal id:    ", internal_id))
     print(paste0("prompt id:      ", ps_get_prompt_id(internal_id)))
     print(paste0("var name:       ", ps_get_assignment_var(internal_id)))
-    print(paste0("expected:       ", ps_get_expected_answer(internal_id)))
-    print(paste0("learner answer: ", ps_get_learner_answer(internal_id)))
+    print(paste0("expected:       ", paste0(ps_get_expected_answer(internal_id), collapse="\n")))
+   # print(paste0("learner answer: ", ps_get_learner_answer(internal_id)))
     print("---")
   }
 
@@ -824,16 +824,6 @@ ps_get_expected_answer <- function(id) {
   }
 
   a <- ps$task_list[[id]]$expected_answer
-  #
-  # if (length(a) == 1) {
-  #   if (str_detect(a, "<-") == TRUE) {
-  #     t <- a
-  #   } else {
-  #     t <- paste0(ps_get_assignment_var(id), " <- ", a)
-  #   }
-  # } else {
-  #   t <- a
-  # }
 
   return(a)
 }
