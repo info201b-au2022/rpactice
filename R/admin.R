@@ -42,7 +42,7 @@ admin.ls <- function() {
     ps <- ps_get_by_short(v[k])
     num_prompts <- length(ps$task_list)
     cat(paste0(k, ": [", v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
-    cat(paste0("   Filename: ", ps$ps_filename, "\n"))
+    #cat(paste0("   Filename: ", ps$ps_filename, "\n"))
   }
 }
 
@@ -131,6 +131,45 @@ admin.vars <- function() {
     cat("No callbacks.")
   }
   cat("\n")
+}
+
+admin.run <- function(short)  {
+  id <- ps_get_id_by_short(short)
+  if (id == -1) {
+    stop(paste0("Error. Practice set not found (", short, ")"))
+  }
+  ps_set_current(id)
+
+  cat("\014admin.run()\n")
+  cat(
+    "Short ID: ", short,
+    "\n", "Code:\n", sep="")
+
+  t <- ps_get_expected_code()
+  for (k in 1:length(t)) {
+    cat("[", k, "] ", t[k], "\n", sep = "")
+  }
+
+  cat("\n",
+      "Environment: pkg.expected_env\n", sep="")
+
+  all <- ls(envir = pkg.expected_env)
+  rm(list = all, envir = pkg.expected_env)
+  eval(parse(text = t), envir = pkg.expected_env)
+
+  out <- sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value")
+  cat(out)
+
+  all <- ls(envir = pkg.expected_env)
+  for (k in 1:length(all)) {
+    var <- all[k]
+    val <- get(var, envir=pkg.expected_env)
+    t <- typeof(val)
+    s <- format_variable(val)
+
+    out <- sprintf("%-20s %-10s %-60s\n", var, t , s)
+    cat(out)
+  }
 }
 
 #' Evaluate a directory of practice sets

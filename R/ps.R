@@ -8,6 +8,8 @@ pkg.globals$gPRACTICE_SET_ID <- 1
 pkg.globals$gTO_CONSOLE <- FALSE
 pkg.globals$gUSER_NAME <- ""
 
+pkg.expected_env <- new.env()
+
 ## Constants ----
 cDEBUG <- FALSE
 cTAB_IN_SPACES <- "   "
@@ -36,14 +38,14 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("DS-7-2.R")) # Indexing and filtering vectors
   ps_add(load_ps("DS-7-3.R")) # Vector practice
 
-  #ps_add(load_ps("DS-8-1.R")) # Creating and accessing lists
-  #ps_add(load_ps("DS-8-2.R")) # Using `*apply()` function
+  # ps_add(load_ps("DS-8-1.R")) # Creating and accessing lists
+  # ps_add(load_ps("DS-8-2.R")) # Using `*apply()` function
 
-  #ps_add(load_ps("DS-10-1.R")) # Creating data frames
-  #ps_add(load_ps("DS-10-2.R")) # Working with data frames
-  #ps_add(load_ps("DS-10-3.R")) # Working with built-in data sets
-  #ps_add(load_ps("DS-10-4.R")) # External data sets: Gates Foundation Educational Grants
-  #ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
+  # ps_add(load_ps("DS-10-1.R")) # Creating data frames
+  # ps_add(load_ps("DS-10-2.R")) # Working with data frames
+  # ps_add(load_ps("DS-10-3.R")) # Working with built-in data sets
+  # ps_add(load_ps("DS-10-4.R")) # External data sets: Gates Foundation Educational Grants
+  # ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
 
   # Test cases
   ps_add(load_ps("T00.R")) # Supreme simplicity for debugging
@@ -185,10 +187,14 @@ get_env_vars <- function(short = "") {
 # Functions for evaluating and formatting expressions
 #----------------------------------------------------------------------------#
 # Evaluates a block of code and returns some details about the result
-eval_string_details <- function(code) {
+eval_string_details <- function(code, run_envir = NULL) {
+  if (is.null(run_envir)) {
+    run_envir <- .GlobalEnv
+  }
+
   tryCatch(
     expr = {
-      val <- eval(parse(text = code), envir = .GlobalEnv)
+      val <- eval(parse(text = code), envir = run_envir)
       t <- typeof(val)
       if (is.data.frame(val)) {
         t <- "dataframe"
@@ -264,6 +270,60 @@ eval_string_and_format <- function(code) {
   }
 }
 
+format_variable <- function(var_to_format) {
+  var_type <- typeof(var_to_format)
+  if (is.data.frame(var_to_format)) {
+    var_type <- "dataframe"
+  }
+
+  # Check for basic type
+  if (var_type %in% c("double", "integer", "real", "logical", "complex", "character")) {
+
+    # Atomic types
+    if (length(var_to_format) == 1) {
+      return(paste0("atomic [1]: ", as.character(var_to_format)))
+
+      # Vector type
+    } else {
+      len <- length(var_to_format)
+      t <- paste0(var_to_format, collapse = " ")
+      if (len > 20) {
+        t <- paste0(str_sub(t, 1, 20), " ...", sep = "")
+      }
+      return(paste0("vector [", len, "]: ", t))
+    }
+
+    # Check for a function
+  } else if (var_type == "closure") {
+    args <- names(formals(var_to_format))
+    t <- paste0(args, collapse = ", ")
+    t <- paste0("function(", t, ") {...}")
+    return(paste0("funct: ", t))
+
+    # Check for dataframe
+  } else if (var_type == "dataframe") {
+    nr <- nrow(var_to_format)
+    nc <- ncol(var_to_format)
+
+    df_info_rows <- "0 rows"
+    df_info_cols <- "0 columns"
+    if (nr == 1) df_info_rows <- "1 row" else df_info_rows <- paste0(nr, " rows")
+    if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
+
+    return(paste0("dataframe: [", df_info_rows, " x ", df_info_cols, "]"))
+
+    # List type
+  } else if (var_type == "list") {
+    len <- length(var_to_format)
+    return(paste0("list: [", len, "]"))
+
+    # A type that is not handled
+  } else {
+    message("\nType unhandled:", var_type, "\n")
+    return(paste0("Type unhandled: ", var_type))
+  }
+}
+
 signature_ok <- function(check_code, expected_code) {
 
   # print(check_code)
@@ -296,7 +356,7 @@ signature_ok <- function(check_code, expected_code) {
 
   num_args <- -1
   if (signature_ok) {
-  num_args <- length(check_formals)
+    num_args <- length(check_formals)
   }
 
   return(num_args)
@@ -331,8 +391,8 @@ DEFAULT_Check <- function(internal_id, result) {
     print(paste0("internal id:    ", internal_id))
     print(paste0("prompt id:      ", ps_get_prompt_id(internal_id)))
     print(paste0("var name:       ", ps_get_assignment_var(internal_id)))
-    print(paste0("expected:       ", paste0(ps_get_expected_answer(internal_id), collapse="\n")))
-   # print(paste0("learner answer: ", ps_get_learner_answer(internal_id)))
+    print(paste0("expected:       ", paste0(ps_get_expected_answer(internal_id), collapse = "\n")))
+    # print(paste0("learner answer: ", ps_get_learner_answer(internal_id)))
     print("---")
   }
 
@@ -826,6 +886,25 @@ ps_get_expected_answer <- function(id) {
   a <- ps$task_list[[id]]$expected_answer
 
   return(a)
+}
+
+ps_get_expected_code <- function() {
+  ps <- ps_get_current()
+  code <- c()
+
+  for (k in 1:length(ps$ps_initial_vars)) {
+    code <- append(code, ps$ps_initial_vars[k])
+  }
+
+  for (task in ps$task_list) {
+    code <- append(code, task$expected_answer)
+  }
+
+  # cat("Length", length(ps$task_list), "\n")
+  # t <- paste0(code, collapse="")
+  # cat(t)
+
+  return(code)
 }
 
 # Hints -----
