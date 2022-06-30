@@ -34,3 +34,18 @@ t07 <- sum(c(6,12,18) == ((X + X) * 3)) == 3 # TRUE
 # g: Calling a function, f(x), (initialized by the practice set) (t04b)
 t08 <- (f(10) == 11) # TRUE
 
+# h: Assign several variables and check the last variable - e.g.,
+#      x <- 1
+#      y <- x + 1
+#      z <- y + 1 (z)
+x <-1
+y <- x +1
+z <- y + 1
+w <- 1000
+
+# i: Assignment to element of a vector
+#       U <- X
+#       U[1] <- 100 (U)
+U <- X
+U[1] <- 100
+

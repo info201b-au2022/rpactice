@@ -6,6 +6,7 @@
 #' @end
 #' @initial-vars
 g <- function(x) {return(x+1)}
+X <- c(1,2,3,4,5,6)
 #' @end
 
 #' @id ?
@@ -54,5 +55,21 @@ f1 <- function(arg_one, arg_two) {
 h <- function(arg1, precision) {
   t <- round(arg1 + pi, precision)
   return(t)
+}
+#' @end
+
+#' @id ?
+#' @msg Update X[3] to 200
+#' @code
+X[3] <- 200
+#' @end
+
+#' @id ?
+#' @msg Update v[3] to 200 with a function, named f_update
+#' @check list(arg1=list(v<-c(1,2,3,4,5)))
+#' @code
+f_update <- function(v) {
+  v[3] <- 200
+  return(v)
 }
 #' @end

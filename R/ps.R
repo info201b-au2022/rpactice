@@ -824,16 +824,18 @@ ps_get_expected_answer <- function(id) {
   }
 
   a <- ps$task_list[[id]]$expected_answer
-  if (length(a) == 1) {
-    if (str_detect(a, "<-") == TRUE) {
-      t <- a
-    } else {
-      t <- paste0(ps_get_assignment_var(id), " <- ", a)
-    }
-  } else {
-    t <- a
-  }
-  return(t)
+  #
+  # if (length(a) == 1) {
+  #   if (str_detect(a, "<-") == TRUE) {
+  #     t <- a
+  #   } else {
+  #     t <- paste0(ps_get_assignment_var(id), " <- ", a)
+  #   }
+  # } else {
+  #   t <- a
+  # }
+
+  return(a)
 }
 
 # Hints -----
