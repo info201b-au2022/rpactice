@@ -9,10 +9,17 @@
 #' @initial-vars
 #' @end
 
+#' @id -
+#' @msg
+#' For the purposes of this practice set, please assume:
+#'    For breakfast, you will have toast, eggs, and tea
+#'    For lunch, you will have soup and "pb + j" (peanut butter and jam)
+#'    For dinner, you will have curry and rice.
+#' @end
+
 #' @id ?
 #' @msg
-#' Create a vector, named `my_breakfast`, of everything you ate for breakfast. Let's assume, for the purpose of
-#' evaluating your code, that you had eggs, toast and tea for breakfast.
+#' Create a vector, named `my_breakfast`, of everything you ate for breakfast.
 #' @end
 #' @code
 my_breakfast <- c("toast", "eggs", "tea")
@@ -20,27 +27,27 @@ my_breakfast <- c("toast", "eggs", "tea")
 
 #' @id ?
 #' @msg
-#' Create a vector `my_lunch` of everything you ate (or will eat) for lunch. Let's assume, for the purpose of
-#' evaluating your code, that you plan to have soup and 'pb + j'.
+#' Create a vector `my_lunch` of everything you ate (or will eat) for lunch.
 #' @end
 #' @code
 my_lunch <- c("soup", "pb + j")
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
-#' Create a list, named `meals`, that contains your breakfast and lunch. The attribute name for `my_breakfast` should
-#' be "breakfast" and for `my_lunch` should be "lunch".
+#' Create a list, named `meals`, that contains your breakfast and lunch. The
+#' attribute name for `my_breakfast` should be "breakfast" and for `my_lunch`
+#' should be "lunch".
 #' @end
 #' @code
 meals <- list(breakfast = my_breakfast, lunch = my_lunch)
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
-#' Add an attribute, named `dinner`, to your `meals` list. That value of this attribute should be what you plan to eat for dinner.
+#' Add an attribute, named `dinner`, to your `meals` list, which includes
+#' everything you ate (or will eat) for dinner
 #' @end
-#' @var meals
 #' @code
 meals$dinner <- c("curry", "rice")
 #' @end
@@ -48,16 +55,27 @@ meals$dinner <- c("curry", "rice")
 #' @id ?
 #' @msg
 #' Use dollar notation ($) to extract your `dinner` element from your list
-#' and save it in a vector called 'dinner'
+#' and save it in a vector called 'd'
 #' @end
 #' @code
-dinner <- meals$dinner
+d <- meals$dinner
 #' @end
 
 #' @id ?
 #' @msg
-#' Use double-bracket notation ([[]]) to extract your `lunch` element from your list
-#' and save it in your list as the element at index 5 (no reason beyond practice)
+#' Use double-bracket notation ([[]]) to extract your `lunch` element from your
+#' list and save it to the variable `l`
+#' @end
+#' @var l
+#' @code
+l <- meals[["lunch"]]
+#' @end
+#'
+#' #' @id ?
+#' @msg
+#' Use double-bracket notation ([[]]) to extract your `lunch` element from your
+#' list and add it at element 5 of `meals` (there is no good reason to do this
+#' -- but making these kinds of assignments will come in handy later)
 #' @end
 #' @var meals
 #' @code
@@ -73,13 +91,15 @@ meals[[5]] <- meals[["lunch"]]
 early_meals <- meals[1:2]
 #' @end
 
-
-###' Challenge ###
+#' @id -
+#' @msg
+#' ### Challenge ###
+#' @end
 
 #' @id ?
 #' @msg
-#' Create a list that has the number of items you ate for each meal
-#' Hint: use the `lappy()` function to apply the `length()` function to each item
+#' Create a list that has the number of items you ate for each meal. Hint: use
+#' the `lapply()` function to apply the `length()` function to each item.
 #' @end
 #' @code
 items <- lapply(meals, length)
@@ -87,13 +107,14 @@ items <- lapply(meals, length)
 
 #' @id ?
 #' @msg
-#' Write a function `add_pizza` that adds pizza to a given meal vector, and
-#' returns the pizza-fied vector
+#' Write a function `add_pizza` that adds pizza to a given `meal` vector, and
+#' returns the pizza-filled vector
 #' @end
+#' @check c(list("a", "b", "c"), list("z"), list())
 #' @code
 add_pizza <- function(meal) {
   meal <- c(meal, "pizza")
-  meal # return the new vector
+  return(meal)
 }
 #' @end
 

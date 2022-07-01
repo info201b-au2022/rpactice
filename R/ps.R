@@ -62,6 +62,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("PS_Example.R"))
 
   ps_set_current(1)
+  clear_viewer_pane()
 }
 
 # Add a practice set into the running aplication

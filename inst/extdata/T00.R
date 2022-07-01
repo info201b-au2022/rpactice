@@ -6,6 +6,7 @@
 #' @end
 #' @initial-vars
 X <- c(1,2,3)
+L <- list(a="aa", b="bb")
 #' @end
 
 #' @id ?
@@ -14,19 +15,20 @@ X <- c(1,2,3)
 t <- 2
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
-#' Assignment to element of a vector
-#'    meals <- list(a="aa", b="bb")
+#' Change the attributes for the list, L, so that a is "aaaa" and b is "bbbb"
+#' @end
 #' @code
-meals <- list(a="aa", b="bb")
+L$a <- "aaaa"
+L[[2]] <- "bbbb"
 #' @end
 
 #' @id ?
 #' @msg
-#' Assignment to element of a vector
-#'    meals$a <- "aaaaaaaaa"
-#' @var meals
+#' To check the result, assign L to L1
+#' @end
+#' @var L1
 #' @code
-meals$a <- "aaaaaaaaa"
+L1 <- L
 #' @end
