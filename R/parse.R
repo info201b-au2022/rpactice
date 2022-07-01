@@ -342,6 +342,7 @@ parse_ps <- function(t, silient = TRUE) {
 #----------------------------------------------------------------------------#
 check_file_integrity <- function(filename, silient = FALSE, detailed = FALSE) {
   if (!file.exists(filename)) {
+    message(paste0("File not found.\n", filename))
     return()
   }
   file_list <- c()
