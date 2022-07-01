@@ -8,3 +8,6 @@ X <- c(1,2,3)
 
 # a: What is 1 + 1 (t)
 t <- 2
+
+# b: Change the second cell of the vector, X, to 2000 (X)
+X[2] <- 2000

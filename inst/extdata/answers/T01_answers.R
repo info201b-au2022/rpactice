@@ -5,47 +5,47 @@ practice.begin("T01", learner="[your name]")
 
 # Initial variables
 X <- c(1,2,3)
+f <- function(x) {return(x+1)}
 
-# # Note: Basic expressions
-#
-# # a: An expression (implicit variable) (t01)
-# t01 <- sqrt((1+2+3)^2)*2  # 12
-#
-# # b: A block expression - two lines (explicit variable) (t02)
-# t02 <- {  # TRUE
-#   t <- 10
-#   t <- t + 100
-#   (t == 110)
-# }
-#
-# # c: Semi-colon  (explicit variable) (t03)
-# t03a <- t01 + 100; t03 <- t03a - 100
-#
-# # d: No braces - two lines (implicit variable) (t04)
-# t04a <- t01 + 100
-# t04 <- t04a - 100
-#
-# # e: Using previous variable (initialized by learner) (t06)
-# t06 <- ((t01 - 12) == 0) # TRUE
-#
-# # f: Using an initial variable (initialized by practice set) (t04a)
-# t07 <- sum(c(6,12,18) == ((X + X) * 3)) == 3 # TRUE
+# Note: Basic expressions
 
-# g: Calling a function, f(x), (initialized by the practice set) (t04b)
+# a: An expression (implicit variable) [t01 <- sqrt((1+2+3)^2)*2  # 12] (t01)
+t01 <- sqrt((1+2+3)^2)*2  # 12
+
+# b: A block expression - two lines (explicit variable) (t02)
+t02 <- {  # TRUE
+  t <- 10
+  t <- t + 100
+  (t == 110)
+}
+
+# c: Semi-colon  (explicit variable) (t03)
+t03a <- t01 + 100; t03 <- t03a - 100
+
+# d: No braces - two lines (implicit variable) (t04)
+t04a <- t01 + 100
+t04 <- t04a - 100
+
+# e: Using previous variable (initialized by learner) (t06)
+t06 <- ((t01 - 12) == 0) # TRUE
+
+# f: Using an initial variable (initialized by practice set) (t07)
+t07 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
+
+# g: Calling a function, f(x), (initialized by the practice set) (t08)
 t08 <- (f(10) == 11) # TRUE
 
 # h: Assign several variables and check the last variable - e.g.,
 #      x <- 1
 #      y <- x + 1
 #      z <- y + 1 (z)
-x <-1
-y <- x +1
+x <- 1
+y <- x + 1
 z <- y + 1
-w <- 1000
+w <- -10
 
 # i: Assignment to element of a vector
 #       U <- X
 #       U[1] <- 100 (U)
 U <- X
 U[1] <- 100
-

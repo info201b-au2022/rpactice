@@ -12,14 +12,15 @@
 admin <- function() {
   cat("\014") # Clear screen
   cat(crayon::red("Function\t\t   "),                   crayon::red("Purpose"), "\n")
-  cat("admin()                     List the current admin functions\n")
-  cat("admin.check([fn|dir])       Check the integrity of a practice set file.\n")
-  cat("admin.grade(dir)            Grade all the work in the directory (dir).\n")
-  cat("admin.grade_ui_dir()        Select a directory (dir) from a file dialog.\n")
-  cat("admin.grade_ui_file()       Select a directory (dir) from a file dialog.\n")
-  cat("admin.ls()                  List installed practice sets and basic info.\n")
-  cat("admin.prompts(short)        List the practice prompts and results.\n")
-  cat("admin.vars()                List all the variables that are 'alive'.\n")
+  cat("admin()                         List the current admin functions.\n")
+  cat("admin.check([fn|dir])           Check the integrity of a practice set file.\n")
+  cat("admin.create_answers(short)     Create an answers .R file.\n")
+  cat("admin.grade(dir)                Grade all the work in the directory (dir).\n")
+  cat("admin.grade_ui_dir()            Select a directory (dir) and grade all work (with file dialog).\n")
+  cat("admin.grade_ui_file()           Select a file and grade it (with file dialog).\n")
+  cat("admin.ls()                      List installed practice sets and basic info.\n")
+  cat("admin.prompts(short)            List the practice prompts and results.\n")
+  cat("admin.vars()                    List all the variables that are 'alive'.\n")
   cat("---\n")
   cat("/Users/dhendry/Documents/_Code2/pinfo201/inst/extdata")
 }
@@ -145,30 +146,26 @@ admin.run <- function(short)  {
     "Short ID: ", short,
     "\n", "Code:\n", sep="")
 
+  # Show the expected code for this practice set
   t <- ps_get_expected_code()
   for (k in 1:length(t)) {
-    cat("[", k, "] ", t[k], "\n", sep = "")
+    #cat("[", k, "] ", t[k], "\n", sep = "")
+    cat(t[k], "\n", sep = "")
   }
 
+  # Evaluate the code and show the variables and values
   cat("\n",
       "Environment: pkg.expected_env\n", sep="")
+  cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))
 
-  all <- ls(envir = pkg.expected_env)
-  rm(list = all, envir = pkg.expected_env)
-  eval(parse(text = t), envir = pkg.expected_env)
-
-  out <- sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value")
-  cat(out)
-
-  all <- ls(envir = pkg.expected_env)
-  for (k in 1:length(all)) {
-    var <- all[k]
-    val <- get(var, envir=pkg.expected_env)
-    t <- typeof(val)
-    s <- format_variable(val)
-
-    out <- sprintf("%-20s %-10s %-60s\n", var, t , s)
+  results <- eval_code_expected(t)
+  if(!is.null(results)) {
+  for (r in results) {
+    out <- sprintf("%-20s %-10s %-60s\n", r$vname, r$vtype , r$vstr)
     cat(out)
+  }
+  } else {
+    stop("admin.run(): eval_code_expected FAILED")
   }
 }
 
@@ -288,6 +285,17 @@ admin.grade_ui_file <- function() {
   } else {
     return (admin.grade(t))
   }
+}
+
+admin.create_answers <- function(short) {
+  id <- ps_get_id_by_short(short)
+  if (id == -1) {
+    stop(paste0("Error. Practice set not found (", short, ")"))
+  }
+  ps_set_current(id)
+
+  t <- format_practice_script(TRUE)
+  cat(t)
 }
 
 #' Check the integrity of practice set

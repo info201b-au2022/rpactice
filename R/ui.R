@@ -22,7 +22,7 @@ ui_begin <- function() {
       short <- input$select
       id <- ps_get_id_by_short(short)
       ps_set_current(id)
-      rstudioapi::documentNew(format_practice_script(id))
+      rstudioapi::documentNew(format_practice_script())
       rstudioapi::setCursorPosition(document_position(3,1))
       stopApp()
     })

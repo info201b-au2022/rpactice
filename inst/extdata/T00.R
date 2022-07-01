@@ -13,3 +13,10 @@ X <- c(1,2,3)
 #' @code
 t <- 2
 #' @end
+#'
+#' #' @id ?
+#' @msg Change the second cell of the vector, X, to 2000
+#' @var X
+#' @code
+X[2] <- 2000
+#' @end

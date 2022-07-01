@@ -6,6 +6,7 @@
 #' @end
 #' @initial-vars
 X <- c(1,2,3)
+f <- function(x) {return(x+1)}
 #' @end
 
 #' @id -
