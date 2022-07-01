@@ -5,6 +5,7 @@ practice.begin("T03", learner="[your name]")
 
 # Initial variables
 g <- function(x) {return(x+1)}
+X <- c(1,2,3,4,5,6)
 
 # a: Call the pre-installed function, g(x), with ten. Does this result make sense? (t01)
 t01 <- g(10)  #A: 11
@@ -32,4 +33,14 @@ h <- function(num, prec) {
   rounded <- round(num + pi, prec)
   return(rounded)
 }
+
+# g: Update X[3] to 200 (X)
+X[3] <- 200
+
+# h: Update v[3] to 200 with a function, named f_update (f_update)
+f_update <- function(v) {
+  v[3] <- 200
+  return(v)
+}
+
 

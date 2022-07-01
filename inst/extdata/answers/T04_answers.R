@@ -2,6 +2,11 @@
 #
 # ---
 practice.begin("T04", learner="DGH Testing")
+
+# Initial variables
+library(dplyr)
+cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(TRUE,FALSE,TRUE,TRUE))
+
 # a: Get the number of rows (number_of_rows)
 number_of_rows <- nrow(cDF)
 

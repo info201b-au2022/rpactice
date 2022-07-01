@@ -1,11 +1,22 @@
-# Answers to P02
+# P02: Using vectors and basic functions
+#    Check into length() and sum()
+# ---
+practice.begin("P02", learner="[your name]")
 
-practice.begin("P02")
-practice.questions()
-t_01 <- sqrt(50)
-t_02 <- round(pi,2)
-t_03 <- round(sqrt(50),1)
-t_04 <- ceiling(5.1)
-t_05 <- floor(5.1)
-t_06 <- log10(10000)
-practice.answers()
+# Initial variables
+X <- c(1,2,3,4)
+
+# a: How many elements are in the vector X? (num)
+num <- length(X)
+
+# b: Use a function to compute the sum of the numbers in vector X? (sum_of_X)
+sum_of_X <- sum(X)
+
+# c: Create a vector with these three elements: 1, 2, 3. (v1)
+v1 <- c(1,2,3)
+
+# d: Add 5 to each element of the vector X. (v2)
+v2 <- X + 5
+
+# e: Make a function (f)
+f <- function(x) {10 * x}

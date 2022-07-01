@@ -220,8 +220,6 @@ eval_code <- function(code, envir_id = 1, clear_first = TRUE) {
     env_name <- pkg.expected_env
   }
 
-  cat(">>>>\n", code, "\n")
-
   all <- ls(envir = env_name)
   rm(list = all, envir = env_name)
 
@@ -413,20 +411,6 @@ format_variable <- function(var_to_format) {
 
 signature_ok <- function(check_function, expected_function) {
 
-  # print(check_code)
-  # print(expected_code)
-
-  # tryCatch(
-  #   expr = {
-  #     check_function <- eval(parse(text = paste0(check_code, collapse = "\n")))
-  #     expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
-  #   },
-  #   error = function(e) {
-  #     stop("signature_ok: ERROR")
-  #     return(-2)
-  #   }
-  # )
-
   check_formals <- names(formals(check_function))
   expected_formals <- names(formals(expected_function))
 
@@ -471,7 +455,7 @@ expected_answer <- function(id) {
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
 DEFAULT_Check2 <- function(var_name, result) {
-  cDEBUG <- TRUE
+  cDEBUG <- FALSE
 
   internal_id <- ps_var_name_to_id(var_name)
 
@@ -741,33 +725,6 @@ DEFAULT_Check <- function(internal_id, result) {
         print(">> Closure")
       }
 
-      # print("Closure Learner ......")
-      # if(is.null(f)) {
-      #   print("FUNC: Zero parameter")
-      # } else if (length(f) == 1) {
-      #   print(paste0("FUNC: One paramter: ", f[1]))
-      # } else if (length(f) == 2) {
-      #   print(paste0("FUNC: Two paramters: ", f[1], " - ", f[2]))
-      # }
-      # print("Closure .............")
-
-      # learner_formals <- names(formals(learner_result$scode))
-      #
-      # expected_code <- ps_get_expected_answer(internal_id)
-      # expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
-      # expected_formals <- names(formals(expected_function))
-      #
-      # # Check that the function signatures are okay
-      # signature_ok <- TRUE
-      # if (is.null(learner_formals) && !is.null(expected_formals)) {
-      #   signature_ok <- FALSE
-      # }
-      # if (signature_ok) {
-      #   if (length(learner_formals) != length(expected_formals)) {
-      #     signature_ok <- FALSE
-      #   }
-      # }
-
       expected_code <- ps_get_expected_answer(internal_id)
       expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
 
@@ -1028,10 +985,7 @@ check_answers_from_ui <- function() {
     return(NULL)
   } else {
     rstudioapi::documentSave(t$id)
-    print(rstudioapi::documentPath(t$id))
     learner_code <- readLines(rstudioapi::documentPath(t$id))
-    print(learner_code)
-    # eval(parse(text = learner_code), envir = .GlobalEnv)
     return(check_answers2(learner_code))
   }
 }

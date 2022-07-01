@@ -224,7 +224,7 @@ admin.grade <- function(filename) {
     )
 
     # Check the answers and get the results
-    result <- check_answers(code_v)
+    result <- check_answers2(code_v)
     t <-format_grading(result)
 
     # Write grading results
