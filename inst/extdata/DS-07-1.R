@@ -101,4 +101,3 @@ wave <- (sin_wave * cos_wave) + sin_wave
 #' @msg
 #' Use the `plot()` function to plot your `wave`!
 #' @end
-

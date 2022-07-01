@@ -27,19 +27,19 @@ cPACKAGE_ENVIR_NAME <- "package:pinfo201"
 #     inst/extdata/
 ps_load_internal_ps <- function() {
   # Freeman & Ross exercises
-  ps_add(load_ps("DS-5-1.R")) # Practice with basic R syntax
+  ps_add(load_ps("DS-05-1.R")) # Practice with basic R syntax
 
-  ps_add(load_ps("DS-6-1.R")) # Calling built-in functions
-  ps_add(load_ps("DS-6-2.R")) # Using built-in string functions
-  ps_add(load_ps("DS-6-3.R")) # Writing and executing functions
-  ps_add(load_ps("DS-6-4.R")) # Functions and conditionals
+  ps_add(load_ps("DS-06-1.R")) # Calling built-in functions
+  ps_add(load_ps("DS-06-2.R")) # Using built-in string functions
+  ps_add(load_ps("DS-06-3.R")) # Writing and executing functions
+  ps_add(load_ps("DS-06-4.R")) # Functions and conditionals
 
-  ps_add(load_ps("DS-7-1.R")) # Creating and operating on vectors
-  ps_add(load_ps("DS-7-2.R")) # Indexing and filtering vectors
-  ps_add(load_ps("DS-7-3.R")) # Vector practice
+  ps_add(load_ps("DS-07-1.R")) # Creating and operating on vectors
+  ps_add(load_ps("DS-07-2.R")) # Indexing and filtering vectors
+  ps_add(load_ps("DS-07-3.R")) # Vector practice
 
-  # ps_add(load_ps("DS-8-1.R")) # Creating and accessing lists
-  # ps_add(load_ps("DS-8-2.R")) # Using `*apply()` function
+  # ps_add(load_ps("DS-08-1.R")) # Creating and accessing lists
+  # ps_add(load_ps("DS-08-2.R")) # Using `*apply()` function
 
   # ps_add(load_ps("DS-10-1.R")) # Creating data frames
   # ps_add(load_ps("DS-10-2.R")) # Working with data frames
@@ -48,7 +48,7 @@ ps_load_internal_ps <- function() {
   # ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
 
   # Test cases
-  ps_add(load_ps("T00.R")) # Supreme simplicity for debugging
+  ps_add(load_ps("T00.R")) # Supreme simplicity - helpful for debuggin
   ps_add(load_ps("T01.R")) # Assignment and atomic vectors
   ps_add(load_ps("T02.R")) # Vectors
   ps_add(load_ps("T03.R")) # Functions
