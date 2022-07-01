@@ -173,6 +173,8 @@ z$zzz <- 'ccc'
 t[] <- 'aaa'
 y[[]] <- 'bbb'
 z$a <- 'ccc'
+
+t$x$y
 "
 
 e2 <- parse(text=t)

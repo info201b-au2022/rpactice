@@ -7,6 +7,8 @@
 #' @initial-vars
 X <- c(1,2,3)
 f <- function(x) {return(x+1)}
+meals1 <- list(a="aa", b="bb")
+meals2 <- list(a="aa", b="bb")
 #' @end
 
 #' @id -
@@ -19,10 +21,13 @@ t01 <- sqrt((1+2+3)^2)*2  # 12
 #' @end
 
 #' @id ?
-#' @msg A block expression - two lines (explicit variable)
+#' @msg
+#' A block expression - two lines (explicit variable)
+#' t02 <- {  ... }
+#' @end
 #' @var t02
 #' @code
-t02 <- {  # TRUE
+t02 <- {
   t <- 10
   t <- t + 100
   (t == 110)
@@ -31,7 +36,7 @@ t02 <- {  # TRUE
 
 #' @id ?
 #' @msg Semi-colon  (explicit variable)
-#' @var t03
+#' @var
 #' @code
 t03a <- t01 + 100; t03 <- t03a - 100
 #' @end
@@ -46,19 +51,19 @@ t04 <- t04a - 100
 #' @id ?
 #' @msg Using previous variable (initialized by learner)
 #' @code
-t06 <- ((t01 - 12) == 0) # TRUE
+t05 <- ((t01 - 12) == 0) # TRUE
 #' @end
 
 #' @id ?
 #' @msg Using an initial variable (initialized by practice set)
 #' @code
-t07 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
+t06 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
 #' @end
 #
 #' @id ?
 #' @msg Calling a function, f(x), (initialized by the practice set)
 #' @code
-t08 <- (f(10) == 11) # TRUE
+t07 <- (f(10) == 11) # TRUE
 #' @end
 
 #' @id
@@ -76,6 +81,14 @@ z <- y + 1
 w <- -10
 #' @end
 
+#' @id -
+#' @msg
+#' Various forms of assignment operations. Curently, only ONE level of nested structure
+#' works.  For example, these structures will fail:
+#'     t$x$y <- blah
+#'     t[[a]][[b]] <- blah
+#' @end
+
 #' @id ?
 #' @msg
 #' Assignment to element of a vector
@@ -89,7 +102,7 @@ U[1] <- 100
 
 #' @id ?
 #' @msg
-#' Assignment to element of a vector
+#' Assignment to two lists
 #'    meals <- list(a="aa", b="bb")
 #' @code
 meals <- list(a="aa", b="bb")
@@ -97,9 +110,18 @@ meals <- list(a="aa", b="bb")
 
 #' @id ?
 #' @msg
-#' Assignment to element of a vector
+#' Sub-select a list with dollar sign
 #'    meals <- list(a="aa", b="bb")
-#' @var meals
+#' @var meals1
 #' @code
-meals$a <- "aaaaaaaaa"
+meals1$a <- "aaaaaaaaa"
+#' @end
+
+#' @id ?
+#' @msg
+#' Sub-select a list with double square brackets ([[]])
+#'    meals[[2]] <- 'bbbbbbbbbb'
+#' @var meals2
+#' @code
+meals2[[2]] <- 'bbbbbbbbbb'
 #' @end

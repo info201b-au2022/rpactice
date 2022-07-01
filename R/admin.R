@@ -296,6 +296,7 @@ admin.create_answers <- function(short) {
   ps_set_current(id)
 
   t <- format_practice_script(TRUE)
+  cat("\014") # Clear screen
   cat(t)
 }
 
