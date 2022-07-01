@@ -28,14 +28,6 @@ practice.begin <- function(short = "P01", learner="Anonymous") {
   # Currently, no session information, so just a global variable
   pkg.globals$gUSER_NAME <- learner
 
-  # # Clear all variables in the R global environment
-  # var_names <- ps_get_live_var_names()
-  # rm(list = var_names, envir = globalenv())
-  #
-  # # Practice sets can set some initial variables in the R global
-  # # environment, allowing practice prompts to refer to these variables
-  # set_env_vars()
-
   return(TRUE)
 }
 

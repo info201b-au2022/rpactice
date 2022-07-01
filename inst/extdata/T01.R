@@ -86,3 +86,20 @@ w <- -10
 U <- X
 U[1] <- 100
 #' @end
+
+#' @id ?
+#' @msg
+#' Assignment to element of a vector
+#'    meals <- list(a="aa", b="bb")
+#' @code
+meals <- list(a="aa", b="bb")
+#' @end
+
+#' @id ?
+#' @msg
+#' Assignment to element of a vector
+#'    meals <- list(a="aa", b="bb")
+#' @var meals
+#' @code
+meals$a <- "aaaaaaaaa"
+#' @end

@@ -13,10 +13,20 @@ X <- c(1,2,3)
 #' @code
 t <- 2
 #' @end
-#'
-#' #' @id ?
-#' @msg Change the second cell of the vector, X, to 2000
-#' @var X
+
+#' @id ?
+#' @msg
+#' Assignment to element of a vector
+#'    meals <- list(a="aa", b="bb")
 #' @code
-X[2] <- 2000
+meals <- list(a="aa", b="bb")
+#' @end
+
+#' @id ?
+#' @msg
+#' Assignment to element of a vector
+#'    meals$a <- "aaaaaaaaa"
+#' @var meals
+#' @code
+meals$a <- "aaaaaaaaa"
 #' @end

@@ -69,7 +69,7 @@ admin.prompts <- function(short) {
   cat("\014") # Clear screen
   cat("[", short, "]: ", ps$ps_title, " (Prompts: ", length(ps$task_list), ")\n", sep = "")
 
-  v <- get_env_vars(short)
+  v <- ps_get_env_vars(short)
   t <- paste0(v, collapse = "\n")
   cat("Envir Variables\n  ", t, "\n")
 
@@ -225,7 +225,7 @@ admin.grade <- function(filename) {
     )
 
     # Check the answers and get the results
-    result <- check_answers2(code_v)
+    result <- check_answers(code_v)
     t <-format_grading(result)
 
     # Write grading results

@@ -423,7 +423,7 @@ check_test_code <- function(ps) {
   cat("\n",
       "Code:", sep="")
   for (c in code) {
-    cat(c, "\n")
+    cat(c, "\n", sep="")
   }
 
   results <- eval_code_expected(code)

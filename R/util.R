@@ -71,9 +71,14 @@ ast_get_assignments <- function(e1) {
     var_name <- e2[[k]][[2]]
     e_t <- e2[[k]][[3]]
 
-    # This case: X[...] <- val -- we what to return X
+    # For these sub-select cases, we need to return X:
+    #    X[blah] <- val
+    #    X$blah% <- val
+    #    X[[blah]] <- val
     if (length(e2[[k]][[2]]) > 2) {
-      if (e2[[k]][[2]][[1]] == "[") {
+      if (e2[[k]][[2]][[1]] == "[" ||
+          e2[[k]][[2]][[1]] == "[[" ||
+          e2[[k]][[2]][[1]] == "$") {
         var_name <- e2[[k]][[2]][[2]]
         e_t <- e2[[k]][[3]]
       }

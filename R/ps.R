@@ -38,8 +38,8 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("DS-07-2.R")) # Indexing and filtering vectors
   ps_add(load_ps("DS-07-3.R")) # Vector practice
 
-  # ps_add(load_ps("DS-08-1.R")) # Creating and accessing lists
-  # ps_add(load_ps("DS-08-2.R")) # Using `*apply()` function
+  ps_add(load_ps("DS-08-1.R")) # Creating and accessing lists
+  ps_add(load_ps("DS-08-2.R")) # Using `*apply()` function
 
   # ps_add(load_ps("DS-10-1.R")) # Creating data frames
   # ps_add(load_ps("DS-10-2.R")) # Working with data frames
@@ -137,6 +137,16 @@ ps_get_all <- function() {
   return(v)
 }
 
+# Get the practice set initial variables
+ps_get_env_vars <- function(short = "") {
+  if (short == "") {
+    ps <- ps_get_current()
+  } else {
+    ps <- ps_get_by_short(short)
+  }
+  return(ps$ps_initial_vars)
+}
+
 # Return a list of practice set titles and ids, suited
 # to a Shinny selectInput widget.  The list has this structure:
 #    list("P01: <title>" = "P01", "P2: <title>" = "P02")
@@ -159,34 +169,12 @@ ps_ui_get_titles <- function() {
   return(t)
 }
 
-# Variables ----
-#----------------------------------------------------------------------------#
-# Functions for setting up the initial variables on which the practice
-# prompts can depend
-#----------------------------------------------------------------------------#
-# set_initial_vars_doit <- function(expr) {
-#   eval(parse(text = expr), envir = .GlobalEnv)
-# }
-#
-# set_env_vars <- function() {
-#   ps <- ps_get_current()
-#   t <- lapply(ps$ps_initial_vars, set_initial_vars_doit)
-# }
 
-get_env_vars <- function(short = "") {
-  if (short == "") {
-    ps <- ps_get_current()
-  } else {
-    ps <- ps_get_by_short(short)
-  }
-  return(ps$ps_initial_vars)
-}
 
 # Expression evaluation ----
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
 #----------------------------------------------------------------------------#
-
 # This function returns a list information about the variables that have
 # been initialized in one of two environments (global or expected)
 get_all_var_info <- function(envir_id) {
@@ -248,13 +236,7 @@ get_var_info <- function(var, envir_id = 1) {
   return(new_info)
 }
 
-get_global_var_info <- function(var) {
-  return(get_var_info(var, 1))
-}
-get_expected_var_info <- function(var) {
-  return(get_var_info(var, 2))
-}
-
+## Wrapper functions ----
 # Wrapper functions for accessing the global (learner) and
 # expected environments.
 eval_code_global <- function(code, clear_first = TRUE) {
@@ -264,6 +246,13 @@ eval_code_expected <- function(code, clear_first = TRUE) {
   return(eval_code(code, 2, clear_first))
 }
 
+get_global_var_info <- function(var) {
+  return(get_var_info(var, 1))
+}
+get_expected_var_info <- function(var) {
+  return(get_var_info(var, 2))
+}
+
 get_all_global_var_info <- function() {
   return(get_var_info(1))
 }
@@ -271,6 +260,7 @@ get__all_expected_var_info <- function() {
   return(get_var_info(2))
 }
 
+## Misc eval functions ----
 # Evaluates a block of code and returns some details about the result
 eval_string_details <- function(code, run_envir = NULL) {
   if (is.null(run_envir)) {
@@ -301,57 +291,14 @@ eval_string_details <- function(code, run_envir = NULL) {
 #
 eval_string_and_format <- function(code) {
   result <- eval_string_details(code)
-  if (result$ok == TRUE) {
-    # Check for basic type
-    if (result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
 
-      # Atomic types
-      if (length(result$value) == 1) {
-        return(paste0("atomic [1]: ", as.character(result$value)))
-
-        # Vector type
-      } else {
-        len <- length(result$value)
-        t <- paste0(result$value, collapse = " ")
-        if (len > 20) {
-          t <- paste0(str_sub(t, 1, 20), " ...", sep = "")
-        }
-        return(paste0("vector [", len, "]: ", t))
-      }
-      # Check for a function
-    } else if (result$type == "closure") {
-      args <- names(formals(result$value))
-      t <- paste0(args, collapse = ", ")
-      t <- paste0("function(", t, ") {...}")
-      return(paste0("funct: ", t))
-
-      # Check for dataframe
-    } else if (result$type == "dataframe") {
-      nr <- nrow(result$value)
-      nc <- ncol(result$value)
-
-      df_info_rows <- "0 rows"
-      df_info_cols <- "0 columns"
-      if (nr == 1) df_info_rows <- "1 row" else df_info_rows <- paste0(nr, " rows")
-      if (nc == 1) df_info_cols <- "1 column" else df_info_cols <- paste0(nc, " columns")
-
-      return(paste0("dataframe: [", df_info_rows, " x ", df_info_cols, "]"))
-
-      # List type
-    } else if (result$type == "list") {
-      len <- length(result$value)
-      return(paste0("list: [", len, "]"))
-
-      # A type that is not handled
-    } else {
-      message("\nType unhandled:", result$type, "\n")
-      return(paste0("Type unhandled: ", result$type))
-    }
-  } else {
+  if (result$ok == FALSE) {
     message("\nERROR: eval_string_and_format:\n", result$error)
     e <- str_replace_all(result$error[1], "\n", " ")
     t <- paste0("Error: ", e)
     return(t)
+  } else {
+    return(format_variable(result$value))
   }
 }
 
@@ -409,12 +356,14 @@ format_variable <- function(var_to_format) {
   }
 }
 
+# Check that two functions have the same number of arguments. If
+# not, return -1. Otherwise, return the number of arguments.
 signature_ok <- function(check_function, expected_function) {
-
   check_formals <- names(formals(check_function))
   expected_formals <- names(formals(expected_function))
 
-  # Check that the function signatures are okay
+  # Check that the function signatures have the same number of
+  # arguments
   signature_ok <- TRUE
   if (is.null(check_formals) && !is.null(expected_formals)) {
     signature_ok <- FALSE
@@ -450,32 +399,20 @@ expected_answer <- function(id) {
   return(eval_string_and_format(code))
 }
 
-# Checking Callbacks ----
+# Code checking ----
 #----------------------------------------------------------------------------#
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
-DEFAULT_Check2 <- function(var_name, result) {
-  cDEBUG <- FALSE
+DEFAULT_Check <- function(var_name, result) {
+  cDEBUG <- TRUE
 
   internal_id <- ps_var_name_to_id(var_name)
-
-  ps <- ps_get_current()
-
-  if (cDEBUG) {
-    cat("--- DEFAULT_Check\n")
-    cat(paste0("ps short:       ", ps$ps_short), "\n")
-    cat(paste0("var name:       ", var_name), "\n")
-    cat(paste0("internal id:    ", internal_id), "\n")
-    cat(paste0("prompt id:      ", ps_get_prompt_id(internal_id)), "\n")
-    cat("---\n")
-  }
-
   learner_r <- get_global_var_info(var_name)
-  Li <- learner_r$info
   expected_r <- get_expected_var_info(var_name)
-  Ei <- expected_r$info
 
-  if (is.null(Li) || is.null(Ei)) {
+  # This should never happen. The variable, var_name, should lead to
+  # results in both the learner and expected environments.
+  if (is.null(learner_r) || is.null(expected_r)) {
     t <- ""
     if (is.null(Li)) {
       t <- paste0(t, "[learner variable is null]")
@@ -489,12 +426,22 @@ DEFAULT_Check2 <- function(var_name, result) {
     return(result)
   }
 
+  Li <- learner_r$info
+  Ei <- expected_r$info
+
   if (cDEBUG) {
+    ps <- ps_get_current()
+    cat("--- DEFAULT_Check\n")
+    cat(paste0("ps short:       ", ps$ps_short), "\n")
+    cat(paste0("var name:       ", var_name), "\n")
+    cat(paste0("internal id:    ", internal_id), "\n")
+    cat(paste0("prompt id:      ", ps_get_prompt_id(internal_id)), "\n")
+    cat("---\n")
+
     cat("...---...\n")
     print(Li)
     cat("...---...\n")
     print(Ei)
-
 
     cat(sprintf("Learner: %-20s %-10s %-60s\n", Li$vname, Li$vtype, Li$vstr))
     cat(sprintf("Expected: %-20s %-10s %-60s\n", Ei$vname, Ei$vtype, Ei$vstr))
@@ -535,6 +482,28 @@ DEFAULT_Check2 <- function(var_name, result) {
       } else {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
       }
+    }
+
+    # Check for dataframe
+  } else if (Li$vtype == "dataframe") {
+    if (cDEBUG) {
+      cat(">> Dataframe\n")
+    }
+    if (identical(Li$vval, Ei$vval, ignore.environment = TRUE) == TRUE) {
+      result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+    } else {
+      result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+    }
+
+    # list
+  } else if (Li$vtype == "list") {
+    if (cDEBUG) {
+      cat(">> List\n")
+    }
+    if (identical(Li$vval, Ei$vval, ignore.environment = TRUE) == TRUE) {
+      result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+    } else {
+      result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
     }
 
     # Functions
@@ -617,22 +586,6 @@ DEFAULT_Check2 <- function(var_name, result) {
       return(result)
     }
 
-    # Check for dataframe
-  } else if (Li$vtype == "dataframe") {
-    if (identical(Li$vval, Ei$vval, ignore.environment = TRUE) == TRUE) {
-      result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-    } else {
-      result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-    }
-
-    # list
-  } else if (Li$vtype == "list") {
-    if (identical(Li$vval, Ei$vval, ignore.environment = TRUE) == TRUE) {
-      result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-    } else {
-      result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-    }
-
     # Type is not handled
   } else {
     if (cDEBUG) {
@@ -662,6 +615,7 @@ DEFAULT_Check2 <- function(var_name, result) {
 #    user_name = <string>,
 #     num_correct = <integer>,
 #     num_incorrect = <integer>,
+#     general_msg = <string>,
 #     message_list = list (
 #        message = list (
 #           internal_id = <internal integer>,
@@ -672,28 +626,42 @@ DEFAULT_Check2 <- function(var_name, result) {
 #     )
 # )
 #----------------------------------------------------------------------------#
-check_answers2 <- function(learner_code) {
-
-  # This structure is used hold feedback on the practice coding prompts.
+check_answers <- function(learner_code) {
   practice_result <- list(
     user_name = pkg.globals$gUSER_NAME,
+    general_msg = "",
     num_correct = 0,
     num_incorrect = 0,
     message_list = list()
   )
 
+  # Evaluate the learner's code and the expected code in two different
+  # environments (global and expected)
   learner_vars <- eval_code_global(learner_code)
   if (is.null(learner_vars)) {
-    stop("check_answer2: learner_vars: Parsing Error")
+    t <- result_prompt_error(-1, "Syntax Error: Check code and try again.")
+    practice_result <- result_update(practice_result, -1, FALSE, t)
+    return(practice_result)
   }
-
   expected_vars <- eval_code_expected(ps_get_expected_code())
   if (is.null(expected_vars)) {
-    stop("check_answer2: expected_vars: Parsing Error")
+    stop("check_answers: expected_vars: Internal Error: Likely R syntax error in expected code.")
   }
 
-  # Process learner code - NOTE: NEED TryCatch() stuff to handle errors
-  learner_assign_ops <- ast_get_assignments(parse(text = learner_code))
+  # Parse the learner's code and extract all variables and assignment
+  # operators
+  tryCatch(
+    expr = {
+      learner_assign_ops <- ast_get_assignments(parse(text = learner_code))
+    },
+    error = function(e) {
+      # This error should not happen -- since, the code has been evaluated above to get
+      # the learner variables
+      t <- result_prompt_error(-1, "Likely a Syntax Error: Check code and try again.")
+      practice_result <- result_update(practice_result, -1, FALSE, t)
+      return(practice_result)
+    }
+  )
 
   # Get the learner's variables and code - NOTE: Why flatten here?
   for (k in 1:length(learner_assign_ops)) {
@@ -711,40 +679,18 @@ check_answers2 <- function(learner_code) {
     return(practice_result)
   }
 
-  # Call each of the functions that checks if the correct value
-  # has been computed.
+  # Call each of the functions that checks if the correct value has been computed.
   for (k in 1:length(var_names)) {
     var <- var_names[k]
     if (!is.null(get_global_var_info(var))) {
       if (is_callback_loaded(var)) {
-      practice_result <- do.call(get_callback_name(var), list(var, practice_result))
+        practice_result <- do.call(get_callback_name(var), list(var, practice_result))
       } else {
-        practice_result <- DEFAULT_Check2(var, practice_result)
+        practice_result <- DEFAULT_Check(var, practice_result)
       }
     }
   }
   return(practice_result)
-}
-
-clear_viewer_pane <- function() {
-  dir <- tempfile()
-  dir.create(dir)
-  TextFile <- file.path(dir, "blank.html")
-  writeLines("", con = TextFile)
-  rstudioapi::viewer(TextFile)
-}
-
-# This function gives access to the learner's code in RStudio
-check_answers_from_ui <- function() {
-  t <- rstudioapi::getSourceEditorContext()
-  if (t$path == "") {
-    showDialog("Check", "Please save your .R file. It must be saved before checking your practice set.")
-    return(NULL)
-  } else {
-    rstudioapi::documentSave(t$id)
-    learner_code <- readLines(rstudioapi::documentPath(t$id))
-    return(check_answers2(learner_code))
-  }
 }
 
 # Create the name for a callback function.  The name follows this template:
@@ -774,6 +720,30 @@ is_callback_loaded <- function(var_name) {
   f_pattern <- paste0("^", funct_name, "$")
   t <- (length(ls(name = cPACKAGE_ENVIR_NAME, pattern = f_pattern)) == 1)
   return(t)
+}
+
+# UI ----
+
+# This function clears the viewer pane
+clear_viewer_pane <- function() {
+  dir <- tempfile()
+  dir.create(dir)
+  TextFile <- file.path(dir, "blank.html")
+  writeLines("", con = TextFile)
+  rstudioapi::viewer(TextFile)
+}
+
+# This function gives access to the learner's code in RStudio
+check_answers_from_ui <- function() {
+  t <- rstudioapi::getSourceEditorContext()
+  if (t$path == "") {
+    showDialog("Check", "Please save your .R file. It must be saved before checking your practice set.")
+    return(NULL)
+  } else {
+    rstudioapi::documentSave(t$id)
+    learner_code <- readLines(rstudioapi::documentPath(t$id))
+    return(check_answers(learner_code))
+  }
 }
 
 # Check sample data ----
@@ -1031,7 +1001,7 @@ format_practice_script <- function(show_answers = FALSE) {
 
   s <- ""
 
-  lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, get_env_vars(), collapse = "\n"))
+  lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n"))
   t_lines_of_code <- ""
   if (lines_of_code != "") {
     t_lines_of_code <- paste0(
@@ -1166,8 +1136,12 @@ result_error_msg <- function(id, show_hints = TRUE) {
 }
 
 result_prompt_error <- function(id, msg) {
+  if (id == -1) {
+    t <- paste0("General practice set error: ", msg)
+  } else {
   t <- paste0("Prompt error: \"", ps_get_prompt(id), "\"\n")
   t <- paste0(t, msg)
+}
   return(t)
 }
 
@@ -1181,6 +1155,11 @@ result_sub_message <- function(message, sub_message) {
 }
 
 result_update <- function(result, id, is_correct, text) {
+  if (id == -1) {
+    result$general_msg <- text
+    return (result)
+  }
+
   if (is_correct == TRUE) {
     result$num_correct <- result$num_correct + 1
     result$correct_v <- append(result$correct_v, id)
@@ -1214,7 +1193,11 @@ format_result <- function(result) {
   t <- paste0(t, "Learner name:\n<i>   ", result$user_name, "</i>")
   t <- paste0(t, "\n")
 
-  lines_of_code <- paste0(cTAB_IN_SPACES, get_env_vars(), collapse = "\n")
+  if(result$general_msg != "") {
+    t <- paste0(t, ">>> Note: ", result$general_msg, "\n\n")
+  }
+
+  lines_of_code <- paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n")
   t <- paste0(t, paste0("Initial variables:\n", lines_of_code, "\n"))
 
   t <- paste0(t, "Checking code:\n   ", num_correct, "/", total, " complete.")

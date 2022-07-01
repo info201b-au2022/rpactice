@@ -165,6 +165,28 @@ test_that("ast functions", {
   expect_equal(r[[3]]$rhs, "10")
 })
 
+t <-
+"t[3] <- 'aaa'
+y[[3]] <- 'bbb'
+z$zzz <- 'ccc'
+
+t[] <- 'aaa'
+y[[]] <- 'bbb'
+z$a <- 'ccc'
+"
+
+e2 <- parse(text=t)
+r <- ast_get_assignments(e2)
+test_that("ast functions - sub-selections", {
+  expect_equal(length(r), 6)
+  expect_equal(r[[1]]$lhs, "t")
+  expect_equal(r[[2]]$lhs, "y")
+  expect_equal(r[[3]]$lhs, "z")
+  expect_equal(r[[4]]$lhs, "t")
+  expect_equal(r[[5]]$lhs, "y")
+  expect_equal(r[[6]]$lhs, "z")
+})
+
 
 
 t <-

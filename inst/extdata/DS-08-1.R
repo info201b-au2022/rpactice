@@ -1,8 +1,8 @@
 #' @version ps-1
-#' @short DS-8-1
+#' @short DS-08-1
 #' @title Creating and accessing lists
 #' @descr
-#' Exercise 6.4 from Programming Skills for Data Science by
+#' Exercise 8.1 from Programming Skills for Data Science by
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
@@ -40,6 +40,7 @@ meals <- list(breakfast = my_breakfast, lunch = my_lunch)
 #' @msg
 #' Add an attribute, named `dinner`, to your `meals` list. That value of this attribute should be what you plan to eat for dinner.
 #' @end
+#' @var meals
 #' @code
 meals$dinner <- c("curry", "rice")
 #' @end
@@ -58,6 +59,7 @@ dinner <- meals$dinner
 #' Use double-bracket notation ([[]]) to extract your `lunch` element from your list
 #' and save it in your list as the element at index 5 (no reason beyond practice)
 #' @end
+#' @var meals
 #' @code
 meals[[5]] <- meals[["lunch"]]
 #' @end

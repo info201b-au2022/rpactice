@@ -1,8 +1,8 @@
 #' @version ps-1
-#' @short DS-8-2
+#' @short DS-08-2
 #' @title Using `*apply()` function
 #' @descr
-#' Exercise 6.4 from Programming Skills for Data Science by
+#' Exercise 8.2 from Programming Skills for Data Science by
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
