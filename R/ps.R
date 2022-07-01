@@ -55,8 +55,8 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("T04.R")) # Dataframes
 
   # Problem sets   - Additional examples
-  ps_add(load_ps("P01.R"))
-  ps_add(load_ps("P02.R"))
+  #ps_add(load_ps("P01.R"))
+  #ps_add(load_ps("P02.R"))
 
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
