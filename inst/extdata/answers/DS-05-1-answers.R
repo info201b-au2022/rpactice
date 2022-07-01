@@ -1,6 +1,6 @@
 # FR-05-1: Book: 05: Exercise 1: Practice with basic R syntax
 # ---
-practice.begin("DS-5-1", learner="[your name]")
+practice.begin("DS-05-1", learner="[your name]")
 
 # a: Create a variable `hometown` that stores the city in which you were born (hometown)
 hometown <- "St. Louis"

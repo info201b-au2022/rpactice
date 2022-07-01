@@ -1,8 +1,8 @@
 #' @version ps-1
-#' @short DS-7-2
-#' @title Indexing and filtering vectors
+#' @short DS-07-3
+#' @title Vector practice
 #' @descr
-#' Exercise 7.2 from Programming Skills for Data Science by
+#' Exercise 7.3 from Programming Skills for Data Science by
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
@@ -11,117 +11,62 @@
 
 #' @id ?
 #' @msg
-#' Create a vector `first_ten` that has the values 10 through 20 in it (using
-#' the : operator).
+#' Create a vector `words` of 6 (or more) words. You can Google for a "random word generator" if you wish!
 #' @end
 #' @code
-first_ten <- 10:20
+words <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
 #' @end
 
 #' @id ?
 #' @msg
-#' Create a vector `next_ten` that has the values 21 through 30 in it (using the
-#' seq() function).
+#' Create a vector `words_of_the_day` that is your `words` vector with the string
+#' "is the word of the day!" pasted on to the end.
+#' BONUS: Surround the word in quotes (e.g., `'data' is the word of the day!`)
+#' Note that the results are more obviously correct with single quotes.
 #' @end
 #' @code
-next_ten <- seq(21,30,1)
+words_of_the_day <- paste0("\"", words, "\" is the word of the day!", collpase = "")
 #' @end
 
 #' @id ?
 #' @msg
-#' Create a vector `all_numbers` by combining the previous two vectors.
+#' Create a vector `a_f_words` which are the elements in `words` that start with
+#' "a" through "f"
+#' Hint: use a comparison operator to see if the word comes before "f" alphabetically!
+#' Tip: make sure all the words are lower-case, and only consider the first letter
+#' of the word!
 #' @end
 #' @code
-all_numbers <- append(first_ten, next_ten)
+a_f_words <- words[substring(words, 1, 1) <= "f"]
 #' @end
 
 #' @id ?
 #' @msg
-#' Create a variable `eleventh` that contains the 11th element in `all_numbers`.
+#' Create a vector `g_m_words` which are the elements in `words` that start with
+#' "g" through "m"
 #' @end
 #' @code
-eleventh <- all_numbers[11]
+g_m_words <- words[words >= "g" & substring(words, 1, 1) <= "m"]
 #' @end
 
 #' @id ?
 #' @msg
-#' Create a vector `some_numbers` that contains the 2nd through the 5th elements
-#' of `all_numbers`.
+#' Define a function `word_bin` that takes in three arguments: a vector of words,
+#' and two letters. The function should return a vector of words that go between
+#' those letters alphabetically.
 #' @end
+#' @check list(cset={})
 #' @code
-some_numbers <- all_numbers[2:5]
+word_bin <- function(words, start, end){
+  words[words >= start & substring(words, 1, 1) <= end]
+}
 #' @end
 
 #' @id ?
 #' @msg
-#' Create a vector `even` that holds the even numbers from 1 to 100.
+#' Use your `word_bin` function to determine which of your words start with "e"
+#' through "q". Assign the answer to variable `word_bin_test`.
 #' @end
 #' @code
-even <- seq(2,100,2)
-#' @end
-
-#' @id ?
-#' @msg
-#' Using the `all()` function and `%%` (modulo) operator, confirm that all of the
-#' numbers in your `even` vector are even. Assign your answer to the
-#' variable, `even_check`.
-#' @end
-#' @code
-even_check <- all(seq(2,100,2) %% 2 == 0)
-#' @end
-
-#' @id ?
-#' @msg
-#' Create a vector `phone_numbers` that contains the numbers 8, 6, 7, 5, 3, 0, 9.
-#' @end
-#' @code
-phone_numbers <- c(8,6,7,5,3,0,9)
-#' @end
-
-#' @id ?
-#' @msg
-#' Create a vector `prefix` that has the first three elements of `phone_numbers`.
-#' @end
-#' @code
-prefix <- phone_numbers[1:3]
-#' @end
-
-#' @id ?
-#' @msg
-#' Create a vector `small` that has the values of `phone_numbers` that are
-#' less than or equal to 5.
-#' @end
-#' @code
-small <- phone_numbers[phone_numbers<=5]
-#' @end
-
-#' @id ?
-#' @msg
-#' Create a vector `large` that has the values of `phone_numbers` that are
-#' strictly greater than 5. "Strictly" mean greater than.
-#' @end
-#' @code
-large <- phone_numbers[phone_numbers > 5]
-#' @end
-
-#' @id ?
-#' @msg
-#' Assign `phone_numbers` to the variable `phone_numbers2`.
-#' Replace the values in `phone_numbers2` that are larger than 5 with the number 5.
-#' @end
-#' #' @var phone_numbers2
-#' @code
-phone_numbers2 <- phone_numbers
-phone_numbers2[phone_numbers2 > 5] <- 5
-#' @end
-
-#' @id ?
-#' @msg
-#' Assign `phone_numbers2` to the variable `phone_numbers3`. Replace every odd-numbered
-#' value in `phone_numbers3` with the number 0.
-#' @end
-#' @var phone_numbers3
-#' @code
-phone_numbers3 <- phone_numbers
-phone_numbers3[phone_numbers3%%2==1] <- 0
+word_bin_test <- word_bin(words, "e", "q")
 #' @end

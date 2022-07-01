@@ -164,14 +164,14 @@ ps_ui_get_titles <- function() {
 # Functions for setting up the initial variables on which the practice
 # prompts can depend
 #----------------------------------------------------------------------------#
-set_initial_vars_doit <- function(expr) {
-  eval(parse(text = expr), envir = .GlobalEnv)
-}
-
-set_env_vars <- function() {
-  ps <- ps_get_current()
-  t <- lapply(ps$ps_initial_vars, set_initial_vars_doit)
-}
+# set_initial_vars_doit <- function(expr) {
+#   eval(parse(text = expr), envir = .GlobalEnv)
+# }
+#
+# set_env_vars <- function() {
+#   ps <- ps_get_current()
+#   t <- lapply(ps$ps_initial_vars, set_initial_vars_doit)
+# }
 
 get_env_vars <- function(short = "") {
   if (short == "") {
@@ -645,206 +645,6 @@ DEFAULT_Check2 <- function(var_name, result) {
   return(result)
 }
 
-
-DEFAULT_Check <- function(internal_id, result) {
-  cDEBUG <- TRUE
-  if (cDEBUG) {
-    print("--- DEFAULT_Check")
-    print(paste0("internal id:    ", internal_id))
-    print(paste0("prompt id:      ", ps_get_prompt_id(internal_id)))
-    print(paste0("var name:       ", ps_get_assignment_var(internal_id)))
-    print(paste0("expected:       ", paste0(ps_get_expected_answer(internal_id), collapse = "\n")))
-    # print(paste0("learner answer: ", ps_get_learner_answer(internal_id)))
-    print("---")
-  }
-
-  learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
-
-  if (cDEBUG) {
-    print("...---...")
-    print(learner_result)
-    print("...---...")
-  }
-
-  if (learner_result$ok == TRUE) {
-    if (cDEBUG) {
-      print(">> Okay")
-    }
-
-    # # Check for not a number
-    # if (is.nan(learner_val) && is.nan(expected_val)) {
-    #   result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-
-    if (learner_result$type %in% c("double", "integer", "real", "logical", "complex", "character")) {
-      if (cDEBUG) {
-        print(">> double, integer, etc.")
-      }
-
-      learner_val <- learner_result$value
-
-      expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
-      expected_val <- expected_result$value
-
-      # Atomic values
-      if (length(learner_result$value) == 1) {
-        if (cDEBUG) {
-          print(">> Atomic")
-        }
-
-        # Check for a regular expression
-        re <- ps_get_re_checks(internal_id)
-        good <- FALSE
-        if (re != "") {
-          good <- str_detect(learner_val, re)
-        } else {
-          good <- identical(learner_val, expected_val, ignore.environment = TRUE)
-        }
-
-        if (good == TRUE) {
-          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-        } else {
-          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-        }
-
-        # Vector values
-      } else {
-        if (cDEBUG) {
-          print(">> Vector")
-        }
-
-        if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
-          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-        } else {
-          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-        }
-      }
-
-      # Functions
-    } else if (learner_result$type == "closure") {
-      if (cDEBUG) {
-        print(">> Closure")
-      }
-
-      expected_code <- ps_get_expected_answer(internal_id)
-      expected_function <- eval(parse(text = paste0(expected_code, collapse = "\n")))
-
-      num_args <- signature_ok(learner_result$scode, expected_code)
-
-      # If the number of parameters differ from expected - note error message
-      if (num_args < 0) {
-        t <- result_main_message(result_error_msg(internal_id, TRUE))
-        t <- result_sub_message(t, "Check the number of arguments in your function")
-        result <- result_update(result, internal_id, FALSE, t)
-        return(result)
-      }
-
-      # A function with ZERO parameters
-      if (num_args == 0) {
-        learner_f_answers <- do.call(learner_result$scode, list())
-        expected_f_answers <- do.call(expected_function, list())
-
-        if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
-          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-        } else {
-          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-        }
-        return(result)
-
-        # A function with ONE parameter
-      } else if (num_args == 1) {
-        learner_answers <- c()
-        expected_answers <- c()
-
-        checks <- ps_get_arg1_checks(internal_id)
-
-        for (k in 1:length(checks)) {
-          t1 <- do.call(learner_result$scode, list(checks[k]))
-          t2 <- do.call(expected_function, list(checks[k]))
-          learner_answers <- append(learner_answers, t1)
-          expected_answers <- append(expected_answers, t2)
-        }
-
-        if (identical(learner_answers, expected_answers, ignore.environment = TRUE) == TRUE) {
-          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-        } else {
-          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-        }
-        return(result)
-
-        # A function with TWO parameters
-      } else if (num_args == 2) {
-        learner_answers <- c()
-        expected_answers <- c()
-
-        checks_arg1 <- ps_get_arg1_checks(internal_id)
-        checks_arg2 <- ps_get_arg2_checks(internal_id)
-
-        for (j in 1:length(checks_arg1)) {
-          for (k in 1:length(checks_arg2)) {
-            t1 <- do.call(learner_result$scode, list(checks_arg1[j], checks_arg2[k]))
-            t2 <- do.call(expected_function, list(checks_arg1[j], checks_arg2[k]))
-            learner_answers <- append(learner_answers, t1)
-            expected_answers <- append(expected_answers, t2)
-          }
-        }
-
-        if (identical(learner_answers, expected_answers, ignore.environment = TRUE) == TRUE) {
-          result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-        } else {
-          result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-        }
-        return(result)
-
-        # A function with more than TWO parameters
-      } else {
-        t <- result_prompt_error(internal_id, "Practice Set Error: To many function parameters.")
-        result <- result_update(result, internal_id, FALSE, t)
-        return(result)
-      }
-
-      # Check for dataframe
-    } else if (learner_result$type == "dataframe") {
-      learner_val <- learner_result$value
-
-      expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
-      expected_val <- expected_result$value
-
-      if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
-        result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-      } else {
-        result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-      }
-
-      # list
-    } else if (learner_result$type == "list") {
-      learner_val <- learner_result$value
-
-      expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
-      expected_val <- expected_result$value
-
-      if (identical(learner_val, expected_val, ignore.environment = TRUE) == TRUE) {
-        result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
-      } else {
-        result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
-      }
-    } else {
-      if (cDEBUG) {
-        print(">> Type not handled")
-      }
-      t <- result_prompt_error(internal_id, "Type not handled.")
-      result <- result_update(result, internal_id, FALSE, t)
-    }
-  } else {
-    if (cDEBUG) {
-      print(">> Syntax error")
-    }
-    t <- result_prompt_error(internal_id, "Syntax error")
-    result <- result_update(result, internal_id, FALSE, t)
-  }
-
-  return(result)
-}
-
 #----------------------------------------------------------------------------#
 # This function evaluates a learner's answer and collects feedback for each
 # of practice prompts.  It does the following:
@@ -872,49 +672,6 @@ DEFAULT_Check <- function(internal_id, result) {
 #     )
 # )
 #----------------------------------------------------------------------------#
-check_answers <- function(learner_code) {
-
-  # This structure is used hold feedback on the practice coding prompts.
-  practice_result <- list(
-    user_name = pkg.globals$gUSER_NAME,
-    num_correct = 0,
-    num_incorrect = 0,
-    message_list = list()
-  )
-
-  # Process learner code - NOTE: NEED TryCatch() stuff to handle errors
-  learner_assign_ops <- ast_get_assignments(parse(text = learner_code))
-
-  # Get the learner's variables and code - NOTE: Why flatten here?
-  for (k in 1:length(learner_assign_ops)) {
-    t <- learner_assign_ops[[k]]
-    flatten <- paste0(t$rhs, collapse = "\n")
-    ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
-  }
-
-  # Get all of the variable names that need to be checked for correctness
-  var_names <- ps_get_live_var_names()
-
-  # No variables initialized - format result and return
-  if (length(var_names) == 0) {
-    return(practice_result)
-  }
-
-  # Call each of the functions that checks if the correct value
-  # has been computed. These functions follow this pattern:
-  #    <var_name>_Check(val,practice_result)
-  for (k in 1:length(var_names)) {
-    var <- var_names[k]
-    internal_id <- ps_var_name_to_id(var)
-    if (is_callback_loaded(var) == TRUE) {
-      practice_result <- do.call(get_callback_name(var), list(internal_id, practice_result))
-    } else {
-      practice_result <- DEFAULT_Check(internal_id, practice_result)
-    }
-  }
-  return(practice_result)
-}
-
 check_answers2 <- function(learner_code) {
 
   # This structure is used hold feedback on the practice coding prompts.
@@ -1164,13 +921,10 @@ ps_get_prompt <- function(id) {
 
 ps_get_expected_answer <- function(id) {
   ps <- ps_get_current()
-
   if (id < 1 || id > length(ps$task_list)) {
     stop(paste0("id is out of bounds (id=", id, ")"))
   }
-
   a <- ps$task_list[[id]]$expected_answer
-
   return(a)
 }
 
@@ -1181,14 +935,10 @@ ps_get_expected_code <- function() {
   for (k in 1:length(ps$ps_initial_vars)) {
     code <- append(code, ps$ps_initial_vars[k])
   }
-
   for (task in ps$task_list) {
     code <- append(code, task$expected_answer)
   }
-
-  # cat("Length", length(ps$task_list), "\n")
-  # t <- paste0(code, collapse="")
-  # cat(t)
+  results <- eval_code_expected(t)
 
   return(code)
 }

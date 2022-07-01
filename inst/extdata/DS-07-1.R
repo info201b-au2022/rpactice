@@ -1,5 +1,5 @@
 #' @version ps-1
-#' @short DS-7-1
+#' @short DS-07-1
 #' @title Creating and operating on vectors
 #' @descr
 #' Exercise 7.1 from Programming Skills for Data Science by

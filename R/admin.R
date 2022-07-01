@@ -20,6 +20,7 @@ admin <- function() {
   cat("admin.grade_ui_file()           Select a file and grade it (with file dialog).\n")
   cat("admin.ls()                      List installed practice sets and basic info.\n")
   cat("admin.prompts(short)            List the practice prompts and results.\n")
+  cat("admin.run(short)                Execute the code in a practice set - check if it works.\n")
   cat("admin.vars()                    List all the variables that are 'alive'.\n")
   cat("---\n")
   cat("/Users/dhendry/Documents/_Code2/pinfo201/inst/extdata")

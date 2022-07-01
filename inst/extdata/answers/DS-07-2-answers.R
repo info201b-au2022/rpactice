@@ -3,7 +3,7 @@
 #    Micheal Freeman and Joel Ross. See:
 #    https://github.com/programming-for-data-science/book-exercises
 # ---
-practice.begin("DS-7-2", learner="[your name]")
+practice.begin("DS-07-2", learner="[your name]")
 
 # a: Create a vector `first_ten` that has the values 10 through 20 in it (using
 #    the : operator). (first_ten)

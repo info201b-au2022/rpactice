@@ -3,7 +3,7 @@
 #    Micheal Freeman and Joel Ross. See:
 #    https://github.com/programming-for-data-science/book-exercises
 # ---
-practice.begin("DS-7-1", learner="[your name]")
+practice.begin("DS-07-1", learner="[your name]")
 
 # a: Create a vector `names` that contains the names of three people,
 #    namely "Alex," "Drew," and "Jordan." Be sure to print out the vector

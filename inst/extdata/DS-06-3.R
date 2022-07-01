@@ -1,5 +1,5 @@
 #' @version ps-1
-#' @short DS-6-3
+#' @short DS-06-3
 #' @title Writing and executing functions
 #' @descr
 #' Exercise 6.3 from Programming Skills for Data Science by

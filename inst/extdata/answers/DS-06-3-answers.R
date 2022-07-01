@@ -3,7 +3,7 @@
 #    Micheal Freeman and Joel Ross. See:
 #    https://github.com/programming-for-data-science/book-exercises
 # ---
-practice.begin("DS-6-3", learner="[your name]")
+practice.begin("DS-06-3", learner="[your name]")
 
 # a: Define a function `add_three` that takes a single argument and
 #    returns a value 3 greater than the input. (add_three)

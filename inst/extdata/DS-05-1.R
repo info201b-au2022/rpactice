@@ -1,5 +1,5 @@
 #' @version ps-1
-#' @short DS-5-1
+#' @short DS-05-1
 #' @title Practice with basic R syntax
 #' @descr
 #' Exercise 5.1 from Programming Skills for Data Science by

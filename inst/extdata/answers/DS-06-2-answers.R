@@ -3,7 +3,7 @@
 #    Micheal Freeman and Joel Ross. See:
 #    https://github.com/programming-for-data-science/book-exercises
 # ---
-practice.begin("DS-6-2", learner="[your name]")
+practice.begin("DS-06-2", learner="[your name]")
 
 # a: Create a variable `lyric` that contains the text "I like to eat apples and
 #    bananas" (lyric)

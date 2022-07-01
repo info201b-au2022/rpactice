@@ -3,7 +3,7 @@
 #    Micheal Freeman and Joel Ross. See:
 #    https://github.com/programming-for-data-science/book-exercises
 # ---
-practice.begin("DS-7-3", learner="[your name]")
+practice.begin("DS-07-3", learner="[your name]")
 
 # a: Create a vector `words` of 6 (or more) words. You can Google for a "random word generator" if you wish! (words)
 words <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")

@@ -397,8 +397,49 @@ check_file_integrity <- function(filename, silient = FALSE, detailed = FALSE) {
     if (!silient) {
       message("Done step 3.\n")
     }
+
+    # Evaluating code
+    if (!silient) {
+      message("4. Checking the expected code ... ")
+    }
+
+    check_test_code(ps)
+
+    if (!silient) {
+      message("Done step 4.\n")
+    }
   }
 }
+
+check_test_code <- function(ps) {
+  code <- c()
+  for (k in 1:length(ps$ps_initial_vars)) {
+    code <- append(code, ps$ps_initial_vars[k])
+  }
+  for (task in ps$task_list) {
+    code <- append(code, task$expected_answer)
+  }
+
+  cat("\n",
+      "Code:", sep="")
+  for (c in code) {
+    cat(c, "\n")
+  }
+
+  results <- eval_code_expected(code)
+  cat("\n",
+      "Environment: pkg.expected_env\n", sep="")
+  cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))
+  if(!is.null(results)) {
+    for (r in results) {
+      out <- sprintf("%-20s %-10s %-60s\n", r$vname, r$vtype , r$vstr)
+      cat(out)
+    }
+  } else {
+    stop("admin.run(): eval_code_expected FAILED")
+  }
+}
+
 
 #----------------------------------------------------------------------------#
 # It checks that are all tags are known

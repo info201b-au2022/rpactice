@@ -1,5 +1,5 @@
 #' @version ps-1
-#' @short DS-6-2
+#' @short DS-06-2
 #' @title Using built-in string functions
 #' @descr
 #' #' Exercise 6.2 from Programming Skills for Data Science by

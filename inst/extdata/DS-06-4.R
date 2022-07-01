@@ -1,5 +1,5 @@
 #' @version ps-1
-#' @short DS-6-4
+#' @short DS-06-4
 #' @title Functions and conditionals
 #' @descr
 #' Exercise 6.4 from Programming Skills for Data Science by

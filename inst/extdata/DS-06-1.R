@@ -1,5 +1,5 @@
 #' @version ps-1
-#' @short DS-6-1
+#' @short DS-06-1
 #' @title Calling built-in functions
 #' @descr
 #' #' Exercise 6.1 from Programming Skills for Data Science by
@@ -39,21 +39,29 @@ now_doing <- paste(my_name, "is programming!")
 #' @id ?
 #' @msg Make the `now_doing` variable upper case.
 #' @code
-now_doing.a <- str_to_upper(now_doing)
+now_doing2 <- str_to_upper(now_doing)
 #' @end
 
 #' @id -
 #' @msg Bonus
 
-#' @id -
+#' @id ?
 #' @msg
 #' Create two variables - `fav_1` and `fav_2` - and, respectively, assign 51 and 76  to
 #' these variables.
+#' @code
+fav_1 <- 51
+fav_2 <- 76
+#' @end
 
-#' @id -
+#' @id ?
 #' @msg
 #' Divide each of the variables - `fav_1` and `fav_2` - by the square root of 201 and save
 #' the new values in the original variables; that is, reuse the variables.
+#' @end
+#' @code
+fav_1 <- fav_1 / sqrt(201)
+fav_2 <- fav_2 / sqrt(201)
 #' @end
 
 #' @id ?
@@ -79,12 +87,16 @@ round_sum <- round(raw_sum,1)
 #' Create two new variables `round_1` and `round_2` that are your `fav_1` and
 #' `fav_2` variables rounded to 1 decimal places.
 #' @end
+#' @code
+round_1 <- round(fav_1,1)
+round_2 <- round(fav_2,1)
+#' @end
 
 #' @id ?
 #' @msg Create a variable `sum_round` that is the sum of the rounded values.
 #' @end
 #' @code
-sum_round <- round(fav_1,1) + round(fav_2,1)
+sum_round <- round_1 + round_2
 #' @end
 
 #' @id ?
