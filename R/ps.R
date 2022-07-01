@@ -405,7 +405,7 @@ expected_answer <- function(id) {
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
 DEFAULT_Check <- function(var_name, result) {
-  cDEBUG <- TRUE
+  cDEBUG <- FALSE
 
   internal_id <- ps_var_name_to_id(var_name)
   learner_r <- get_global_var_info(var_name)
