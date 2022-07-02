@@ -90,6 +90,8 @@ admin.prompts <- function(short) {
         m <- paste0(" ", m, "...")
       }
       cat(k, "[-] ", m, sep = "")
+      t1 <- sprintf("%s", format_code(task$expected_answer))
+      cat("\n", t1, "\n")
     } else {
       # r <- eval_string_and_format(task$expected_answer)
       r <- eval_string_and_format(task$assignment_var)
@@ -99,8 +101,8 @@ admin.prompts <- function(short) {
       }
 
       cat(k, ":", task$prompt_id, "[", task$assignment_var, "]: ", task$prompt_msg, "\n", sep = "")
-      t1 <- sprintf("%-60s", format_code(task$expected_answer))
-      cat(t1, "\n", sep = "")
+      t1 <- sprintf("%s", format_code(task$expected_answer))
+      cat("", t1, "\n", sep = "")
       cat("", crayon::red(r), "\n", sep = "")
     }
     k <- k + 1

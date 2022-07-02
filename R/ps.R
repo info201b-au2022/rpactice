@@ -54,16 +54,17 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("T02.R")) # Vectors
   ps_add(load_ps("T03.R")) # Functions
   ps_add(load_ps("T04.R")) # Dataframes
+  ps_add(load_ps("T10.R")) # Dataframes
 
   # Problem sets   - Additional examples
-  #ps_add(load_ps("P01.R"))
-  #ps_add(load_ps("P02.R"))
+  # ps_add(load_ps("P01.R"))
+  # ps_add(load_ps("P02.R"))
 
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
 
   ps_set_current(1)
- # clear_viewer_pane()
+  # clear_viewer_pane()
 }
 
 # Add a practice set into the running aplication
@@ -981,47 +982,84 @@ number_of_prompts <- function() {
 
 # This function is used to create a template script - learners can start
 # here and write code for each of the prompts
-format_practice_script <- function(show_answers = FALSE) {
+format_practice_script <- function(show_answers = TRUE) {
   ps <- ps_get_current()
 
+
+  # Count the number of prompts and create the `num_pompts_msg`, which is
+  # presented below.
+  note_msg_num <- 0
+  for (task in ps$task_list) {
+    if (task$is_note_msg == TRUE) {
+      note_msg_num <- note_msg_num + 1
+    }
+  }
+  num_prompts <- length(ps$task_list) - note_msg_num
+  num_prompts_msg <- ""
+  if (num_prompts > 0 && num_prompts < 27) {
+    letter <- str_sub("abcdefghijklmnopqrstuvwxyz", num_prompts, num_prompts)
+    num_prompts_msg <- sprintf("Your %d prompts: (a)-(%s)", num_prompts, letter)
+  } else {
+    num_prompts_msg <- sprintf("Your %d prompts", num_prompts)
+  }
+
+  # Loop through each of the prompts in the task_list
+  note_msg_num <- 1
   t <- ""
   for (task in ps$task_list) {
-    msg <- str_replace_all(task$prompt_msg, "\n", "\n#   ")
+
+    # Output a prompt - either message prompt or a real prompt
+    msg <- ""
     if (task$is_note_msg == TRUE) {
-      t <- paste0(t, "# Note: ", msg, "\n\n")
+      snum <- sprintf("%02d", note_msg_num)
+      msg <- str_replace_all(task$prompt_msg, "\n", "\n#   ")
+      t <- paste0(t, "#                                         Note ", snum, ".\n#    ", msg, "\n")
+      note_msg_num <- note_msg_num + 1
     } else {
-      t <- paste0(t, "# ", task$prompt_id, ": ", msg, " (", task$assignment_var, ")", "\n")
+      msg <- str_replace_all(task$prompt_msg, "\n", "\n#   ")
+      t <- paste0(t, "# ", task$prompt_id, ": ", msg, " (Variable: ", task$assignment_var, ")", "\n")
     }
 
-    # This will show the answers -- Useful to generating answer files
+    # NOTE: This will show the expected answers, which is very useful for
+    # checking and debugging the practice set files.
     if (show_answers == TRUE) {
       s <- paste0(task$expected_answer, collapse = "\n")
       t <- paste0(t, s, "\n\n")
     } else {
       t <- paste0(t, "\n")
     }
+
   }
 
-  s <- ""
-
+  # The initial variables that are set at the top of the script.
   lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n"))
   t_lines_of_code <- ""
   if (lines_of_code != "") {
     t_lines_of_code <- paste0(
-      "# Initial variables\n",
+      "# Initial variables ----\n", cTAB_IN_SPACES,
       lines_of_code, "\n\n"
     )
   }
 
+  # Put all the bits together
   t <- paste0(
+    "# pinfo201 / ", ps$ps_version, "\n",
+    "#\n",
     "# ", ps$ps_short, ": ", ps$ps_title, "\n",
     "#   ", str_replace_all(ps$ps_descr, "\n", "\n#   "), "\n", "",
-    s,
-    "# ---\n",
-    "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\"",
-    ", uwnetid=\"[your UW Net Id]\")",
+
+    # Basic practice set information
+    "\n# Practice set info ---- \n",
+    "practice.begin(\"", ps$ps_short,
+    "\", learner=\"[your name]\"",
+    ", uwnetid=\"[your UW NetId]\")",
     "\n\n",
+
+    # Initial lines of code
     t_lines_of_code,
+
+    # The prompts come here
+    "# ", num_prompts_msg, " ----\n\n",
     t,
     "\n"
   )
@@ -1144,9 +1182,9 @@ result_prompt_error <- function(id, msg) {
   if (id == -1) {
     t <- paste0("General practice set error: ", msg)
   } else {
-  t <- paste0("Prompt error: \"", ps_get_prompt(id), "\"\n")
-  t <- paste0(t, msg)
-}
+    t <- paste0("Prompt error: \"", ps_get_prompt(id), "\"\n")
+    t <- paste0(t, msg)
+  }
   return(t)
 }
 
@@ -1162,7 +1200,7 @@ result_sub_message <- function(message, sub_message) {
 result_update <- function(result, id, is_correct, text) {
   if (id == -1) {
     result$general_msg <- text
-    return (result)
+    return(result)
   }
 
   if (is_correct == TRUE) {
@@ -1198,7 +1236,7 @@ format_result <- function(result) {
   t <- paste0(t, "Learner name:\n<i>   ", result$user_name, "</i> (", result$uwnetid, ")")
   t <- paste0(t, "\n")
 
-  if(result$general_msg != "") {
+  if (result$general_msg != "") {
     t <- paste0(t, ">>> Note: ", result$general_msg, "\n\n")
   }
 
