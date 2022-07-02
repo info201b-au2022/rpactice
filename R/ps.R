@@ -1028,7 +1028,6 @@ format_practice_script <- function(show_answers = TRUE) {
     } else {
       t <- paste0(t, "\n")
     }
-
   }
 
   # The initial variables that are set at the top of the script.
@@ -1131,22 +1130,33 @@ format_prompts <- function(do_not_show = NULL) {
 format_answers <- function() {
   ps <- ps_get_current()
   short <- ps$ps_short
+
   t <- ""
   id <- 0
+  msg_id <- 1
+
   for (task in ps$task_list) {
-    if (task$is_note_msg == FALSE) {
-      id <- ps_get_internal_id_from_prompt_id(task$prompt_id)
-      t <- paste0(t, task$prompt_id, ": ", ps_get_prompt(id), "\n")
-
-      expected <- format_code(ps_get_expected_answer(id))
-      expected_t <- paste0("<span style='color:purple'>", expected, "</span>\n", collapse = "")
-
-      t <- paste0(t, expected_t)
-      t <- paste0(t, cTAB_IN_SPACES, expected_answer(id), "\n")
+    if (task$is_note_msg == TRUE) {
+      if (length(task$expected_answer) != 0) {
+        t <- paste0(t, "Note ", msg_id, ": Expected code\n")
+        t <- paste0(t, format_code(task$expected_answer), "\n")
+      }
+      msg_id <- msg_id + 1
+    } else {
+      t <- paste0(t, "", task$prompt_id, ": Expected code \n")
+      t <- paste0(t, "", format_code(task$expected_answer))
+      t <- paste0(t, "\n")
     }
   }
   return(t)
 }
+
+#       expected <- format_code(ps_get_expected_answer(id))
+#       expected_t <- paste0("<span style='color:purple'>", expected, "</span>\n", collapse = "")
+#
+#       t <- paste0(t, expected_t)
+#       t <- paste0(t, cTAB_IN_SPACES, expected_answer(id), "\n")
+
 
 # Formatting results ----
 #----------------------------------------------------------------------------#
