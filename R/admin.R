@@ -148,6 +148,8 @@ admin.vars <- function() {
 #' executes the all of the code for the practice set, \code{short}. Use this
 #' function to test the practice set.
 #'
+#' @param short for the short name of the practice set
+#'
 #' @export
 #----------------------------------------------------------------------------#
 # List all the variable names that are current alive in the practice set
@@ -332,7 +334,7 @@ admin.grade_ui_file <- function() {
 #' practice set.  Practically, this function helps you
 #' to debug your practice set.
 #'
-#'  @param short the unique identifier for a practice set
+#'@param short the unique identifier for a practice set
 #'
 #' @export
 admin.create_answers <- function(short) {

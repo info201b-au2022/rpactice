@@ -7,7 +7,7 @@
 admin.vars()
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin.prompts()}
+Intended for teaching assistants and instructors only, \code{admin.vars()}
 lists all of the objects associated with the currently active practice set,
 including expected variables and callback functions for checking code.
 }

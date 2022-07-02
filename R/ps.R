@@ -7,6 +7,7 @@ pkg.globals <- new.env()
 pkg.globals$gPRACTICE_SET_ID <- 1
 pkg.globals$gTO_CONSOLE <- FALSE
 pkg.globals$gUSER_NAME <- ""
+pkg.globals$gUWNETID <- ""
 
 pkg.expected_env <- new.env()
 
@@ -62,7 +63,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("PS_Example.R"))
 
   ps_set_current(1)
-  clear_viewer_pane()
+ # clear_viewer_pane()
 }
 
 # Add a practice set into the running aplication
@@ -630,6 +631,7 @@ DEFAULT_Check <- function(var_name, result) {
 check_answers <- function(learner_code) {
   practice_result <- list(
     user_name = pkg.globals$gUSER_NAME,
+    uwnetid = pkg.globals$gUWNETID,
     general_msg = "",
     num_correct = 0,
     num_incorrect = 0,
@@ -1016,7 +1018,9 @@ format_practice_script <- function(show_answers = FALSE) {
     "#   ", str_replace_all(ps$ps_descr, "\n", "\n#   "), "\n", "",
     s,
     "# ---\n",
-    "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\")\n\n",
+    "practice.begin(\"", ps$ps_short, "\", learner=\"[your name]\"",
+    ", uwnetid=\"[your UW Net Id]\")",
+    "\n\n",
     t_lines_of_code,
     t,
     "\n"
@@ -1191,7 +1195,7 @@ format_result <- function(result) {
 
   t <- ""
   t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n", ps$ps_descr, "\n")
-  t <- paste0(t, "Learner name:\n<i>   ", result$user_name, "</i>")
+  t <- paste0(t, "Learner name:\n<i>   ", result$user_name, "</i> (", result$uwnetid, ")")
   t <- paste0(t, "\n")
 
   if(result$general_msg != "") {

@@ -2,10 +2,11 @@
 % Please edit documentation in R/admin.R
 \name{admin.grade_ui_dir}
 \alias{admin.grade_ui_dir}
-\title{UI for selecting a directory to grade}
+\title{Grade all files in a folder}
 \usage{
 admin.grade_ui_dir()
 }
 \description{
-UI for selecting a directory to grade
+Intended for teaching assistants and instructors only, this function allows
+you to select a folder and grade all files within this folder.
 }

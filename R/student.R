@@ -16,7 +16,7 @@
 #' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
 #'
 #' @export
-practice.begin <- function(short = "P01", learner="Anonymous") {
+practice.begin <- function(short = "P01", learner="Anonymous", uwnetid="") {
   id <- ps_get_id_by_short(short)
   if (id == -1) {
     stop(paste0("Can't find practice set named ", short, " (id=", id, ")."))
@@ -27,6 +27,7 @@ practice.begin <- function(short = "P01", learner="Anonymous") {
 
   # Currently, no session information, so just a global variable
   pkg.globals$gUSER_NAME <- learner
+  pkg.globals$gUWNETID <-uwnetid
 
   return(TRUE)
 }

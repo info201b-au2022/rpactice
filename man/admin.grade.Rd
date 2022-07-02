@@ -11,5 +11,10 @@ admin.grade(filename)
 }
 \description{
 Intended for teaching assistants and instructors only, \code{admin.grade()},
-will check all of the practice sets within a directory.
+this function will grade all of the practice sets within a directory.
+That is, it will check student code against expected code and produce
+a reports - currently, one report for each student assignment.
+}
+\details{
+This reports are placed within a sub-folder, named `results`.
 }

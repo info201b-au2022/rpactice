@@ -9,5 +9,8 @@ admin.ls()
 \description{
 Intended for teaching assistants and instructors only, \code{admin.ls()}
 simply lists all currently installed practice sets. Each of these
-practice sets are available to learners.
+practice sets are available to learners and for grading.
+}
+\details{
+To grade student work, the practice set must be loaded.
 }

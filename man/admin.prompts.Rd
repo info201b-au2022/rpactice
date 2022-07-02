@@ -12,5 +12,5 @@ admin.prompts(short)
 \description{
 Intended for teaching assistants and instructors only, \code{admin.prompts()}
 shows all of the practice sets, including the written prompts and the
-expected answers
+expected answers.
 }

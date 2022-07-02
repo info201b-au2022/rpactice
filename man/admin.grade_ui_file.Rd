@@ -2,10 +2,12 @@
 % Please edit documentation in R/admin.R
 \name{admin.grade_ui_file}
 \alias{admin.grade_ui_file}
-\title{UI for selecting a directory to grade}
+\title{Grade a single file}
 \usage{
 admin.grade_ui_file()
 }
 \description{
-UI for selecting a directory to grade
+Intended for teaching assistants and instructors only,
+this function allows you to select a single file
+and grade it.
 }
