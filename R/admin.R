@@ -206,6 +206,7 @@ admin.run <- function(short) {
 #'
 #' @export
 admin.grade <- function(filename) {
+  cResultsDir <- "results"
   if (!file.exists(filename)) {
     stop(paste0("Directory does not exist.\n", dir, ""), sep = "")
   }
@@ -223,7 +224,7 @@ admin.grade <- function(filename) {
     dir <- dirname(filename)
   }
 
-  results_dir <- paste0(dir, "/results")
+  results_dir <- paste0(dir, "/", cResultsDir)
   if (dir.exists(results_dir)) {
     unlink(results_dir)
   }
@@ -239,9 +240,9 @@ admin.grade <- function(filename) {
 
   out <- ""
 
-  t <- sprintf("%-30s %-20s %-15s %-15s", "Filename", "Name", "Summary", "Wrong Answers (internal ids)\n")
+  t <- sprintf("%-20s %-20s %-15s %-15s", "Filename", "Name", "Summary", "Wrong Answers (internal ids)\n")
   cat("        ", t, sep = "")
-  out <- paste0(out, t)
+  out <- paste0(out, "     ", t)
 
   for (k in 1:length(file_list)) {
 
@@ -276,10 +277,9 @@ admin.grade <- function(filename) {
     wrongs <- paste0(result$incorrect_v, collapse = " ")
 
     t <- sprintf(
-      "%-30s %-20s(%20s) %-15s %-15s",
+      "%-20s %-20s %-15s %-15s",
       file_names[k],
-      result$user_name,
-      result$uwnetid,
+      paste0(result$user_name, "(", result$uwnetid, ")"),
       paste0(
         result$num_correct, " of ",
         (result$num_incorrect + result$num_correct)
@@ -289,11 +289,10 @@ admin.grade <- function(filename) {
     cat("[", k, "]\t", t, "\n", sep = "")
 
     t_out <- sprintf(
-      "<a href=\"./%s\">%-30s</a> %-20s(%20s) %-15s %-15s",
+      "<a href=\"./%s\">%-20s</a> %-20s %-15s %-15s",
       ps_feedback_fn,
       ps_feedback_fn,
-      result$user_name,
-      result$uwnetid,
+      paste0(result$user_name, "(", result$uwnetid, ")"),
       paste0(
         result$num_correct, " of ",
         (result$num_incorrect + result$num_correct)
@@ -302,25 +301,33 @@ admin.grade <- function(filename) {
     )
 
 
-    out <- paste0(out, "[", k, "]\t", t_out, "\n", sep = "")
+    out <- paste0(out, "[", k, "]  ", t_out, "\n", sep = "")
   }
 
-  out <- paste0("# <!DOCTYPE html>\n",
+  # Build output for an index.html file
+  out <- paste0("<!DOCTYPE html>\n",
          "<html>\n",
          "<head></head>\n",
          "<body>\n",
+         "<pre>\n",
+         paste0("admin.grade()\n",
+         "Date:        ", date(), "\n",
+         "Assignments: ", dir, "\n",
+         "Results:     ", results_dir, "\n"),
+         "</pre>\n",
          "<pre>\n",
          out,
          "</pre>\n",
          "</body>\n",
          "</html>")
 
-  index_fn <- paste0(dir, "/results/", "index.html")
+  # Save index.html file
+  index_fn <- paste0(dir, "/", cResultsDir, "/", "index.html")
   fileConn <- file(index_fn, "w")
   writeLines(out, fileConn)
   close(fileConn)
 
-  cat("See graded work in:\n   ", filename, "/<Filename.html>", sep = "")
+  cat("See graded work in:\n   ", index_fn, "\n", sep = "")
 }
 
 #' Grade all files in a folder
