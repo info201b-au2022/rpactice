@@ -1071,23 +1071,27 @@ format_prompts <- function(do_not_show = NULL) {
   ps <- ps_get_current()
   t_out <- ""
 
-  if (is.null(do_not_show)) {
-    for (task in ps$task_list) {
-      m <- task$prompt_msg
+  # Loop through each of the prompts in the task_list
+  note_msg_num <- 1
+  t <- ""
+  for (task in ps$task_list) {
 
-      if (task$prompt_id == "-") {
-        # t_out <- paste0(t_out, "   <span style='color:blue'><b>Note</b>: ", m, "</span>")
-        # t_out <- paste0(t_out, "\n     Note:\n")
-        t_out <- paste0(t_out, "\n   <b>Note</b>: ", m, "\n")
-      } else {
-        t_out <- paste0(
-          t_out, task$prompt_id, ": ",
-          m,
-          " (", task$assignment_var, ")", "\n"
-        )
-      }
+    # Output a prompt - either message prompt or a real prompt
+    msg <- ""
+    if (task$is_note_msg == TRUE) {
+      msg <- task$prompt_msg
+      snum <- sprintf("%02d", note_msg_num)
+      t <- paste0(t, '<p style="text-align:center;"><b>Note ', snum, '</b></p>')
+      t <- paste0(t, "<pre>",msg, "</pre>")
+
+      note_msg_num <- note_msg_num + 1
+    } else {
+      msg <- task$prompt_msg
+      t <- paste0(t, "<pre><b>", task$prompt_id, "</b>: ", msg, " (Variable: ", task$assignment_var, ")", "</pre>")
     }
   }
+
+  t_out <- t
 
   # for (k in 1: length(ps$task_list)) {
   #
@@ -1114,7 +1118,6 @@ format_prompts <- function(do_not_show = NULL) {
 
   t_out <- paste0(
     "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n",
-    ps$ps_descr, "\n",
     "---\n",
     t_out
   )
@@ -1127,51 +1130,74 @@ format_prompts <- function(do_not_show = NULL) {
 # Functions for presenting answers
 # styler::style_text("t <-function(a) {return (a+1)}")
 #----------------------------------------------------------------------------#
-format_answers <- function() {
-  return(answer_page())
+format_answers2 <- function() {
+
+  pg <- answer_page()
 
   ps <- ps_get_current()
-  short <- ps$ps_short
+  t1 <- paste0(ps$ps_short, ": ", ps$ps_title, ": Answers")
+
+  pg <- str_replace(pg,"--PS-TITLE--",t1)
+  pg <- str_replace(pg,"--PS-DESCR--", ps$ps_descr)
 
   t <- ""
   id <- 0
   msg_id <- 1
 
+  chunk1 <-
+' <button class="collapsible">--PS-PROMPT--</button>
+  <div class="content">
+  <pre>
+   --PS-CODE--
+  </pre>
+  </div>
+'
+  answer_html <- ""
+
   for (task in ps$task_list) {
     if (task$is_note_msg == TRUE) {
       if (length(task$expected_answer) != 0) {
-        t <- paste0(t, "Note ", msg_id, ": Expected code\n")
-        t <- paste0(t, format_code(task$expected_answer), "\n")
+        t1 <- paste0("Note ", msg_id, ": Expected code")
+        t2 <- paste0(str_trim(format_code(task$expected_answer)))
       }
       msg_id <- msg_id + 1
     } else {
-      t <- paste0(t, "", task$prompt_id, ": Expected code \n")
-      t <- paste0(t, "", format_code(task$expected_answer))
-      t <- paste0(t, "\n")
+      t1 <- paste0("", task$prompt_id, ": Expected code")
+      t2 <- paste0("", str_trim(format_code(task$expected_answer)))
     }
+
+    t <- str_replace(chunk1, "--PS-PROMPT--", t1)
+    t <- str_replace(t, "--PS-CODE--", t2)
+
+    answer_html <- paste0(answer_html,t)
   }
+
+  pg <- str_replace(pg,"--PS-ANSWERS--",answer_html)
+
+  return(pg)
 }
 
-format_answers2 <- function() {
+format_answers <- function() {
   ps <- ps_get_current()
   short <- ps$ps_short
 
-  t <- ""
+  t <- paste0("<b>", ps$ps_short, ": ", ps$ps_title, ": Answers</b>\n")
   id <- 0
   msg_id <- 1
 
   for (task in ps$task_list) {
     if (task$is_note_msg == TRUE) {
       if (length(task$expected_answer) != 0) {
-        t <- paste0(t, "Note ", msg_id, ": Expected code\n")
-        t <- paste0(t, format_code(task$expected_answer), "\n")
+        t <- paste0(t, "<b>Note ", sprintf("%02d",msg_id), "</b>: Expected code\n")
+        t <- paste0(t, format_code(task$expected_answer), "\n\n")
       }
       msg_id <- msg_id + 1
     } else {
-      t <- paste0(t, "", task$prompt_id, ": Expected code \n")
+      t <- paste0(t, "<b>", task$prompt_id, "</b>: Expected code\n")
       t <- paste0(t, "", format_code(task$expected_answer))
-      t <- paste0(t, "\n")
+      t <- paste0(t, "\n\n")
     }
+
   }
   return(t)
 }

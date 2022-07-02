@@ -3,7 +3,7 @@ front_part1 <-
 <!DOCTYPE html>
   <html>
   <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!- <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
     .collapsible {
       background-color: #777;
@@ -22,7 +22,7 @@ front_part1 <-
   }
 
   .content {
-    padding: 0 4px;
+    padding: 0 0px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
@@ -31,14 +31,14 @@ front_part1 <-
   </style>
     </head>
     <body>
+    <pre>
+    --PS-TITLE--
+    --PS-DESCR--
+    </pre>
 
-    <h2>Animated Collapsibles</h2>
+    --PS-ANSWERS--
 
-    <p>A Collapsible:</p>
-    <button class="collapsible">Open Collapsible</button>
-    <div class="content">
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div>
+    <hr>
 
     <p>Collapsible Set:</p>
     <button class="collapsible">Open Section 1</button>

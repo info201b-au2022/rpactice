@@ -59,16 +59,16 @@ practice.check <- function() {
 #'
 #' @export
 practice.answers <- function() {
-  ps <- ps_get_current()
-  t <- format_answers()
-
-  t <- paste0(
-    "<b>", ps$ps_short, ": ", ps$ps_title, ": Answers</b>\n",
-    ps$ps_descr, "\n",
-    "---\n",
-    t
-  )
-  print_output(t, "anwers")
+  # ps <- ps_get_current()
+  # t <- format_answers()
+  #
+  # t <- paste0(
+  #   "<b>", ps$ps_short, ": ", ps$ps_title, ": Answers</b>\n",
+  #   ps$ps_descr, "\n",
+  #   "---\n",
+  #   t
+  # )
+  print_output(format_answers(), "anwers")
   return(TRUE)
 }
 
