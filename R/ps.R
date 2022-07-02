@@ -1128,6 +1128,31 @@ format_prompts <- function(do_not_show = NULL) {
 # styler::style_text("t <-function(a) {return (a+1)}")
 #----------------------------------------------------------------------------#
 format_answers <- function() {
+  return(answer_page())
+
+  ps <- ps_get_current()
+  short <- ps$ps_short
+
+  t <- ""
+  id <- 0
+  msg_id <- 1
+
+  for (task in ps$task_list) {
+    if (task$is_note_msg == TRUE) {
+      if (length(task$expected_answer) != 0) {
+        t <- paste0(t, "Note ", msg_id, ": Expected code\n")
+        t <- paste0(t, format_code(task$expected_answer), "\n")
+      }
+      msg_id <- msg_id + 1
+    } else {
+      t <- paste0(t, "", task$prompt_id, ": Expected code \n")
+      t <- paste0(t, "", format_code(task$expected_answer))
+      t <- paste0(t, "\n")
+    }
+  }
+}
+
+format_answers2 <- function() {
   ps <- ps_get_current()
   short <- ps$ps_short
 
@@ -1150,12 +1175,6 @@ format_answers <- function() {
   }
   return(t)
 }
-
-#       expected <- format_code(ps_get_expected_answer(id))
-#       expected_t <- paste0("<span style='color:purple'>", expected, "</span>\n", collapse = "")
-#
-#       t <- paste0(t, expected_t)
-#       t <- paste0(t, cTAB_IN_SPACES, expected_answer(id), "\n")
 
 
 # Formatting results ----
