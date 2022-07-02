@@ -223,6 +223,12 @@ admin.grade <- function(filename) {
     dir <- dirname(filename)
   }
 
+  results_dir <- paste0(dir, "/results")
+  if (dir.exists(results_dir)) {
+    unlink(results_dir)
+  }
+  dir.create(results_dir)
+
   cat("\014admin.grade()\n") # Clear screen
   cat(
     "Directory: ", dir, "\n",
@@ -231,8 +237,11 @@ admin.grade <- function(filename) {
     sep = ""
   )
 
+  out <- ""
+
   t <- sprintf("%-30s %-20s %-15s %-15s", "Filename", "Name", "Summary", "Wrong Answers (internal ids)\n")
   cat("        ", t, sep = "")
+  out <- paste0(out, t)
 
   for (k in 1:length(file_list)) {
 
@@ -241,16 +250,16 @@ admin.grade <- function(filename) {
     code_string <- paste0(code_v, collapse = "\n")
 
     # Try to evaluate the code
-    out <- tryCatch(
-      {
-        eval(parse(text = code_string), envir = globalenv())
-      },
-      error = function(cond) {
-        message(paste0("Evaluation failed."))
-        message(paste0("Filename: ", file_list[k]))
-        message(cond)
-      }
-    )
+    # out <- tryCatch(
+    #   {
+    #     eval(parse(text = code_string), envir = globalenv())
+    #   },
+    #   error = function(cond) {
+    #     message(paste0("Evaluation failed."))
+    #     message(paste0("Filename: ", file_list[k]))
+    #     message(cond)
+    #   }
+    # )
 
     # Check the answers and get the results
     result <- check_answers(code_v)
@@ -258,8 +267,8 @@ admin.grade <- function(filename) {
 
     # Write grading results
     ps_feedback_fn <- str_replace(file_names[k], ".R", ".html")
-    ps_feedback_fn <- paste0(dir, "/results/", ps_feedback_fn)
-    fileConn <- file(ps_feedback_fn, "w")
+    ps_feedback_fn_abs <- paste0(dir, "/results/", ps_feedback_fn)
+    fileConn <- file(ps_feedback_fn_abs, "w")
     writeLines(t, fileConn)
     close(fileConn)
 
@@ -267,9 +276,10 @@ admin.grade <- function(filename) {
     wrongs <- paste0(result$incorrect_v, collapse = " ")
 
     t <- sprintf(
-      "%-30s %-20s %-15s %-15s",
+      "%-30s %-20s(%20s) %-15s %-15s",
       file_names[k],
       result$user_name,
+      result$uwnetid,
       paste0(
         result$num_correct, " of ",
         (result$num_incorrect + result$num_correct)
@@ -277,7 +287,38 @@ admin.grade <- function(filename) {
       wrongs
     )
     cat("[", k, "]\t", t, "\n", sep = "")
+
+    t_out <- sprintf(
+      "<a href=\"./%s\">%-30s</a> %-20s(%20s) %-15s %-15s",
+      ps_feedback_fn,
+      ps_feedback_fn,
+      result$user_name,
+      result$uwnetid,
+      paste0(
+        result$num_correct, " of ",
+        (result$num_incorrect + result$num_correct)
+      ),
+      wrongs
+    )
+
+
+    out <- paste0(out, "[", k, "]\t", t_out, "\n", sep = "")
   }
+
+  out <- paste0("# <!DOCTYPE html>\n",
+         "<html>\n",
+         "<head></head>\n",
+         "<body>\n",
+         "<pre>\n",
+         out,
+         "</pre>\n",
+         "</body>\n",
+         "</html>")
+
+  index_fn <- paste0(dir, "/results/", "index.html")
+  fileConn <- file(index_fn, "w")
+  writeLines(out, fileConn)
+  close(fileConn)
 
   cat("See graded work in:\n   ", filename, "/<Filename.html>", sep = "")
 }
