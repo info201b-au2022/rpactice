@@ -1081,8 +1081,8 @@ format_prompts <- function(do_not_show = NULL) {
     if (task$is_note_msg == TRUE) {
       msg <- task$prompt_msg
       snum <- sprintf("%02d", note_msg_num)
-      t <- paste0(t, '<p style="text-align:center;"><b>Note ', snum, '</b></p>')
-      t <- paste0(t, "<pre>",msg, "</pre>")
+      t <- paste0(t, '<p style="text-align:center;"><b>Note ', snum, "</b></p>")
+      t <- paste0(t, "<pre>", msg, "</pre>")
 
       note_msg_num <- note_msg_num + 1
     } else {
@@ -1117,7 +1117,7 @@ format_prompts <- function(do_not_show = NULL) {
   # }
 
   t_out <- paste0(
-    "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n",
+    "<b>", ps$ps_short, ": Prompts: ", ps$ps_title, "</b>\n",
     "---\n",
     t_out
   )
@@ -1131,21 +1131,20 @@ format_prompts <- function(do_not_show = NULL) {
 # styler::style_text("t <-function(a) {return (a+1)}")
 #----------------------------------------------------------------------------#
 format_answers2 <- function() {
-
   pg <- answer_page()
 
   ps <- ps_get_current()
   t1 <- paste0(ps$ps_short, ": ", ps$ps_title, ": Answers")
 
-  pg <- str_replace(pg,"--PS-TITLE--",t1)
-  pg <- str_replace(pg,"--PS-DESCR--", ps$ps_descr)
+  pg <- str_replace(pg, "--PS-TITLE--", t1)
+  pg <- str_replace(pg, "--PS-DESCR--", ps$ps_descr)
 
   t <- ""
   id <- 0
   msg_id <- 1
 
   chunk1 <-
-' <button class="collapsible">--PS-PROMPT--</button>
+    ' <button class="collapsible">--PS-PROMPT--</button>
   <div class="content">
   <pre>
    --PS-CODE--
@@ -1169,10 +1168,10 @@ format_answers2 <- function() {
     t <- str_replace(chunk1, "--PS-PROMPT--", t1)
     t <- str_replace(t, "--PS-CODE--", t2)
 
-    answer_html <- paste0(answer_html,t)
+    answer_html <- paste0(answer_html, t)
   }
 
-  pg <- str_replace(pg,"--PS-ANSWERS--",answer_html)
+  pg <- str_replace(pg, "--PS-ANSWERS--", answer_html)
 
   return(pg)
 }
@@ -1181,14 +1180,14 @@ format_answers <- function() {
   ps <- ps_get_current()
   short <- ps$ps_short
 
-  t <- paste0("<b>", ps$ps_short, ": ", ps$ps_title, ": Answers</b>\n")
+  t <- paste0("<b>", ps$ps_short, ": Answers: ", ps$ps_title, "</b>\n")
   id <- 0
   msg_id <- 1
 
   for (task in ps$task_list) {
     if (task$is_note_msg == TRUE) {
       if (length(task$expected_answer) != 0) {
-        t <- paste0(t, "<b>Note ", sprintf("%02d",msg_id), "</b>: Expected code\n")
+        t <- paste0(t, "<b>Note ", sprintf("%02d", msg_id), "</b>: Expected code\n")
         t <- paste0(t, format_code(task$expected_answer), "\n\n")
       }
       msg_id <- msg_id + 1
@@ -1197,7 +1196,6 @@ format_answers <- function() {
       t <- paste0(t, "", format_code(task$expected_answer))
       t <- paste0(t, "\n\n")
     }
-
   }
   return(t)
 }
@@ -1279,6 +1277,17 @@ result_update <- function(result, id, is_correct, text) {
   return(result)
 }
 
+get_smilely_face <- function() {
+  faces <- c(
+    128512,
+    127752,
+    128570,
+    128175,
+    128522)
+  num <- trunc(runif(1,1,length(faces)))
+  return(sprintf("&#%d;", faces[num]))
+}
+
 format_result <- function(result) {
   total <- number_of_prompts()
   num_attempted <- result$num_correct + result$num_incorrect
@@ -1287,34 +1296,50 @@ format_result <- function(result) {
   ps <- ps_get_current()
 
   t <- ""
-  t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n", ps$ps_descr, "\n")
-  t <- paste0(t, "Learner name:\n<i>   ", result$user_name, "</i> (", result$uwnetid, ")")
+  t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n")
+  if (result$user_name != "") {
+  t <- paste0(t, "Learner name and UW NetID:\n<i>   ", result$user_name, "</i> (", result$uwnetid, ")")
   t <- paste0(t, "\n")
+  } else {
+    t <- paste0(t, "Learner name:\n<i>   ", "No learner</i> (", "No UW NetID", ")")
+    t <- paste0(t, "\n")
+  }
 
+  # General syntax error - likely, because of a student error
   if (result$general_msg != "") {
     t <- paste0(t, ">>> Note: ", result$general_msg, "\n\n")
   }
 
-  lines_of_code <- paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n")
-  t <- paste0(t, paste0("Initial variables:\n", lines_of_code, "\n"))
+  # Show the installed variables
+  if (length(ps_get_env_vars()) != 0) {
+    lines_of_code <- paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n")
+    t <- paste0(t, paste0("Initial variables:\n", lines_of_code, "\n"))
+  } else {
+    t <- paste0(t, "Initial variables:\n   No variables installed.\n")
+  }
 
   t <- paste0(t, "Checking code:\n   ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
-    t <- paste0(t, " Good work! &#128512;\n")
+    t <- paste0(t, " Good work! ", get_smilely_face(), "\n")
+    t <- paste0(t, "Expected code:\n   ")
+    the_code <- ps_get_expected_code()
+    for (k in 1:length(the_code)) {
+      t_code <- paste0(the_code[k], collpase="\n   ")
+      t <- paste0(t, "", t_code)
+    }
   } else {
     t <- paste0(t, " More work to do.\n")
+
+    for (m in result$message_list) {
+      t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
+    }
+
+    correct_list <- paste0(result$correct_v, collapse = " - ")
+    incorrect_list <- paste0(result$incorrect_v, collapse = " - ")
+
+    t <- paste0(t, "\n Correct: ", correct_list)
+    t <- paste0(t, "\n Incorrect: ", incorrect_list)
   }
-
-  for (m in result$message_list) {
-    t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
-  }
-
-  correct_list <- paste0(result$correct_v, collapse = " - ")
-  incorrect_list <- paste0(result$incorrect_v, collapse = " - ")
-
-  t <- paste0(t, "\n Correct: ", correct_list)
-  t <- paste0(t, "\n Incorrect: ", incorrect_list)
-
   return(t)
 }
 

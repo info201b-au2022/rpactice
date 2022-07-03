@@ -44,7 +44,7 @@ games$won <- games$diff > 0
 opponents <- c("Dolphins", "Rams", "49ers", "Jets")
 
 #                                         Note 02.
-#    # Assign your dataframe `rownames` of their opponents.
+#    # Assign your dataframe `rownames`  of their opponents.
 rownames(games) <- opponents
 
 # e: To test your work, assign your `games` dataframe to the variable.
