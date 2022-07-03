@@ -1284,8 +1284,18 @@ get_smilely_face <- function() {
     128570,
     128175,
     128522)
-  num <- trunc(runif(1,1,length(faces)))
+  num <- round(runif(1,1,length(faces)),0)
   return(sprintf("&#%d;", faces[num]))
+}
+
+get_adage <- function() {
+  adage <- c(
+    "Review your code. Do you understand each step?",
+    "Repeating and redoing practice sets is a good way to learn.",
+    "Write your own prompts and test your understanding.",
+    "Do you understand each step? Help other learners succeed.")
+  num <- round(runif(1,1,length(adage)),0)
+  return(sprintf("%s", adage[num]))
 }
 
 format_result <- function(result) {
@@ -1327,6 +1337,7 @@ format_result <- function(result) {
       t_code <- paste0(the_code[k], collpase="\n   ")
       t <- paste0(t, "", t_code)
     }
+    t <- paste0(t,"\n<font color='green'>Final suggestion!\n   ",  "", get_adage(), "</font>\n")
   } else {
     t <- paste0(t, " More work to do.\n")
 
