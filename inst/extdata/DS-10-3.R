@@ -2,7 +2,7 @@
 #' @short DS-10-3
 #' @title Working with built-in data sets
 #' @descr
-#' Exercise 10.3 from Programming Skills for Data Science by
+#' Exercise 10.3 adapted from Programming Skills for Data Science by
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
@@ -11,8 +11,9 @@
 
 #' @id -
 #' @msg
-#' Load R's "USPersonalExpenditure" dataset using the `data()` function
-#' This will produce a data frame called `USPersonalExpenditure`
+#' Load R's "USPersonalExpenditure" data set using the `data()` function. This
+#' is the code:
+#'    > data("USPersonalExpenditure")
 #' @end
 #' @code
 data("USPersonalExpenditure")
@@ -21,18 +22,19 @@ data("USPersonalExpenditure")
 #' @id ?
 #' @msg
 #' The variable `USPersonalExpenditure` is now accessible to you. Unfortunately,
-#' it's not a data frame (it's actually what is called a matrix)
+#' it's not a dataframe (it's actually a data type called a matrix). Using the
+#' function `is.data.frame()` check if `USPersonalExpenditure` is a data frame.
 #' Test this using the `is.data.frame()` function
 #' @end
 #' @code
-is.data.frame(USPersonalExpenditure)
+is_var_a_dataframe <- is.data.frame(USPersonalExpenditure)
 #' @end
 
 #' @id ?
 #' @msg
 #' Luckily, you can pass the USPersonalExpenditure variable as an argument to the
 #' `data.frame()` function to convert it a data farm. Do this, storing the
-#' result in a new variable
+#' result in a new variable, named `us_exp`.
 #' @end
 #' @code
 us_exp <- data.frame(USPersonalExpenditure)
@@ -43,16 +45,13 @@ us_exp <- data.frame(USPersonalExpenditure)
 #' What are the column names of your dataframe?
 #' @end
 #' @code
-colnames(us_exp)
+c_names <- colnames(us_exp)
 #' @end
 
 #' @id -
 #' @msg
-#' Consider: why are they so strange? Think about whether you could use a number
-#'  like 1940 with dollar notation!
-#' @end
-#' @code
-xxx
+#' Print the column names. Consider: Why are they so strange? Think about
+#' whether you could use a number like 1940 with dollar notation!
 #' @end
 
 #' @id ?
@@ -60,12 +59,12 @@ xxx
 #' What are the row names of your dataframe?
 #' @end
 #' @code
-rownames(us_exp)
+r_names <- rownames(us_exp)
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
-#' Add a column "category" to your data frame that contains the rownames
+#' Add a column, named `category`, to your dataframe, which contains the rownames.
 #' @end
 #' @code
 us_exp$category <- rownames(us_exp)
@@ -98,19 +97,20 @@ highest_1960 <- us_exp$category[us_exp$X1960 == max(us_exp$X1960)]
 #' @id ?
 #' @msg
 #' Define a function `lowest_category` that takes in a year as a parameter, and
-#' returns the lowest spending category of that year
+#' returns the lowest spending category of that year.
 #' @end
-  #' @code
+#' @code
 lowest_category <- function(year) {
   col <- paste0("X", year)
   us_exp$category[us_exp[, col] == min(us_exp[, col])]
-  #' @end
 }
+#' @end
 
 #' @id ?
 #' @msg
-#' Using your function, determine the lowest spending category of each year
-#' Hint: use the `sapply()` function to apply your function to a vector of years
+#' Using your function, determine the lowest spending category of each year.
+#' Hint: use the `sapply()` function to apply your function to a vector of
+#' years
 #' @end
 #' @code
 lowest <- sapply(seq(1940, 1960, 5), lowest_category)

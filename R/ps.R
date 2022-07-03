@@ -202,9 +202,9 @@ get_all_var_info <- function(envir_id) {
   return(var_info)
 }
 
-# This function returns runs a block of code in one of either two
-# environments. It returns the results as a list of variables and
-# basic information for each variable
+# This function runs a block of code in one of either two environments.
+# It returns the results as a list of variables and basic information
+# for each variable
 eval_code <- function(code, envir_id = 1, clear_first = TRUE) {
   env_name <- .GlobalEnv
   if (envir_id == 2) {
@@ -224,6 +224,9 @@ eval_code <- function(code, envir_id = 1, clear_first = TRUE) {
   )
 }
 
+# This function looks for a variable in one of two environments,
+# global or expected, and returns basic information about that
+# variable.
 get_var_info <- function(var, envir_id = 1) {
   env_name <- .GlobalEnv
   if (envir_id == 2) {
@@ -233,6 +236,9 @@ get_var_info <- function(var, envir_id = 1) {
   if (exists(var, envir = env_name)) {
     val <- get(var, envir = env_name)
     t <- typeof(val)
+    if (is.data.frame(val)) {
+      t <- "dataframe"
+    }
     s <- format_variable(val)
     new_info <- list(info = list(vname = var, vval = val, vtype = t, vstr = s))
   }
@@ -397,9 +403,9 @@ format_code <- function(code_text, indent = cTAB_IN_SPACES) {
 
 # This function for an expected answer to a problem set
 # Note: id is the "internal id" (not the prompt id)
-expected_answer <- function(id) {
-  code <- ps_get_expected_answer(id)
-  return(eval_string_and_format(code))
+ps_get_expected_answer <- function(id) {
+  var <- ps_get_assignment_var(id)
+  return(eval_string_and_format(var))
 }
 
 # Code checking ----
@@ -407,7 +413,7 @@ expected_answer <- function(id) {
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
 DEFAULT_Check <- function(var_name, result) {
-  cDEBUG <- FALSE
+  cDEBUG <- TRUE
 
   internal_id <- ps_var_name_to_id(var_name)
   learner_r <- get_global_var_info(var_name)
@@ -647,13 +653,12 @@ check_answers <- function(learner_code) {
     practice_result <- result_update(practice_result, -1, FALSE, t)
     return(practice_result)
   }
-  expected_vars <- eval_code_expected(ps_get_expected_code())
+  expected_vars <- eval_code_expected(ps_get_all_expected_code())
   if (is.null(expected_vars)) {
     stop("check_answers: expected_vars: Internal Error: Likely R syntax error in expected code.")
   }
 
-  # Parse the learner's code and extract all variables and assignment
-  # operators
+  # Parse the learner's code and extract all variables and assignment operators
   tryCatch(
     expr = {
       learner_assign_ops <- ast_get_assignments(parse(text = learner_code))
@@ -833,6 +838,15 @@ ps_get_prompt_id <- function(id) {
   return(ps$task_list[[id]]$prompt_id)
 }
 
+ps_get_prompt_id_list <- function(v) {
+  l <- c()
+  for (k in 1:length(v)) {
+    prompt_id <- ps_get_prompt_id(v[k])
+    l <- append(l, prompt_id)
+  }
+  return(l)
+}
+
 # This function returns all the expected variables - learners write code
 # to assign values to these variables
 ps_get_all_assignment_vars <- function() {
@@ -893,7 +907,7 @@ ps_get_prompt <- function(id) {
   return(t)
 }
 
-ps_get_expected_answer <- function(id) {
+ps_get_expected_code <- function(id) {
   ps <- ps_get_current()
   if (id < 1 || id > length(ps$task_list)) {
     stop(paste0("id is out of bounds (id=", id, ")"))
@@ -902,7 +916,7 @@ ps_get_expected_answer <- function(id) {
   return(a)
 }
 
-ps_get_expected_code <- function() {
+ps_get_all_expected_code <- function() {
   ps <- ps_get_current()
   code <- c()
 
@@ -954,7 +968,7 @@ ps_update_learner_answer <- function(var_name, answer) {
   return(TRUE)
 }
 
-ps_get_learner_answer_by_id <- function(id) {
+ps_get_learner_code <- function(id) {
   ps <- ps_get_current()
   t <- ps$task_list[[id]]$learner_answer
   return(t)
@@ -962,7 +976,7 @@ ps_get_learner_answer_by_id <- function(id) {
 
 ps_get_learner_answer <- function(var_name) {
   id <- ps_var_name_to_id(var_name)
-  return(ps_get_learner_answer_by_id(id))
+  return(ps_get_learner_code(id))
 }
 
 # Prompts ----
@@ -980,11 +994,22 @@ number_of_prompts <- function() {
   return(num)
 }
 
+all_prompt_ids <- function() {
+  ps <- ps_get_current()
+  l <- c()
+  k <- 0
+  for (k in 1:length(ps$task_list)) {
+      if (ps$task_list[[k]]$is_note_msg == FALSE) {
+        l <- append(l, k)
+      }
+    }
+  return(l)
+}
+
 # This function is used to create a template script - learners can start
 # here and write code for each of the prompts
 format_practice_script <- function(show_answers = TRUE) {
   ps <- ps_get_current()
-
 
   # Count the number of prompts and create the `num_pompts_msg`, which is
   # presented below.
@@ -1206,18 +1231,13 @@ format_answers <- function() {
 # Functions for formatting and outputting feedback on practice sets
 #----------------------------------------------------------------------------#
 result_good_msg <- function(id) {
-  expected <- ps_get_expected_answer(id)
-  learner <- ps_get_learner_answer_by_id(id)
-  # print(learner)
-  answer <- expected_answer(id)
-  t <- answer
+  expected_code <- ps_get_expected_code(id)
+  #  learner_code <- ps_get_learner_code(id)
+  answer <- ps_get_expected_answer(id)
   t <- paste0(
     "<span style='color:green'>&#10004;",
-    " ", t, "</span>\n",
-    "     <i>Your code</i>:",
-    "\n    ", format_code(learner),
-    "\n", "     <i>Expected</i>:",
-    "\n    ", format_code(expected)
+    " ", answer, "</span>\n",
+    "   > ", format_code(expected_code)
   )
   return(t)
 }
@@ -1277,27 +1297,32 @@ result_update <- function(result, id, is_correct, text) {
   return(result)
 }
 
+# Randomly chose a smilely face
 get_smilely_face <- function() {
   faces <- c(
     128512,
     127752,
     128570,
     128175,
-    128522)
-  num <- round(runif(1,1,length(faces)),0)
+    128522
+  )
+  num <- round(runif(1, 1, length(faces)), 0)
   return(sprintf("&#%d;", faces[num]))
 }
 
+# Randomly chose an adage
 get_adage <- function() {
   adage <- c(
     "Review your code. Do you understand each step?",
-    "Repeating and redoing practice sets is a good way to learn.",
-    "Write your own prompts and test your understanding.",
-    "Do you understand each step? Help other learners succeed.")
-  num <- round(runif(1,1,length(adage)),0)
+    "Repeat practice sets! It is a good way to learn.",
+    "Write your own prompts - then write your own code.",
+    "Do you understand each step? Consider explaining your code to others."
+  )
+  num <- round(runif(1, 1, length(adage)), 0)
   return(sprintf("%s", adage[num]))
 }
 
+# This function formats a result set
 format_result <- function(result) {
   total <- number_of_prompts()
   num_attempted <- result$num_correct + result$num_incorrect
@@ -1308,48 +1333,75 @@ format_result <- function(result) {
   t <- ""
   t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n")
   if (result$user_name != "") {
-  t <- paste0(t, "Learner name and UW NetID:\n<i>   ", result$user_name, "</i> (", result$uwnetid, ")")
-  t <- paste0(t, "\n")
+    t <- paste0(t, "Learner name and UW NetID:\n<i>   ", result$user_name, "</i> (", result$uwnetid, ")")
+    t <- paste0(t, "\n")
   } else {
-    t <- paste0(t, "Learner name:\n<i>   ", "No learner</i> (", "No UW NetID", ")")
+    t <- paste0(t, "Learner name:\n<i>   ", "No learner</i> (", "No e-mail address", ")")
     t <- paste0(t, "\n")
   }
 
   # General syntax error - likely, because of a student error
   if (result$general_msg != "") {
-    t <- paste0(t, ">>> Note: ", result$general_msg, "\n\n")
+    t <- paste0(t, "\n>>> Note: ", result$general_msg, "\n\n")
+    return(t)
   }
 
-  # Show the installed variables
-  if (length(ps_get_env_vars()) != 0) {
-    lines_of_code <- paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n")
-    t <- paste0(t, paste0("Initial variables:\n", lines_of_code, "\n"))
-  } else {
-    t <- paste0(t, "Initial variables:\n   No variables installed.\n")
-  }
+  # # Show the installed variables (eliding, for very long lines)
+  # # NOTE: This does not work as intended.  More work to do ...
+  # s <- ""
+  # lines_of_code <- ""
+  # e_vars <- ps_get_env_vars()
+  # if (length(e_vars) != 0) {
+  #   for (k in 1:length(e_vars)) {
+  #     s <- e_vars[k]
+  #     if (str_length(s) > 120) {
+  #       s <- paste0(str_sub(s, 1, 120), " ...")
+  #     }
+  #     lines_of_code <- paste0(lines_of_code, cTAB_IN_SPACES, s, "\n")
+  #   }
+  #   t <- paste0(t, paste0("Initial practice set variables:\n", lines_of_code, "\n"))
+  # } else {
+  #   t <- paste0(t, "Initial practice set variables:\n   No variables installed.\n")
+  # }
 
-  t <- paste0(t, "Checking code:\n   ", num_correct, "/", total, " complete.")
+  # Show the results
+  t <- paste0(t, "Checking your code:\n   ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
     t <- paste0(t, " Good work! ", get_smilely_face(), "\n")
-    t <- paste0(t, "Expected code:\n   ")
-    the_code <- ps_get_expected_code()
-    for (k in 1:length(the_code)) {
-      t_code <- paste0(the_code[k], collpase="\n   ")
-      t <- paste0(t, "", t_code)
-    }
-    t <- paste0(t,"\n<font color='green'>Final suggestion!\n   ",  "", get_adage(), "</font>\n")
-  } else {
-    t <- paste0(t, " More work to do.\n")
 
     for (m in result$message_list) {
       t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
     }
 
-    correct_list <- paste0(result$correct_v, collapse = " - ")
-    incorrect_list <- paste0(result$incorrect_v, collapse = " - ")
+    t <- paste0(t, "\nFinal suggestion!\n   ", "<font color='green'>", get_adage(), "</font>\n")
 
-    t <- paste0(t, "\n Correct: ", correct_list)
-    t <- paste0(t, "\n Incorrect: ", incorrect_list)
+    t <- paste0(t, "\n<p style='text-align:center;'><b> Expected code:</b></p>\n   ")
+    the_code <- ps_get_all_expected_code()
+    for (k in 1:length(the_code)) {
+      t_code <- paste0(the_code[k], collpase = "\n   ")
+      t <- paste0(t, "", t_code)
+    }
+
+    # Errors are present
+  } else {
+    t <- paste0(t, " More work to do.\n\nYour progress:\n")
+
+    for (m in result$message_list) {
+      t <- paste0(t, "", m$prompt_id, ": ", m$msg_text, "\n")
+    }
+
+    all <- all_prompt_ids()
+    attempted <- c(result$correct_v, result$incorrect_v)
+    still_to_do <- all[!(all %in% attempted)]
+
+    correct_list <- paste0(ps_get_prompt_id_list(result$correct_v), collapse = " ")
+    incorrect_list <- paste0(ps_get_prompt_id_list(result$incorrect_v), collapse = " ")
+    still_to_do_list <- paste0(ps_get_prompt_id_list(still_to_do), collapse = " ")
+
+    t <- paste0(t, "\nSummary:")
+    t <- paste0(t, "\n   <span style='color:green'>&#10004; Correct: ", correct_list, "</span>")
+    t <- paste0(t, "\n   Try again: ", incorrect_list)
+    t <- paste0(t, "\n   Still to do: ", still_to_do_list)
   }
   return(t)
 }

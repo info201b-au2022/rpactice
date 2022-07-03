@@ -171,7 +171,7 @@ admin.run <- function(short) {
   )
 
   # Show the expected code for this practice set
-  t <- ps_get_expected_code()
+  t <- ps_get_all_expected_code()
   for (k in 1:length(t)) {
     # cat("[", k, "] ", t[k], "\n", sep = "")
     cat(t[k], "\n", sep = "")
