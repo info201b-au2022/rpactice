@@ -1,46 +1,51 @@
-# T03: Test cases: Functions
-#    Test statements that return functions (including the @check tag)
-# ---
-practice.begin("T03", learner="[your name]")
+# pinfo201 / ps-1
+#
+# T03: Test cases: Assignment
+#    Test different forms of assignment statements
 
-# Initial variables
-g <- function(x) {return(x+1)}
-X <- c(1,2,3,4,5,6)
+# Practice set info ----
+practice.begin("T03", learner="[your name]", uwnetid="[your UW NetId]")
 
-# a: Call the pre-installed function, g(x), with ten. Does this result make sense? (t01)
-t01 <- g(10)  #A: 11
+# Initial variables ----
+   X <- c(1,2,3)
 
-# b: Write a function, named `what_is_pi()`, which returns pi (3.1415). [f()] (what_is_pi)
-what_is_pi <- function() {
-  return(pi)
-}
-# c: Write a function, named `squared` that takes one numeric argument and squares the number. [f(arg1)] (squared)
-squared <- function(arg1) {
-  s <- arg1^2
-  return(s)
-}
+# Your 1 prompts: (a)-(a) ----
 
-# d: Use the function, `squared()`, to test that it works for the number 100. (t02)
-t02 <- squared(100)
+#                                         Note 01.
+#    Complex lhs structures and assignments
 
-# e: xxx
-f1 <- function(p1, p2) {
-  return (p1 == p2)
-}
 
-# f: Test a function with two arguments - correctness is tested with a callback (see g.T03_Check()) [f(arg1,arg2)] (h)
-h <- function(num, prec) {
-  rounded <- round(num + pi, prec)
-  return(rounded)
-}
+#                                         Note 02.
+#    Currently, only ONE level of nested structure. For example, these structures will fail
+#    because pinfo201 cannot determine the name of the variable:
+#        t$x$y <- blah
+#        t[[a]][[b]] <- blah
+#        t[[k]]$x <- blah
 
-# g: Update X[3] to 200 (X)
-X[3] <- 200
 
-# h: Update v[3] to 200 with a function, named f_update (f_update)
-f_update <- function(v) {
-  v[3] <- 200
-  return(v)
-}
+# a: Assignment to element of a vector. This works.
+#       U <- X
+#       U[1] <- 100 (Variable: U)
+U <- X
+U[1] <- 100
+
+#                                         Note 03.
+#    Assignment to two lists
+#       meals <- list(a="aa", b="bb")
+meals <- list(breakfaset="toast", lunch="soup", dinner="lentis and rice")
+
+#                                         Note 04.
+#    Sub-select a list with dollar sign ($)
+#       meals$breakfast <- "oatmeal"
+meals$breakfast <- "oatmeal"
+
+#                                         Note 05.
+#    Sub-select a list with double square brackets ([[]])
+#       meals2[[2]] <- 'cheese sandwich'
+meals[[2]] <- 'cheese sandwich'
+
+#                                         Note 06.
+#    Check that meals is correct, by assigning `meals` to `meals_done`.
+meals_done <- meals
 
 

@@ -1,20 +1,17 @@
-# T00: Super basic test for debugging
+# pinfo201 / ps-1
+#
+# T00: Basic for debugging
 #    For debugging - this practice set contains almost nothing!
-# ---
-practice.begin("T00", learner="[your name]")
 
-# Initial variables
-X <- c(1,2,3)
-   L <- list(a="aa", b="bb")
+# Practice set info ----
+practice.begin("T00", learner="[your name]", uwnetid="[your UW NetId]")
 
-# a: What is 1 + 1 (t)
-   t <- 2
+# Initial variables ----
+   X <- c(1,2,3)
 
-# Note: Change the attributes for the list, L, so that a is "aaaa" and b is "bbbb"
-L$a <- "aaaa"
-L[[2]] <- "bbbb"
+# Your 1 prompts: (a)-(a) ----
 
-# b: To check the result, assign L to L1 (L1)
-L1 <- L
+# a: What is 1 + 1 (Variable: t)
+t <- 2
 
 

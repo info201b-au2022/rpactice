@@ -15,7 +15,7 @@ next_ten <- seq(21,30,1)
 
 # c: Create a vector `all_numbers` by combining the previous two vectors. (all_numbers)
 all_numbers <- append(first_ten, next_ten)
-
+#
 # d: Create a variable `eleventh` that contains the 11th element in `all_numbers`. (eleventh)
 eleventh <- all_numbers[11]
 
@@ -29,7 +29,7 @@ even <- seq(2,100,2)
 # g: Using the `all()` function and `%%` (modulo) operator, confirm that all of the
 #    numbers in your `even` vector are even. Assign your answer to the
 #    variable, `even_check`. (even_check)
-even_check <- all(seq(2,100,2) %% 2 == 0)
+even_check <- all(even %% 2 == 0)
 
 # h: Create a vector `phone_numbers` that contains the numbers 8, 6, 7, 5, 3, 0, 9. (phone_numbers)
 phone_numbers <- c(8,6,7,5,3,0,9)
@@ -45,19 +45,13 @@ small <- phone_numbers[phone_numbers<=5]
 #    strictly greater than 5. "Strictly" mean greater than. (large)
 large <- phone_numbers[phone_numbers > 5]
 
-# # l: Assign `phone_numbers` to the variable `phone_numbers2`.
-# #    Replace the values in `phone_numbers2` that are larger than 5 with the number 5. (phone_numbers2[phone_numbers2 > 5])
-# phone_numbers2 <- phone_numbers
-# phone_numbers2[phone_numbers2 > 5] <- 5
-# phone_numbers2
-#
-# phone_numbers2a <- phone_numbers
-# phone_numbers2a[phone_numbers2a > 5] <- 5
-# identical(phone_numbers2, phone_numbers2a)
+# l: Assign `phone_numbers` to the variable `phone_numbers2`.
+#    Replace the values in `phone_numbers2` that are larger than 5 with the number 5. (phone_numbers2[phone_numbers2 > 5])
+phone_numbers2 <- phone_numbers
+phone_numbers2[phone_numbers2 > 5] <- 5
 
 # # m: Assign `phone_numbers2` to the variable `phone_numbers3`. Replace every odd-numbered
-# #    value in `phone_numbers3` with the number 0. (phone_numbers3[phone_numbers3%%2 == 1])
-# phone_numbers3 <- phone_numbers
-# phone_numbers3[phone_numbers3%%2==1] <- 0
-# phone_numbers3
+#    value in `phone_numbers3` with the number 0. (phone_numbers3[phone_numbers3%%2 == 1])
+phone_numbers3 <- phone_numbers
+phone_numbers3[phone_numbers3%%2==1] <- 0
 

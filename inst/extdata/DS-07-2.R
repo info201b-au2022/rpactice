@@ -67,7 +67,7 @@ even <- seq(2,100,2)
 #' variable, `even_check`.
 #' @end
 #' @code
-even_check <- all(seq(2,100,2) %% 2 == 0)
+even_check <- all(even %% 2 == 0)
 #' @end
 
 #' @id ?
@@ -109,7 +109,7 @@ large <- phone_numbers[phone_numbers > 5]
 #' Assign `phone_numbers` to the variable `phone_numbers2`.
 #' Replace the values in `phone_numbers2` that are larger than 5 with the number 5.
 #' @end
-#' #' @var phone_numbers2
+#' @var phone_numbers2
 #' @code
 phone_numbers2 <- phone_numbers
 phone_numbers2[phone_numbers2 > 5] <- 5

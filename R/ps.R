@@ -50,11 +50,13 @@ ps_load_internal_ps <- function() {
 
   # Test cases
   ps_add(load_ps("T00.R")) # Supreme simplicity - helpful for debuggin
-  ps_add(load_ps("T01.R")) # Assignment and atomic vectors
-  ps_add(load_ps("T02.R")) # Vectors
-  ps_add(load_ps("T03.R")) # Functions
-  ps_add(load_ps("T04.R")) # Dataframes
-  ps_add(load_ps("T10.R")) # Dataframes
+  ps_add(load_ps("T01.R")) # Assignment
+  ps_add(load_ps("T02.R")) # Assignment: Copy variables
+  ps_add(load_ps("T03.R")) # Assignment: Structures
+  ps_add(load_ps("T04.R")) # Vectors
+  ps_add(load_ps("T05.R")) # Functions
+  ps_add(load_ps("T06.R")) # Dataframes
+  # ps_add(load_ps("T10.R")) # Issues, bugs, etc.
 
   # Problem sets   - Additional examples
   # ps_add(load_ps("P01.R"))
@@ -186,6 +188,9 @@ get_all_var_info <- function(envir_id) {
 
   all <- ls(envir = env_name)
   var_info <- list()
+  if (length(all) == 0) {
+    return(var_info)
+  }
 
   for (k in 1:length(all)) {
     var <- all[k]
@@ -209,7 +214,7 @@ eval_code <- function(code, envir_id = 1, clear_first = TRUE) {
   }
 
   if (clear_first == TRUE) {
-    rm(list=ls(envir=env_name), envir = env_name)
+    rm(list = ls(envir = env_name), envir = env_name)
   }
 
   tryCatch(
@@ -417,11 +422,20 @@ ps_get_expected_answer <- function(id) {
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
 DEFAULT_Check <- function(var_name, result) {
-  cDEBUG <- TRUE
+  cDEBUG <- FALSE
 
   internal_id <- ps_var_name_to_id(var_name)
   learner_r <- get_global_var_info(var_name)
   expected_r <- get_expected_var_info(var_name)
+
+  # This should never happen. The variable, var_name, should have an
+  # internal id; if not, something is truly messed up.
+  if (internal_id == -1 || internal_id == 0) {
+    t <- result_prompt_error(internal_id, paste0("DEFAULT_Check: Internal error: internal_id: ", internal_id))
+    result <- result_update(result, -1, FALSE, t)
+    stop(t)
+    # return(result)
+  }
 
   # This should never happen. The variable, var_name, should lead to
   # results in both the learner and expected environments.
@@ -434,9 +448,9 @@ DEFAULT_Check <- function(var_name, result) {
       t <- paste0(t, "[expected variable is null]")
     }
     t <- result_prompt_error(internal_id, paste0("Check: Internal error: ", t))
-    result <- result_update(result, internal_id, FALSE, t)
+    result <- result_update(result, -1, FALSE, t)
     stop(paste0("Check: Internal error:", t))
-    return(result)
+    # return(result)
   }
 
   Li <- learner_r$info
@@ -553,6 +567,11 @@ DEFAULT_Check <- function(var_name, result) {
       expected_answers <- c()
 
       checks <- ps_get_arg1_checks(internal_id)
+      if (length(checks) == 0) {
+        t <- result_prompt_error(internal_id, paste0("DEFAULT_Check: One paramter function: Missing checks: ", internal_id))
+        result <- result_update(result, -1, FALSE, t)
+        return(result)
+      }
 
       for (k in 1:length(checks)) {
         t1 <- do.call(Li$vname, list(checks[k]))
@@ -574,7 +593,18 @@ DEFAULT_Check <- function(var_name, result) {
       expected_answers <- c()
 
       checks_arg1 <- ps_get_arg1_checks(internal_id)
+      if (length(checks_arg1) == 0) {
+        t <- result_prompt_error(internal_id, paste0("DEFAULT_Check: Two paramter function: Missing checks: ", internal_id))
+        result <- result_update(result, -1, FALSE, t)
+        return(result)
+      }
+
       checks_arg2 <- ps_get_arg2_checks(internal_id)
+      if (length(checks_arg2) == 0) {
+        t <- result_prompt_error(internal_id, paste0("DEFAULT_Check: Two paramter function: Missing checks: ", internal_id))
+        result <- result_update(result, -1, FALSE, t)
+        return(result)
+      }
 
       for (j in 1:length(checks_arg1)) {
         for (k in 1:length(checks_arg2)) {
@@ -646,6 +676,8 @@ check_answers <- function(learner_code) {
     general_msg = "",
     num_correct = 0,
     num_incorrect = 0,
+    correct_v = c(),
+    incorrect_v = c(),
     message_list = list()
   )
 
@@ -656,6 +688,13 @@ check_answers <- function(learner_code) {
   learner_vars <- eval_code_global(learner_code)
   if (is.null(learner_vars)) {
     t <- result_prompt_error(-1, "Syntax Error: Check code and try again.")
+    practice_result <- result_update(practice_result, -1, FALSE, t)
+    return(practice_result)
+  }
+
+  # If the learner has done nothing (no learner variables), we are done
+  if (length(learner_vars)==0) {
+    t <- result_prompt_error(-1, "Currently nothing to evaluate!")
     practice_result <- result_update(practice_result, -1, FALSE, t)
     return(practice_result)
   }
@@ -698,7 +737,7 @@ check_answers <- function(learner_code) {
     ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
   }
 
-  #STEP 5
+  # STEP 5
   # Get all of the variable names that need to be checked for correctness.
   # Check if the equivalent variables hold the same values in the Global
   # and Expected environments.
@@ -861,9 +900,12 @@ ps_get_prompt_id <- function(id) {
 
 ps_get_prompt_id_list <- function(v) {
   l <- c()
-  for (k in 1:length(v)) {
-    prompt_id <- ps_get_prompt_id(v[k])
-    l <- append(l, prompt_id)
+  if (!is.null(v) && length(v) > 0) {
+    for (k in 1:length(v)) {
+      prompt_id <- ps_get_prompt_id(v[k])
+      # cat(k, "\t", v[k], "\t", prompt_id, "\n")
+      l <- append(l, prompt_id)
+    }
   }
   return(l)
 }
@@ -909,16 +951,12 @@ ps_get_assignment_var <- function(id) {
 
 # Variable names are mapped to internal ids in the practice sets
 ps_var_name_to_id <- function(var_name) {
-  if (is.null(var_name)) {
-    return(-1)
-  }
-  if (var_name == "") {
-    return(-1)
-  }
   ps <- ps_get_current()
-  for (k in 1:length(ps$task_list)) {
-    if (ps$task_list[[k]]$assignment_var == var_name) {
-      return(k)
+  if (!is.null(var_name) && var_name != "" && length(ps$task_list) > 0) {
+    for (k in 1:length(ps$task_list)) {
+      if (ps$task_list[[k]]$assignment_var == var_name) {
+        return(k)
+      }
     }
   }
   return(-1)
@@ -952,13 +990,16 @@ ps_get_expected_code <- function(id) {
 ps_get_all_expected_code <- function() {
   ps <- ps_get_current()
   code <- c()
-
-  for (k in 1:length(ps$ps_initial_vars)) {
-    code <- append(code, ps$ps_initial_vars[k])
+  if (length(ps$ps_initial_vars) > 0) {
+    for (k in 1:length(ps$ps_initial_vars)) {
+      code <- append(code, ps$ps_initial_vars[k])
+    }
   }
-  for (task in ps$task_list) {
-    if (task$copy_var == FALSE) {
-      code <- append(code, task$expected_answer)
+  if (length(ps$task_list) > 0) {
+    for (task in ps$task_list) {
+      if (task$copy_var == FALSE) {
+        code <- append(code, task$expected_answer)
+      }
     }
   }
   return(code)
@@ -1030,10 +1071,11 @@ number_of_prompts <- function() {
 all_prompt_ids <- function() {
   ps <- ps_get_current()
   l <- c()
-  k <- 0
-  for (k in 1:length(ps$task_list)) {
-    if (ps$task_list[[k]]$is_note_msg == FALSE) {
-      l <- append(l, k)
+  if (length(ps$task_list) > 0) {
+    for (k in 1:length(ps$task_list)) {
+      if (ps$task_list[[k]]$is_note_msg == FALSE) {
+        l <- append(l, k)
+      }
     }
   }
   return(l)
@@ -1286,7 +1328,7 @@ result_error_msg <- function(id, show_hints = TRUE) {
 
 result_prompt_error <- function(id, msg) {
   if (id == -1) {
-    t <- paste0("General practice set error: ", msg)
+    t <- paste0("", msg)
   } else {
     t <- paste0("Prompt error: \"", ps_get_prompt(id), "\"\n")
     t <- paste0(t, msg)
@@ -1304,6 +1346,7 @@ result_sub_message <- function(message, sub_message) {
 }
 
 result_update <- function(result, id, is_correct, text) {
+  # A non-specific error because id is -1
   if (id == -1) {
     result$general_msg <- text
     return(result)
@@ -1379,24 +1422,6 @@ format_result <- function(result) {
     return(t)
   }
 
-  # # Show the installed variables (eliding, for very long lines)
-  # # NOTE: This does not work as intended.  More work to do ...
-  # s <- ""
-  # lines_of_code <- ""
-  # e_vars <- ps_get_env_vars()
-  # if (length(e_vars) != 0) {
-  #   for (k in 1:length(e_vars)) {
-  #     s <- e_vars[k]
-  #     if (str_length(s) > 120) {
-  #       s <- paste0(str_sub(s, 1, 120), " ...")
-  #     }
-  #     lines_of_code <- paste0(lines_of_code, cTAB_IN_SPACES, s, "\n")
-  #   }
-  #   t <- paste0(t, paste0("Initial practice set variables:\n", lines_of_code, "\n"))
-  # } else {
-  #   t <- paste0(t, "Initial practice set variables:\n   No variables installed.\n")
-  # }
-
   # Show the results
   t <- paste0(t, "Checking your code:\n   ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
@@ -1427,14 +1452,26 @@ format_result <- function(result) {
     attempted <- c(result$correct_v, result$incorrect_v)
     still_to_do <- all[!(all %in% attempted)]
 
+    # cat("\nall>         ", all, "\t", is.null(all), "\n")
+    # cat("correct_v    ", result$correct_v, "\t", is.null(result$correct_v), "\n")
+    # cat("incorrect_v  ", result$incorrect_v, "\t", is.null(result$incorrect_v), "\n")
+    # cat("attempted    ", attempted, "\t", is.null(attempted), "\n")
+    # cat("still_to_do  ", still_to_do, "\t", is.null(still_to_do), "\n")
+
     correct_list <- paste0(ps_get_prompt_id_list(result$correct_v), collapse = " ")
     incorrect_list <- paste0(ps_get_prompt_id_list(result$incorrect_v), collapse = " ")
     still_to_do_list <- paste0(ps_get_prompt_id_list(still_to_do), collapse = " ")
 
     t <- paste0(t, "\nSummary:")
-    t <- paste0(t, "\n   <span style='color:green'>&#10004; Correct: ", correct_list, "</span>")
-    t <- paste0(t, "\n   Try again: ", incorrect_list)
-    t <- paste0(t, "\n   Still to do: ", still_to_do_list)
+    if (correct_list != "") {
+      t <- paste0(t, "\n   <span style='color:green'>&#10004; Correct: ", correct_list, "</span>")
+    }
+    if (incorrect_list != "") {
+      t <- paste0(t, "\n   Try again: ", incorrect_list)
+    }
+    if (still_to_do_list != "") {
+      t <- paste0(t, "\n   Still to do: ", still_to_do_list)
+    }
   }
   return(t)
 }

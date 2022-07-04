@@ -1,43 +1,29 @@
-# T04: Answers to Test cases: Dataframes
+# pinfo201 / ps-1
 #
-# ---
-practice.begin("T04", learner="DGH Testing")
+# T04: Test cases: Vectors
+#    Test statements that return vectors
 
-# Initial variables
-library(dplyr)
-cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(TRUE,FALSE,TRUE,TRUE))
+# Practice set info ----
+practice.begin("T04", learner="[your name]", uwnetid="[your UW NetId]")
 
-# a: Get the number of rows (number_of_rows)
-number_of_rows <- nrow(cDF)
+# Initial variables ----
+   X <- c(1,2,3,4)
 
-# b: Get the number of columns (number_of_cols)
-number_of_cols <- ncol(cDF)
+# Your 5 prompts: (a)-(e) ----
 
-# c: The names of the columns (col_names)
-col_names <- colnames(cDF)
+# a: Create a vector with four elements, 1-4 (Variable: t01)
+t01 <- c(1,2,3,4)
 
-# d: Get the second column (col2)
-col2 <- cDF[,2]
+# b: A vector (Variable: t02)
+t02 <- round(seq(1:15)*pi,1)
 
-# e: Get the first row of the data frame (df1)
-df1 <- cDF[1,]
+# c: Multiple vector by 2 (Variable: t03)
+t03 <- t01 * 2 #A: c(2 4 6 8)
 
-# f: With dplyr::select, get columns A and C (df2)
-df2 <- dplyr::select(cDF,A,C)
+# d: Select items from the vector (Variable: t04)
+t04 <- t03[t03 > 4] #A: c(6 8)
 
-# g: With dplyr::select, get columsn A and C (with a pipe) (df3)
-df3 <- cDF %>% dplyr::select(A,C)
-
-# h: Select rows where C==TRUE and show only A and C columns (df4)
-df4 <- cDF %>%
-  filter(C==TRUE) %>%
-  select(A,C)
-
-# #i: Write a function of filter rows by column C (which can be either FALSE or TRUE) (df5_f)
-df5_f <- function(test) {
-  cDF %>%
-    filter(C==test) %>%
-    select(A,C)
-}
+# e: Add two vectors (X initialized in problem set) (Variable: t05)
+t05 <- X + t01 #A: c(2,4,6,8)
 
 

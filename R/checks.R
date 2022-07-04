@@ -132,7 +132,7 @@ h.T03_Check <- function(var_name, result) {
 }
 
 # Practice Set DS-7-3 ----
-word_bin.DS_7_3_Check <- function(var_name, result) {
+word_bin.DS_07_3_Check <- function(var_name, result) {
   internal_id <- ps_var_name_to_id(var_name)
 
   # Get the learner and expected variable information

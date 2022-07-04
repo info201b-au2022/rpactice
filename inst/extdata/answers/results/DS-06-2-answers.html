@@ -1,0 +1,32 @@
+<head></head><body><pre><b>DS-06-2: Using built-in string functions</b>
+Learner name and UW NetID:
+<i>   [your name]</i> ()
+Checking your code:
+   6/6 complete. Good work! &#128570;
+a: <span style='color:green'>&#10004; atomic [1]: I like to eat apples and bananas</span>
+   >    lyric <- "I like to eat apples and bananas"
+b: <span style='color:green'>&#10004; atomic [1]: I like to eat</span>
+   >    intro <- substr(lyric, 1, 13)
+c: <span style='color:green'>&#10004; atomic [1]: apples and bananas</span>
+   >    fruits <- substr(lyric, 15, nchar(lyric))
+d: <span style='color:green'>&#10004; atomic [1]: eepples eend beeneenees</span>
+   >    fruits_e <- gsub("a", "ee", fruits)
+e: <span style='color:green'>&#10004; atomic [1]: opples ond bononos</span>
+   >    fruits_o <- gsub("a", "o", fruits)
+f: <span style='color:green'>&#10004; atomic [1]: I like to eat eepples eend beeneenees</span>
+   >    lyric_e <- paste(intro, fruits_e)
+   # print(fruits_e)
+
+Final suggestion!
+   <font color='green'>Do you understand each step? Consider explaining your code to others.</font>
+
+<p style='text-align:center;'><b> Expected code:</b></p>
+   lyric <- "I like to eat apples and bananas"
+   intro <- substr(lyric,1,13)
+   fruits <- substr(lyric,15,nchar(lyric))
+   fruits_e <- gsub("a","ee", fruits)
+   fruits_o <- gsub("a","o", fruits)
+   lyric_e <- paste(intro, fruits_e)
+   #print(fruits_e)
+   #print(paste(intro, fruits_o))
+   </pre></body>

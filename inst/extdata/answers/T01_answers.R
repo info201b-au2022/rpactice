@@ -9,10 +9,8 @@ practice.begin("T01", learner="[your name]", uwnetid="[your UW NetId]")
 # Initial variables ----
    X <- c(1,2,3)
    f <- function(x) {return(x+1)}
-   meals1 <- list(a="aa", b="bb")
-   meals2 <- list(a="aa", b="bb")
 
-# Your 14 prompts: (a)-(n) ----
+# Your 8 prompts: (a)-(h) ----
 
 #                                         Note 01.
 #    Basic expressions
@@ -45,7 +43,7 @@ t06 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
 # g: Calling a function, f(x), (initialized by the practice set) (Variable: t07)
 t07 <- (f(10) == 11) # TRUE
 
-# h: Assign several variables and check the last variable - e.g.,
+# h: Assign several variables and check a particular variable (z)
 #      x <- 1
 #      y <- x + 1
 #      z <- y + 1 (Variable: z)
@@ -53,36 +51,5 @@ x <- 1
 y <- x + 1
 z <- y + 1
 w <- -10
-
-#                                         Note 02.
-#    Various forms of assignment operations. Curently, only ONE level of nested structure
-#    works.  For example, these structures will fail:
-#        t$x$y <- blah
-#        t[[a]][[b]] <- blah
-
-
-# i: Assignment to element of a vector
-#       U <- X
-#       U[1] <- 100 (Variable: U)
-U <- X
-U[1] <- 100
-
-# j: Assignment to two lists
-#       meals <- list(a="aa", b="bb") (Variable: meals)
-meals <- list(a="aa", b="bb")
-
-# k: Sub-select a list with dollar sign
-#       meals <- list(a="aa", b="bb") (Variable: meals1)
-meals1$a <- "aaaaaaaaa"
-
-# l: Sub-select a list with double square brackets ([[]])
-#       meals[[2]] <- 'bbbbbbbbbb' (Variable: meals2)
-meals2[[2]] <- 'bbbbbbbbbb'
-
-# m: How old are you? (Variable: your_age)
-your_age <- 50
-
-# n: Your age (your_age) * 3 (Variable: new_age)
-new_age <- your_age * 3
 
 

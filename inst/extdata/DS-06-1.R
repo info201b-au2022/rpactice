@@ -33,7 +33,7 @@ name_length <- nchar(my_name)
 #' Use the `paste()` function.
 #' @end
 #' @code
-now_doing <- paste(my_name, "is programming!")
+now_doing <- paste(my_name, " is programming!")
 #' @end
 
 #' @id ?

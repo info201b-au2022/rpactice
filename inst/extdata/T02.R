@@ -1,41 +1,48 @@
 #' @version ps-1
 #' @short T02
-#' @title Test cases: Vectors
+#' @title Test cases: Copy variables
 #' @descr
-#' Test statements that return vectors
+#' Sometimes it is helpful to write a practice set based on a learner's
+#' data input. This is possible with the @cp-var tag.
 #' @end
 #' @initial-vars
-X <- c(1,2,3,4)
+#' @end
+
+#' @id -
+#' @msg Testing the use of the @cp-var tag
+
+#' @id ?
+#' @msg Assign your name to the variable my_name
+#' @cp-var my_name
+#' @code
+my_name <- "learner defined varaible"
 #' @end
 
 #' @id ?
-#' @msg Create a vector with four elements, 1-4
+#' @msg
+#' How many characters are in your name?
+#' @end
 #' @code
-t01 <- c(1,2,3,4)
+num_characters <- nchar(my_name)
 #' @end
 
 #' @id ?
-#' @msg A vector
-#' @var t02
+#' @msg Assign your an absolute directory path to your csv file.
+#' @cp-var fname
 #' @code
-t02 <- round(seq(1:15)*pi,1)
+fname <- NULL
 #' @end
 
 #' @id ?
-#' @msg Multiple vector by 2
+#' @msg Read the csv file into the variable `df`.
 #' @code
-t03 <- t01 * 2 #A: c(2 4 6 8)
+df <- read.csv(fname)
 #' @end
 
 #' @id ?
-#' @msg Select items from the vector
-#' @var t04
+#' @msg How many rows are in the dataframe, `df`?
 #' @code
-t04 <- t03[t03 > 4] #A: c(6 8)
+num_of_rows <- nrow(df)
 #' @end
 
-#' @id ?
-#' @msg Add two vectors (X initialized in problem set)
-#' @code
-t05 <- X + t01 #A: c(2,4,6,8)
-#' @end
+

@@ -12,36 +12,41 @@
 #' To work on this practice set, you need to download the file:
 #'    `gates_money.csv`
 #'
-#' The file located in this GitHub directory:
+#' The file is located in this GitHub directory:
 #'    https://github.com/programming-for-data-science/book-exercises/tree/master/chapter-10-exercises/exercise-4/data
 #'
 #' Save this file in your working directory, under the directory
-#' `data`. Generally, your working directory should be:
+#' `data`. It is highly recommended that your working directory  be:
 #'    ~/Documents/info201
 #'
-#' So, generally, the file should be located here:
+#' So, you should save the file here, so that it is located here:
 #'    ~/Documents/info201/data/gates_money.csv
 #'
+#' Use a spreadsheet or text editor and double-check that the file
+#' is located in this directory. This is always a good practice
+#' when downloading a data set.
+#'
 #' Recall that you can check and set your working directory with
-#' RStudio and with these commands:
+#' RStudio and with these R functions:
 #'    > ?getwd()
 #'    > ?setwd()
 #' @end
 #'
 #' @id ?
 #' @msg
-#' Assign the path name to your file in the variable `my_path_name`. As
-#' described in the previous note, your path should look like this:
-#'    my_path_name <- "~/Documents/info201/data/gates_money.csv"
+#' Assign the path name to your file in the variable `fn_path`. As
+#' described in the previous note, your path should look something
+#' like this:
+#'    fn_path <- "~/Documents/info201/data/gates_money.csv"
 #' @end
-#' @cp-var my_path_name
+#' @cp-var fn_path
 
 #' @id ?
 #' @msg
-#' Use the `read.csv()` and your variable, `my_path_name`,
+#' Use the `read.csv()` and your variable, `fn_path`,
 #' read the data:
 #'    `data/gates_money.csv`
-#' Put the data into a variable called `grants`.
+#' Assign the data into a variable called `grants`.
 #'
 #' Note: Do NOT treat strings as factors.
 #' @end
@@ -51,7 +56,7 @@ grants <- read.csv(my_path_name, stringsAsFactors = FALSE)
 
 #' @id -
 #' @msg
-#' Use the View function to look at the loaded data. From the RStudio
+#' Use the View function to inspect at the loaded data. From the RStudio
 #' console type:
 #'    View(grants)
 #' @end

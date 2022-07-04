@@ -1,0 +1,45 @@
+<head></head><body><pre><b>DS-06-4: Functions and conditionals</b>
+Learner name and UW NetID:
+<i>   [your name]</i> ()
+Checking your code:
+   2/2 complete. Good work! &#127752;
+a: <span style='color:green'>&#10004; funct: function(str1, str2) {...}</span>
+   >    is_twice_as_long <- function(str1, str2) {
+     diff <- abs(nchar(str1) - nchar(str2))
+     min_length <- min(nchar(str1), nchar(str2))
+     diff >= min_length # if difference is more than short
+   }
+b: <span style='color:green'>&#10004; funct: function(first, second) {...}</span>
+   >    describe_difference <- function(first, second) {
+     diff <- nchar(first) - nchar(second)
+     if (diff > 0) {
+       sentence <- paste("Your first string is longer by", diff, "characters")
+     } else if (diff < 0) {
+       sentence <- paste("Your second string is longer by", -diff, "characters")
+     } else {
+       sentence <- "Your strings are the same length!"
+     }
+     sentence # return the sentence
+   }
+
+Final suggestion!
+   <font color='green'>Review your code. Do you understand each step?</font>
+
+<p style='text-align:center;'><b> Expected code:</b></p>
+   is_twice_as_long <- function(str1, str2) {
+     diff <- abs(nchar(str1) - nchar(str2))
+     min_length <- min(nchar(str1), nchar(str2))
+     diff >= min_length # if difference is more than short
+   }
+   describe_difference <- function(first, second) {
+   diff <- nchar(first) - nchar(second)
+   if (diff > 0) {
+     sentence <- paste("Your first string is longer by", diff, "characters")
+   } else if (diff < 0) {
+     sentence <- paste("Your second string is longer by", -diff, "characters")
+   } else {
+     sentence <- "Your strings are the same length!"
+   }
+   sentence # return the sentence
+   }
+   </pre></body>

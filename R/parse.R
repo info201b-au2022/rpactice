@@ -452,7 +452,11 @@ check_test_code <- function(ps) {
     code <- append(code, ps$ps_initial_vars[k])
   }
   cat("II. Initial Variables:\n   ")
-  t <- paste0(ps$ps_initial_vars, collapse = "\n   ")
+  if (length(code) != 0) {
+    t <- paste0(ps$ps_initial_vars, collapse = "\n   ")
+  } else {
+    t <- "None."
+  }
   cat(t)
 
   # The variables to copy, if any
@@ -513,13 +517,13 @@ check_test_code <- function(ps) {
 
 
 #----------------------------------------------------------------------------#
-# It checks that are all tags are known
+# This function checks that are all tags are known
 #----------------------------------------------------------------------------#
 check_tags <- function(t, silient = FALSE, detailed = FALSE) {
   any_errors <- FALSE
   prompts_will_be_renumbered <- 0
   msg_prompts <- 0
-  num_prompts <- 1
+  num_prompts <- 0
 
   for (k in 1:length(t)) {
     if (!silient && detailed) {
@@ -593,8 +597,10 @@ check_tags <- function(t, silient = FALSE, detailed = FALSE) {
     } else {
       message(paste0("   Summary: Erroneous tags found."))
     }
+
     message(paste0("   Summary: Num prompts: ", num_prompts))
     message(paste0("   Summary: Num message prompts: ", msg_prompts))
+
     if (prompts_will_be_renumbered > 0) {
       message(paste0("   Summary: Prompt IDs will be renumbered: Yes."))
     } else {
@@ -688,36 +694,36 @@ check_ps <- function(ps, silent = FALSE) {
     }
   }
 
-  # Check that a all variable names are unique - if not unique, try to fix
-  var_list <- c()
-  for (j in 1:N) {
-    v <- ps$task_list[[j]]$assignment_var # TODO: vector?
-    duplicate <- FALSE
-    old_v <- v
-    if (v != "") {
-      k <- 1
-      repeat {
-        if (v %in% var_list) {
-          duplicate <- TRUE
-          if (k == 1) {
-            v <- paste0(v, ".")
-          } else if (k > 5) {
-            stop(paste0("check_ps: duplicate variable name - could not correct (", v, ")"))
-          }
-          v <- paste0(v, str_sub(letters, k, k))
-        } else {
-          var_list <- append(var_list, v)
-          ps$task_list[[j]]$assignment_var <- v
-          break
-        }
-        k <- k + 1
-      }
-    }
-    if (!silent && duplicate) {
-      message(paste0("   [", j, "] @var: Duplicate varirable names."))
-      message(paste0("      Changed variable name (from ", old_v, " to ", ps$task_list[[j]]$assignment_var, ")."))
-    }
-  }
+  # # Check that a all variable names are unique - if not unique, try to fix
+  # var_list <- c()
+  # for (j in 1:N) {
+  #   v <- ps$task_list[[j]]$assignment_var # TODO: vector?
+  #   duplicate <- FALSE
+  #   old_v <- v
+  #   if (v != "") {
+  #     k <- 1
+  #     repeat {
+  #       if (v %in% var_list) {
+  #         duplicate <- TRUE
+  #         if (k == 1) {
+  #           v <- paste0(v, ".")
+  #         } else if (k > 5) {
+  #           stop(paste0("check_ps: duplicate variable name - could not correct (", v, ")"))
+  #         }
+  #         v <- paste0(v, str_sub(letters, k, k))
+  #       } else {
+  #         var_list <- append(var_list, v)
+  #         ps$task_list[[j]]$assignment_var <- v
+  #         break
+  #       }
+  #       k <- k + 1
+  #     }
+  #   }
+  #   if (!silent && duplicate) {
+  #     message(paste0("   [", j, "] @var: Duplicate varirable names."))
+  #     message(paste0("      Changed variable name (from ", old_v, " to ", ps$task_list[[j]]$assignment_var, ")."))
+  #   }
+  # }
 
   # Check if a task ID has not been assigned
   renumber <- FALSE

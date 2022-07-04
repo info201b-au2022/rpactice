@@ -1,72 +1,41 @@
 #' @version ps-1
 #' @short T04
-#' @title Test cases: Dataframes
+#' @title Test cases: Vectors
 #' @descr
-#' Test statements that return dataframes
+#' Test statements that return vectors
 #' @end
 #' @initial-vars
-library(dplyr)
-cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(TRUE,FALSE,TRUE,TRUE))
+X <- c(1,2,3,4)
 #' @end
 
 #' @id ?
-#' @msg Get the number of rows
+#' @msg Create a vector with four elements, 1-4
 #' @code
-number_of_rows <- nrow(cDF)
+t01 <- c(1,2,3,4)
 #' @end
 
 #' @id ?
-#' @msg Get the number of columns
+#' @msg A vector
+#' @var t02
 #' @code
-number_of_cols <- ncol(cDF)
+t02 <- round(seq(1:15)*pi,1)
 #' @end
 
 #' @id ?
-#' @msg The names of the columns
+#' @msg Multiple vector by 2
 #' @code
-col_names <- colnames(cDF)
+t03 <- t01 * 2 #A: c(2 4 6 8)
 #' @end
 
 #' @id ?
-#' @msg Get the second column
+#' @msg Select items from the vector
+#' @var t04
 #' @code
-col2 <- cDF[,2]
+t04 <- t03[t03 > 4] #A: c(6 8)
 #' @end
 
 #' @id ?
-#' @msg Get the first row of the data frame
+#' @msg Add two vectors (X initialized in problem set)
 #' @code
-df1 <- cDF[1,]
+t05 <- X + t01 #A: c(2,4,6,8)
 #' @end
-
-#' @id ?
-#' @msg With dplyr::select, get columns A and C
-#' @code
-df2 <- dplyr::select(cDF,A,C)
-#' @end
-
-#' @id ?
-#' @msg With dplyr::select, get columns A and C (with a pipe)
-#' @code
-df3 <- cDF %>% dplyr::select(A,C)
-#' @end
-
-#' @id ?
-#' @msg Select rows where C==TRUE and show only A and C columns
-#' @code
-df4 <- cDF %>%
-  filter(C==TRUE) %>%
-  select(A,C)
-#' @end
-
-#' @id ?
-#' @msg Write a function of filter rows by column C (which can be either FALSE or TRUE)
-#' @check list(arg1=c(TRUE, FALSE))
-#' @code
-df5_f <- function(f) {
-cDF %>%
-  filter(C==f) %>%
-  select(A,C)
-}
-#' @end
-

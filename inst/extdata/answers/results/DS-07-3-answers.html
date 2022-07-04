@@ -1,0 +1,33 @@
+<head></head><body><pre><b>DS-07-3: Vector practice</b>
+Learner name and UW NetID:
+<i>   [your name]</i> ()
+Checking your code:
+   6/6 complete. Good work! &#128570;
+a: <span style='color:green'>&#10004; vector [7]: convivial love excitment mountains fast bicycles stars</span>
+   >    words <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
+b: <span style='color:green'>&#10004; vector [7]: "convivial" is the word of the day! "love" is the word of the day! "excitment" is the word of the day! "mountains" is the word of the day! "fast" is the word of the day! "bicycles" is the word of the day! "stars" is the word of the day!</span>
+   >    words_of_the_day <- paste0("\"", words, "\" is the word of the day!", collpase = "")
+c: <span style='color:green'>&#10004; vector [4]: convivial excitment fast bicycles</span>
+   >    a_f_words <- words[substring(words, 1, 1) <= "f"]
+d: <span style='color:green'>&#10004; vector [2]: love mountains</span>
+   >    g_m_words <- words[words >= "g" & substring(words, 1, 1) <= "m"]
+e: <span style='color:green'>&#10004; funct: function(words, start, end) {...}</span>
+   >    word_bin <- function(words, start, end) {
+     words[words >= start & substring(words, 1, 1) <= end]
+   }
+f: <span style='color:green'>&#10004; vector [4]: love excitment mountains fast</span>
+   >    word_bin_test <- word_bin(words, "e", "q")
+
+Final suggestion!
+   <font color='green'>Do you understand each step? Consider explaining your code to others.</font>
+
+<p style='text-align:center;'><b> Expected code:</b></p>
+   words <- c("convivial", "love", "excitment", "mountains", "fast", "bicycles", "stars")
+   words_of_the_day <- paste0("\"", words, "\" is the word of the day!", collpase = "")
+   a_f_words <- words[substring(words, 1, 1) <= "f"]
+   g_m_words <- words[words >= "g" & substring(words, 1, 1) <= "m"]
+   word_bin <- function(words, start, end){
+     words[words >= start & substring(words, 1, 1) <= end]
+   }
+   word_bin_test <- word_bin(words, "e", "q")
+   </pre></body>

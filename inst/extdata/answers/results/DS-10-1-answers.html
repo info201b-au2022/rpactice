@@ -1,0 +1,29 @@
+<head></head><body><pre><b>DS-10-1: Creating data frames</b>
+Learner name and UW NetID:
+<i>   [your name]</i> ()
+Checking your code:
+   5/5 complete. Good work! &#128175;
+a: <span style='color:green'>&#10004; vector [4]: 12 3 37 27</span>
+   >    points <- c(12, 3, 37, 27) # example from 2016 season
+b: <span style='color:green'>&#10004; vector [4]: 10 9 18 17</span>
+   >    points_allowed <- c(10, 9, 18, 17)
+c: <span style='color:green'>&#10004; dataframe: [4 rows x 4 columns]</span>
+   >    games <- data.frame(points, points_allowed)
+d: <span style='color:green'>&#10004; vector [4]: Dolphins Rams 49ers Jets</span>
+   >    opponents <- c("Dolphins", "Rams", "49ers", "Jets")
+e: <span style='color:green'>&#10004; dataframe: [4 rows x 4 columns]</span>
+   >    all_done <- games
+
+Final suggestion!
+   <font color='green'>Repeat practice sets! It is a good way to learn.</font>
+
+<p style='text-align:center;'><b> Expected code:</b></p>
+   points <- c(12, 3, 37, 27) # example from 2016 season
+   points_allowed <- c(10, 9, 18, 17)
+   games <- data.frame(points, points_allowed)
+   games$diff <- games$points - games$points_allowed
+   games$won <- games$diff > 0
+   opponents <- c("Dolphins", "Rams", "49ers", "Jets")
+   rownames(games) <- opponents
+   all_done <- games
+   </pre></body>

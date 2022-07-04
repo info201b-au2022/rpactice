@@ -55,7 +55,6 @@ g_m_words <- words[words >= "g" & substring(words, 1, 1) <= "m"]
 #' and two letters. The function should return a vector of words that go between
 #' those letters alphabetically.
 #' @end
-#' @check list(cset={})
 #' @code
 word_bin <- function(words, start, end){
   words[words >= start & substring(words, 1, 1) <= end]

@@ -1,22 +1,31 @@
-# T02: Test cases: Vectors
-#    Test statements that return vectors
-# ---
-practice.begin("T02", learner="[your name]")
+# pinfo201 / ps-1
+#
+# T02: Test cases: Copy variables
+#    Sometimes it is helpful to write a practice set based on a learner's
+#    data input. This is possible with the @cp-var tag.
 
-# Initial variables
-X <- c(1,2,3,4)
+# Practice set info ----
+practice.begin("T02", learner="[your name]", uwnetid="[your UW NetId]")
 
-# a: Create a vector with four elements, 1-4 (t01)
-t01 <- c(1,2,3,4)
+# Your 5 prompts: (a)-(e) ----
 
-# b: A vector (t02)
-t02 <- round(seq(1:15)*pi,1)
+#                                         Note 01.
+#    Testing the use of the @cp-var tag
 
-# c: Multiple vector by 2 (t03)
-t03 <- t01 * 2 #A: c(2 4 6 8)
 
-# d: Select items from the vector (t04)
-t04 <- t03[t03 > 4] #A: c(6 8)
+# a: Assign your name to the variable my_name (Variable: my_name)
+my_name <- "learner defined varaible"
 
-# e: Add two vectors (X initialized in problem set) (t05)
-t05 <- X + t01 #A: c(2,4,6,8)
+# b: How many characters are in your name? (Variable: num_characters)
+num_characters <- nchar(my_name)
+
+# c: Assign your an absolute directory path to your csv file. (Variable: fname)
+fname <- NULL
+
+# d: Read the csv file into the variable `df`. (Variable: df)
+df <- read.csv(fname)
+
+# e: How many rows are in the dataframe, `df`? (Variable: num_of_rows)
+num_of_rows <- nrow(df)
+
+

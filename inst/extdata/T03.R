@@ -1,75 +1,65 @@
 #' @version ps-1
 #' @short T03
-#' @title Test cases: Functions
+#' @title Test cases: Assignment
 #' @descr
-#' Test statements that return functions (including the @check tag)
+#' Test different forms of assignment statements
 #' @end
 #' @initial-vars
-g <- function(x) {return(x+1)}
-X <- c(1,2,3,4,5,6)
+X <- c(1,2,3)
+#' @end
+
+#' @id -
+#' @msg Complex lhs structures and assignments
+
+#' @id -
+#' @msg
+#' Currently, only ONE level of nested structure. For example, these structures will fail
+#' because pinfo201 cannot determine the name of the variable:
+#'     t$x$y <- blah
+#'     t[[a]][[b]] <- blah
+#'     t[[k]]$x <- blah
 #' @end
 
 #' @id ?
-#' @msg Call the pre-installed function, g(x), with ten. Does this result make sense?
+#' @msg
+#' Assignment to element of a vector. This works.
+#'    U <- X
+#'    U[1] <- 100
+#' @var U
 #' @code
-t01 <- g(10)  #A: 11
+U <- X
+U[1] <- 100
 #' @end
 
-#' @id ?
-#' @msg Write a function, named `what_is_pi()`, which returns pi (3.1415). [f()]
+#' @id -
+#' @msg
+#' Assignment to two lists
+#'    meals <- list(a="aa", b="bb")
 #' @code
-what_is_pi <- function() {
-  return(pi)
-}
+meals <- list(breakfaset="toast", lunch="soup", dinner="lentis and rice")
 #' @end
 
-#' @id ?
-#' @msg Write a function, named `squared` that takes one numeric argument and squares the number. [f(arg1)]
-#' @var squared
-#' @check list(arg1=c(1, 2, 3, 0, -1, -2, -3, NA))
+#' @id -
+#' @msg
+#' Sub-select a list with dollar sign ($)
+#'    meals$breakfast <- "oatmeal"
 #' @code
-squared <- function(x) {
-  t <- x^2
-  return(t)
-}
+meals$breakfast <- "oatmeal"
 #' @end
 
-#' @id ?
-#' @msg Use the function, `squared()`, to test that it works for the number 100.
+#' @id -
+#' @msg
+#' Sub-select a list with double square brackets ([[]])
+#'    meals2[[2]] <- 'cheese sandwich'
 #' @code
-t02 <- squared(100)
+meals[[2]] <- 'cheese sandwich'
 #' @end
 
-#' @id ?
-#' @msg A function with two parameters
-#' @check list(arg1=c("aaa", "bbb", "ccc"), arg2=c("xxx", "aaa", "zzz"))
+#' @id -
+#' @msg
+#' Check that meals is correct, by assigning `meals` to `meals_done`.
 #' @code
-f1 <- function(arg_one, arg_two) {
-  return (arg_one == arg_two)
-}
+meals_done <- meals
 #' @end
 
-#' @id ?
-#' @msg Callback: Test a function with two arguments - correctness is tested with a callback (see g.T03_Check()) [f(arg1,arg2)]
-#' @code
-h <- function(arg1, precision) {
-  t <- round(arg1 + pi, precision)
-  return(t)
-}
-#' @end
 
-#' @id ?
-#' @msg Update X[3] to 200
-#' @code
-X[3] <- 200
-#' @end
-
-#' @id ?
-#' @msg Update v[3] to 200 with a function, named f_update
-#' @check list(arg1=list(v<-c(1,2,3,4,5)))
-#' @code
-f_update <- function(v) {
-  v[3] <- 200
-  return(v)
-}
-#' @end

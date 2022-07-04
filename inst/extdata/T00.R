@@ -1,6 +1,6 @@
 #' @version ps-1
 #' @short T00
-#' @title Super basic test for debugging
+#' @title Basic for debugging
 #' @descr
 #' For debugging - this practice set contains almost nothing!
 #' @end
@@ -15,21 +15,14 @@ t <- 2
 #' @end
 
 #' @id ?
-#' @msg
-#' How old are you?
+#' @msg What is 1 + 1
+#' @code
+t <- 2
 #' @end
-#' @cp-var u
-#'
-#' @id ?
-#' @msg
-#' Give a constant
-#' @end
-#' @cp-var C
 
 #' @id ?
-#' @msg
-#' To check the result, assign L to L1
-#' @end
+#' @msg What is 1 + 1
 #' @code
-T <- C * u
+t <- 2
 #' @end
+
