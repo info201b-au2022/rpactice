@@ -649,8 +649,10 @@ check_answers <- function(learner_code) {
     message_list = list()
   )
 
+  # STEP 1
   # Evaluate the learner's code and the expected code in two different
   # environments (global and expected)
+  # TODO: Deal with errors ...
   learner_vars <- eval_code_global(learner_code)
   if (is.null(learner_vars)) {
     t <- result_prompt_error(-1, "Syntax Error: Check code and try again.")
@@ -658,18 +660,24 @@ check_answers <- function(learner_code) {
     return(practice_result)
   }
 
-  # Copy the variables from the GlobalEnv to the Expected Environment
+  # STEP 2
+  # Are there variables in the the GlobalEnv that need to be copied
+  # into the Expected Env?  If so, copy those variables.
   cp_vars <- ps_get_all_cp_vars()
   for (v in cp_vars) {
     cp_var_to_envir(v, get(v, envir = .GlobalEnv))
   }
 
+  # STEP 3
+  # Evaluate the expected code.
   expected_vars <- eval_code_expected(ps_get_all_expected_code(), FALSE)
   if (is.null(expected_vars)) {
     stop("check_answers: expected_vars: Internal Error: Likely R syntax error in expected code.")
   }
 
-  # Parse the learner's code and extract all variables and assignment operators
+  # STEP 4
+  # Parse the learner's code and extract all variables and assignment
+  # operators. Update the practice set with this code.
   tryCatch(
     expr = {
       learner_assign_ops <- ast_get_assignments(parse(text = learner_code))
@@ -690,8 +698,10 @@ check_answers <- function(learner_code) {
     ps_update_learner_answer(t$lhs, paste0(t$lhs, "<-", flatten))
   }
 
-  # Get all of the variable names that need to be checked for correctness
-  # var_names <- ps_get_live_var_names()
+  #STEP 5
+  # Get all of the variable names that need to be checked for correctness.
+  # Check if the equivalent variables hold the same values in the Global
+  # and Expected environments.
   var_names <- ps_get_all_assignment_vars()
 
   # No variables initialized - so we are done
