@@ -19,7 +19,7 @@
 #' `data`. It is highly recommended that your working directory  be:
 #'    ~/Documents/info201
 #'
-#' So, you should save the file here, so that it is located here:
+#' So, you should save the file here:
 #'    ~/Documents/info201/data/gates_money.csv
 #'
 #' Use a spreadsheet or text editor and double-check that the file
@@ -43,15 +43,15 @@
 
 #' @id ?
 #' @msg
-#' Use the `read.csv()` and your variable, `fn_path`,
-#' read the data:
+#' Use the `read.csv()` function and your variable, `fn_path`,
+#' to read this data set
 #'    `data/gates_money.csv`
 #' Assign the data into a variable called `grants`.
 #'
 #' Note: Do NOT treat strings as factors.
 #' @end
 #' @code
-grants <- read.csv(my_path_name, stringsAsFactors = FALSE)
+grants <- read.csv(fn_path, stringsAsFactors = FALSE)
 #' @end
 
 #' @id -
@@ -82,7 +82,7 @@ is_vector <- is.vector(organization)
 #' @id -
 #' @msg
 #' Now that the data set as been loaded in the variable, `grants`, you can
-#' ask some questions.
+#' write code to answer questions.
 #' @end
 
 #' @id ?
