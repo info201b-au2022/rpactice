@@ -22,9 +22,10 @@ data("USPersonalExpenditure")
 #' @id ?
 #' @msg
 #' The variable `USPersonalExpenditure` is now accessible to you. Unfortunately,
-#' it's not a dataframe (it's actually a data type called a matrix). Using the
-#' function `is.data.frame()` check if `USPersonalExpenditure` is a data frame.
-#' Test this using the `is.data.frame()` function
+#' it's not a dataframe (it's actually a data type called a matrix).
+#'
+#' Using the function `is.data.frame()` check if `USPersonalExpenditure` is a
+#' data frame.
 #' @end
 #' @code
 is_var_a_dataframe <- is.data.frame(USPersonalExpenditure)
@@ -33,8 +34,9 @@ is_var_a_dataframe <- is.data.frame(USPersonalExpenditure)
 #' @id ?
 #' @msg
 #' Luckily, you can pass the USPersonalExpenditure variable as an argument to the
-#' `data.frame()` function to convert it a data farm. Do this, storing the
-#' result in a new variable, named `us_exp`.
+#' `data.frame()` function to convert it a dataframe.
+#'
+#' Do this, storing the result in a new variable, named `us_exp`.
 #' @end
 #' @code
 us_exp <- data.frame(USPersonalExpenditure)
@@ -99,6 +101,7 @@ highest_1960 <- us_exp$category[us_exp$X1960 == max(us_exp$X1960)]
 #' Define a function `lowest_category` that takes in a year as a parameter, and
 #' returns the lowest spending category of that year.
 #' @end
+#' @check list(arg1=c(1940,1955))
 #' @code
 lowest_category <- function(year) {
   col <- paste0("X", year)

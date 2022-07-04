@@ -6,7 +6,6 @@
 #' @end
 #' @initial-vars
 X <- c(1,2,3)
-L <- list(a="aa", b="bb")
 #' @end
 
 #' @id ?
@@ -15,20 +14,22 @@ L <- list(a="aa", b="bb")
 t <- 2
 #' @end
 
-#' @id -
+#' @id ?
 #' @msg
-#' Change the attributes for the list, L, so that a is "aaaa" and b is "bbbb"
+#' How old are you?
 #' @end
-#' @code
-L$a <- "aaaa"
-L[[2]] <- "bbbb"
+#' @cp-var u
+#'
+#' @id ?
+#' @msg
+#' Give a constant
 #' @end
+#' @cp-var C
 
 #' @id ?
 #' @msg
 #' To check the result, assign L to L1
 #' @end
-#' @var L1
 #' @code
-L1 <- L
+T <- C * u
 #' @end

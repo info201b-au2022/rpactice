@@ -44,9 +44,9 @@ ps_load_internal_ps <- function() {
 
   ps_add(load_ps("DS-10-1.R")) # Creating data frames
   ps_add(load_ps("DS-10-2.R")) # Working with data frames
-  # ps_add(load_ps("DS-10-3.R")) # Working with built-in data sets
-  # ps_add(load_ps("DS-10-4.R")) # External data sets: Gates Foundation Educational Grants
-  # ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
+  ps_add(load_ps("DS-10-3.R")) # Working with built-in data sets
+  ps_add(load_ps("DS-10-4.R")) # External data sets: Gates Foundation Educational Grants
+  ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
 
   # Test cases
   ps_add(load_ps("T00.R")) # Supreme simplicity - helpful for debuggin
@@ -172,8 +172,6 @@ ps_ui_get_titles <- function() {
   return(t)
 }
 
-
-
 # Expression evaluation ----
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
@@ -187,7 +185,6 @@ get_all_var_info <- function(envir_id) {
   }
 
   all <- ls(envir = env_name)
-
   var_info <- list()
 
   for (k in 1:length(all)) {
@@ -211,15 +208,17 @@ eval_code <- function(code, envir_id = 1, clear_first = TRUE) {
     env_name <- pkg.expected_env
   }
 
-  all <- ls(envir = env_name)
-  rm(list = all, envir = env_name)
+  if (clear_first == TRUE) {
+    rm(list=ls(envir=env_name), envir = env_name)
+  }
 
   tryCatch(
     expr = {
       val <- eval(parse(text = code), envir = env_name)
       return(get_all_var_info(envir_id))
     }, error = function(e) {
-      return(NULL)
+      message(e)
+      return(e)
     }
   )
 }
@@ -244,6 +243,11 @@ get_var_info <- function(var, envir_id = 1) {
   }
   return(new_info)
 }
+
+cp_var_to_envir <- function(var_name, value) {
+  pkg.expected_env[[var_name]] <- value
+}
+
 
 ## Wrapper functions ----
 # Wrapper functions for accessing the global (learner) and
@@ -653,7 +657,14 @@ check_answers <- function(learner_code) {
     practice_result <- result_update(practice_result, -1, FALSE, t)
     return(practice_result)
   }
-  expected_vars <- eval_code_expected(ps_get_all_expected_code())
+
+  # Copy the variables from the GlobalEnv to the Expected Environment
+  cp_vars <- ps_get_all_cp_vars()
+  for (v in cp_vars) {
+    cp_var_to_envir(v, get(v, envir = .GlobalEnv))
+  }
+
+  expected_vars <- eval_code_expected(ps_get_all_expected_code(), FALSE)
   if (is.null(expected_vars)) {
     stop("check_answers: expected_vars: Internal Error: Likely R syntax error in expected code.")
   }
@@ -860,6 +871,18 @@ ps_get_all_assignment_vars <- function() {
   return(vars)
 }
 
+ps_get_all_cp_vars <- function(flag = TRUE) {
+  ps <- ps_get_current()
+  vars <- c()
+  for (t in ps$task_list) {
+    if (t$copy_var == flag) {
+      vars <- append(vars, t$assignment_var)
+    }
+  }
+  return(vars)
+}
+
+
 # Determine the assignment variables that a learner has initialized
 # var_names <- ls(envir = globalenv(), pattern = "^t_..$")
 ps_get_live_var_names <- function() {
@@ -924,10 +947,10 @@ ps_get_all_expected_code <- function() {
     code <- append(code, ps$ps_initial_vars[k])
   }
   for (task in ps$task_list) {
-    code <- append(code, task$expected_answer)
+    if (task$copy_var == FALSE) {
+      code <- append(code, task$expected_answer)
+    }
   }
-  results <- eval_code_expected(t)
-
   return(code)
 }
 
@@ -999,10 +1022,10 @@ all_prompt_ids <- function() {
   l <- c()
   k <- 0
   for (k in 1:length(ps$task_list)) {
-      if (ps$task_list[[k]]$is_note_msg == FALSE) {
-        l <- append(l, k)
-      }
+    if (ps$task_list[[k]]$is_note_msg == FALSE) {
+      l <- append(l, k)
     }
+  }
   return(l)
 }
 

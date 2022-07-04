@@ -76,16 +76,22 @@ get_var_lhs <- function(s) {
 #----------------------------------------------------------------------------#
 # Helper function to update the practice set data structure
 #----------------------------------------------------------------------------#
-update_list <- function(prompts, id, msg, var, check, code, h) {
+update_list <- function(prompts, id, msg, var, cp_var, check, code, h) {
+  t_var <- var
+  t_cp_var <- FALSE
 
-  # Turn var and assignment_var into a vector
+  if (cp_var != "") {
+    t_var <- cp_var
+    t_cp_var <- TRUE
+  }
 
   new_prompt <- list(task = list(
     prompt_id = id,
     is_note_msg = FALSE,
     prompt_msg = msg,
-    assignment_var = var,
+    assignment_var = t_var,
     checks_for_f = check,
+    copy_var = t_cp_var,
     expected_answer = code,
     learner_answer = NULL,
     hints = h
@@ -110,6 +116,7 @@ update_list <- function(prompts, id, msg, var, check, code, h) {
 #        is_note_msg = <boolean>
 #        prompt_msg = <string>
 #        assignment_var = <string>
+#        copy_var <string>
 #        expected_answer = c(<string>, <string>, ...) // lines of code
 #        learner_answer = NULL  // during checking, filled in with lines of code
 #        hints = c(<string>, <string>, ...)   // list of hints
@@ -133,6 +140,7 @@ parse_ps <- function(t, silient = TRUE) {
   id <- -1
   msg <- ""
   var <- ""
+  cp_var <- ""
   check <- ""
   code <- c()
   hints <- c()
@@ -221,10 +229,11 @@ parse_ps <- function(t, silient = TRUE) {
 
       # For the second or more ID update the prompts list structure
       if (first_id == TRUE) {
-        prompts <- update_list(prompts, id, msg, var, check, code, hints)
+        prompts <- update_list(prompts, id, msg, var, cp_var, check, code, hints)
         id <- ""
         msg <- ""
         var <- ""
+        cp_var <- ""
         check <- ""
         code <- c()
         hints <- c()
@@ -262,7 +271,8 @@ parse_ps <- function(t, silient = TRUE) {
         if (str_detect(t[k], "^#' @code") ||
           str_detect(t[k], "^#' @id") ||
           str_detect(t[k], "^#' @check") ||
-          str_detect(t[k], "^#' @var")) {
+          str_detect(t[k], "^#' @var") ||
+          str_detect(t[k], "^#' @cp-var")) {
           k <- k - 1 # push the line back, so we can process this chunk on the next loop
           break
         }
@@ -275,6 +285,13 @@ parse_ps <- function(t, silient = TRUE) {
       var <- str_trim(str_sub(t[k], 8, str_length(t[k])))
       if (!silient) {
         print(paste0("var: ", var))
+      }
+
+      # Found the name cp-var
+    } else if (str_detect(t[k], "#' @cp-var")) {
+      cp_var <- str_trim(str_sub(t[k], 11, str_length(t[k])))
+      if (!silient) {
+        print(paste0("cp-var: ", cp_var))
       }
 
       # Found the check information
@@ -328,7 +345,7 @@ parse_ps <- function(t, silient = TRUE) {
   }
 
   if (id != "") {
-    prompts <- update_list(prompts, id, msg, var, check, code, hints)
+    prompts <- update_list(prompts, id, msg, var, cp_var, check, code, hints)
     ps$task_list <- prompts
   }
 
@@ -413,31 +430,84 @@ check_file_integrity <- function(filename, silient = FALSE, detailed = FALSE) {
 }
 
 check_test_code <- function(ps) {
+  # Basic information on the prompts, variables, and code
+  cat("\nI. Variable information for each prompt ('\\n' collapsed to ';'):\n", sep = "")
+  t <- sprintf("%6s\t%-20s\t%5s\t%-78s\n", "Prompt", "Variable Name", "Copy?", "Code")
+  cat(t)
+
+  for (task in ps$task_list) {
+    a <- paste0(task$expected_answer, collapse = ";")
+    if (nchar(a) > 74) {
+      a <- str_sub(a, 1, 74)
+      a <- paste0(a, " ...")
+    }
+    t <- sprintf("%6s\t%20s\t%5s\t%-78s\n", task$prompt_id, task$assignment_var, task$copy_var, a)
+    cat(t)
+  }
+  cat("\n")
+
+  # The initial variables
+  code <- c()
+  for (k in 1:length(ps$ps_initial_vars)) {
+    code <- append(code, ps$ps_initial_vars[k])
+  }
+  cat("II. Initial Variables:\n   ")
+  t <- paste0(ps$ps_initial_vars, collapse = "\n   ")
+  cat(t)
+
+  # The variables to copy, if any
+  v <- c()
+  for (task in ps$task_list) {
+    if (task$copy_var == TRUE) {
+      v <- append(v, task$assignment_var)
+    }
+  }
+  cat("\n\nIII. Variables to copy:\n   ")
+  if (length(v) > 0) {
+    t <- paste0(v, collapse = "\n   ")
+  } else {
+    t <- "None."
+  }
+  cat(t)
+
+  cat("\n",
+    "\nIV. Code (for easy copy-and-paste)\n",
+    sep = ""
+  )
   code <- c()
   for (k in 1:length(ps$ps_initial_vars)) {
     code <- append(code, ps$ps_initial_vars[k])
   }
   for (task in ps$task_list) {
-    code <- append(code, task$expected_answer)
+    if (task$copy_var == FALSE) {
+      code <- append(code, task$expected_answer)
+    }
   }
 
-  cat("\n",
-      "Code:", sep="")
   for (c in code) {
-    cat(c, "\n", sep="")
+    cat(c, "\n", sep = "")
   }
 
-  results <- eval_code_expected(code)
-  cat("\n",
-      "Environment: pkg.expected_env\n", sep="")
-  cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))
-  if(!is.null(results)) {
-    for (r in results) {
-      out <- sprintf("%-20s %-10s %-60s\n", r$vname, r$vtype , r$vstr)
-      cat(out)
+  # If possible try running the code (currently, if
+  # are variables to copy we can't runn the code because
+  # there values are undefined.
+  if (length(v) == 0) {
+    results <- eval_code_expected(code)
+    cat("\n",
+      "V. Environment: pkg.expected_env\n",
+      sep = ""
+    )
+    cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))
+    if (!is.null(results)) {
+      for (r in results) {
+        out <- sprintf("%-20s %-10s %-60s\n", r$vname, r$vtype, r$vstr)
+        cat(out)
+      }
+    } else {
+      stop("admin.run(): eval_code_expected FAILED.\n")
     }
   } else {
-    stop("admin.run(): eval_code_expected FAILED")
+    cat("\nV. Did not evaluate code - because there are variables to copy.\n")
   }
 }
 
@@ -502,6 +572,9 @@ check_tags <- function(t, silient = FALSE, detailed = FALSE) {
         next
       }
       if (str_detect(t[k], "^#' @var ")) {
+        next
+      }
+      if (str_detect(t[k], "^#' @cp-var ")) {
         next
       }
       if (str_detect(t[k], "^#' @version ")) {

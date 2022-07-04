@@ -9,41 +9,51 @@
 #'
 #' @id -
 #' @msg
-#' To work on this practice set, you need to download the file
-#' `data/gates_money.csv`, which is located in this GitHub directory:
+#' To work on this practice set, you need to download the file:
+#'    `gates_money.csv`
+#'
+#' The file located in this GitHub directory:
 #'    https://github.com/programming-for-data-science/book-exercises/tree/master/chapter-10-exercises/exercise-4/data
 #'
-#' Save this file in your working directory, under the directory `data`:
-#'    data/gates_money.csv
+#' Save this file in your working directory, under the directory
+#' `data`. Generally, your working directory should be:
+#'    ~/Documents/info201
+#'
+#' So, generally, the file should be located here:
+#'    ~/Documents/info201/data/gates_money.csv
 #'
 #' Recall that you can check and set your working directory with
 #' RStudio and with these commands:
 #'    > ?getwd()
 #'    > ?setwd()
 #' @end
-#' @code
-grants <- read.csv("data/gates_money.csv", stringsAsFactors = FALSE)
+#'
+#' @id ?
+#' @msg
+#' Assign the path name to your file in the variable `my_path_name`. As
+#' described in the previous note, your path should look like this:
+#'    my_path_name <- "~/Documents/info201/data/gates_money.csv"
 #' @end
+#' @cp-var my_path_name
 
 #' @id ?
 #' @msg
-#' Use the `read.csv()` function to read the data this file:
+#' Use the `read.csv()` and your variable, `my_path_name`,
+#' read the data:
 #'    `data/gates_money.csv`
 #' Put the data into a variable called `grants`.
 #'
-#' Notes: (1) Be sure to set your working directory in RStudio; and
-#' (2) Do NOT treat strings as factors.
+#' Note: Do NOT treat strings as factors.
 #' @end
 #' @code
-grants <- read.csv("data/gates_money.csv", stringsAsFactors = FALSE)
+grants <- read.csv(my_path_name, stringsAsFactors = FALSE)
 #' @end
 
 #' @id -
 #' @msg
-#' Use the View function to look at the loaded data.
-#' @end
-#' @code
-View(grants)
+#' Use the View function to look at the loaded data. From the RStudio
+#' console type:
+#'    View(grants)
 #' @end
 
 #' @id ?
@@ -70,7 +80,7 @@ is_vector <- is.vector(organization)
 #' ask some questions.
 #' @end
 
-#' @id -
+#' @id ?
 #' @msg
 #' What was the mean dollar amount of all grants?
 #' @end

@@ -174,7 +174,31 @@ admin.run <- function(short) {
   t <- ps_get_all_expected_code()
   for (k in 1:length(t)) {
     # cat("[", k, "] ", t[k], "\n", sep = "")
-    cat(t[k], "\n", sep = "")
+    cat("   ", t[k], "\n", sep = "")
+  }
+
+  v <- ps_get_all_cp_vars()
+  if (length(v) > 0) {
+    cat(
+      "Variables to copy: \n",
+      sep = ""
+    )
+    cp_vars <- ps_get_all_cp_vars()
+    for (k in 1:length(cp_vars)) {
+      cat("   ", cp_vars[k], "\n", sep = "")
+    }
+
+    # eval_code_expected("t<-1",TRUE)
+    # cat(">>> ", ls(envir=pkg.expected_env))
+    # pkg.expected_env[[cp_vars[1]]] <- a1
+    # pkg.expected_env[[cp_vars[2]]] <- a2
+    # cat(">>> ", ls(envir=pkg.expected_env))
+
+  } else {
+    cat(
+      "Variables to copy: None.\n",
+      sep = ""
+    )
   }
 
   # Evaluate the code and show the variables and values
@@ -184,7 +208,8 @@ admin.run <- function(short) {
   )
   cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))
 
-  results <- eval_code_expected(t)
+  results <- eval_code_expected(t,FALSE)
+  print(results)
   if (!is.null(results)) {
     for (r in results) {
       out <- sprintf("%-20s %-10s %-60s\n", r$vname, r$vtype, r$vstr)
@@ -307,21 +332,25 @@ admin.grade <- function(filename) {
   }
 
   # Build output for an index.html file
-  out <- paste0("<!DOCTYPE html>\n",
-         "<html>\n",
-         "<head></head>\n",
-         "<body>\n",
-         "<pre>\n",
-         paste0("admin.grade()\n",
-         "Date:        ", date(), "\n",
-         "Assignments: ", dir, "\n",
-         "Results:     ", results_dir, "\n"),
-         "</pre>\n",
-         "<pre>\n",
-         out,
-         "</pre>\n",
-         "</body>\n",
-         "</html>")
+  out <- paste0(
+    "<!DOCTYPE html>\n",
+    "<html>\n",
+    "<head></head>\n",
+    "<body>\n",
+    "<pre>\n",
+    paste0(
+      "admin.grade()\n",
+      "Date:        ", date(), "\n",
+      "Assignments: ", dir, "\n",
+      "Results:     ", results_dir, "\n"
+    ),
+    "</pre>\n",
+    "<pre>\n",
+    out,
+    "</pre>\n",
+    "</body>\n",
+    "</html>"
+  )
 
   # Save index.html file
   index_fn <- paste0(dir, "/", cResultsDir, "/", "index.html")
@@ -384,7 +413,7 @@ admin.grade_ui_file <- function() {
 #' practice set.  Practically, this function helps you
 #' to debug your practice set.
 #'
-#'@param short the unique identifier for a practice set
+#' @param short the unique identifier for a practice set
 #'
 #' @export
 admin.create_answers <- function(short) {

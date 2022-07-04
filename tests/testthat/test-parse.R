@@ -966,3 +966,50 @@ test_that("parse_ps - @check input for functions", {
   expect_equal(ps$task_list[[1]]$assignment_var,"t01")
   expect_equal(ps$task_list[[2]]$assignment_var,"squared")
 })
+
+s <-
+  "
+#' @version ps-1
+#' @short T03
+#' @title Test cases: Functions
+#' @descr
+#' @end
+#' @initial-vars
+g <- function(x) {return(x+1)}
+#' @end
+
+#' @id ?
+#' @msg Call function that is pre-installed
+#' @cp-var t01
+
+#' @id ?
+#' @msg Call function that is pre-installed
+#' @cp-var t02
+#' @code
+t02 <- g(10)  #A: 11
+#' @end
+
+#' @id ?
+#' @msg Create a function that squares a number
+#' @var squared
+#' @code
+squared <- function(x) {
+  xx <- x^2
+  return(t)
+}
+#' @end
+"
+
+t <- str_split(s,"\n")
+ps <- parse_ps(t[[1]])
+ps <- check_ps(ps)
+
+test_that("parse_ps - @check input for functions", {
+  expect_equal(ps$task_list[[1]]$assignment_var,"t01")
+  expect_equal(ps$task_list[[2]]$assignment_var,"t02")
+  expect_equal(ps$task_list[[3]]$assignment_var,"squared")
+
+  expect_equal(ps$task_list[[1]]$copy_var,TRUE)
+  expect_equal(ps$task_list[[2]]$copy_var,TRUE)
+  expect_equal(ps$task_list[[3]]$copy_var,FALSE)
+})

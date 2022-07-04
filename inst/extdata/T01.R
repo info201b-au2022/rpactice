@@ -36,7 +36,6 @@ t02 <- {
 
 #' @id ?
 #' @msg Semi-colon  (explicit variable)
-#' @var
 #' @code
 t03a <- t01 + 100; t03 <- t03a - 100
 #' @end
@@ -66,9 +65,9 @@ t06 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
 t07 <- (f(10) == 11) # TRUE
 #' @end
 
-#' @id
+#' @id ?
 #' @msg
-#' Assign several variables and check the last variable - e.g.,
+#' Assign several variables and check a particular variable (z)
 #'   x <- 1
 #'   y <- x + 1
 #'   z <- y + 1
@@ -83,7 +82,7 @@ w <- -10
 
 #' @id -
 #' @msg
-#' Various forms of assignment operations. Curently, only ONE level of nested structure
+#' Various forms of assignment operations. Currently, only ONE level of nested structure
 #' works.  For example, these structures will fail:
 #'     t$x$y <- blah
 #'     t[[a]][[b]] <- blah
@@ -125,3 +124,43 @@ meals1$a <- "aaaaaaaaa"
 #' @code
 meals2[[2]] <- 'bbbbbbbbbb'
 #' @end
+#'
+#' @id ?
+#' @msg
+#' Learners can initialize their own variables, which are, in turn,
+#' used during evaluation. For example, what is your age?
+#' @end
+#' @cp-var your_age
+
+#' @id ?
+#' @msg
+#' Write equation that computes the number of years until you turn
+#' 100 years old.
+#' @end
+#' @code
+years_to_100 <- 100 - your_age
+#' @end
+
+#' @id ?
+#' @msg
+#' What is the path to a `.cvs` file?
+#' @end
+#' @cp-var file_path
+#' @code
+file_path <- "[unknown]"
+#' @end
+
+#' @id ?
+#' @msg
+#' Load the data into dataframe, named `df`.
+#' @end
+#' @cp-var df
+#' @code
+df <- NULL
+#' @end
+
+#' @id -
+#' @msg
+#' A final message
+#' @end
+
