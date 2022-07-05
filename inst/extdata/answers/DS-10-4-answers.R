@@ -37,7 +37,7 @@ practice.begin("DS-10-4", learner="[your name]", uwnetid="[your UW NetId]")
 # a: Assign the path name to your file in the variable `fn_path`. As
 #    described in the previous note, your path should look something
 #    like this:
-fn_path <- "~/Documents/_Code2/info201/data/gates_money.csv"
+fn_path <- "~/Documents/_Code2/info201/data/female_names.csv"
 
 # b: Use the `read.csv()` and your variable, `fn_path`,
 #    read the data:

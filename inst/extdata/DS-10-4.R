@@ -12,17 +12,17 @@
 #' To work on this practice set, you need to download the file:
 #'    `gates_money.csv`
 #'
-#' The file is located in this GitHub directory:
+#' This file is located in this GitHub directory:
 #'    https://github.com/programming-for-data-science/book-exercises/tree/master/chapter-10-exercises/exercise-4/data
 #'
-#' Save this file in your working directory, under the directory
-#' `data`. It is highly recommended that your working directory  be:
+#' Save `gates_money.csv` in your working directory, under the directory
+#' `data`. Your working directory should be:
 #'    ~/Documents/info201
 #'
 #' So, you should save the file here:
 #'    ~/Documents/info201/data/gates_money.csv
 #'
-#' Use a spreadsheet or text editor and double-check that the file
+#' Hint: Use a spreadsheet or text editor and double-check that the file
 #' is located in this directory. This is always a good practice
 #' when downloading a data set.
 #'

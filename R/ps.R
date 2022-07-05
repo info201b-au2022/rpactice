@@ -56,6 +56,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("T04.R")) # Vectors
   ps_add(load_ps("T05.R")) # Functions
   ps_add(load_ps("T06.R")) # Dataframes
+  ps_add(load_ps("T07.R")) # Files
   # ps_add(load_ps("T10.R")) # Issues, bugs, etc.
 
   # Problem sets   - Additional examples
