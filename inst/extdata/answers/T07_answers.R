@@ -13,7 +13,9 @@ practice.begin("T07", learner="[your name]", uwnetid="[your UW NetId]")
 
 
 # a: Assign your name to the variable my_name (Variable: fn_path)
-fn_path <- "~/Documents/_Code2/info201/data/female_names.csv"
+fn_path <- "~/Documents/_Code2/info201/data/gate_money.csv"
+
+a <- 1 +_+ 4
 
 # b: Read the df (Variable: df)
 df <- read.csv(fn_path)

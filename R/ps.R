@@ -9,6 +9,7 @@ pkg.globals$gTO_CONSOLE <- FALSE
 pkg.globals$gUSER_NAME <- ""
 pkg.globals$gUWNETID <- ""
 
+pkg.learner_env <- new.env()
 pkg.expected_env <- new.env()
 
 ## Constants ----
@@ -179,13 +180,28 @@ ps_ui_get_titles <- function() {
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
 #----------------------------------------------------------------------------#
+get_envir <- function(id) {
+  # The learner variable space
+  if (id == 1) {
+    return(pkg.learner_env)
+  }
+  # The expected variable space
+  else if (id == 2) {
+    return (pkg.expected_env)
+  }
+  # The global variable space (parent for pkg.learner_env and pkg.expected_env)
+  else if (id == 3) {
+    return (.GlobalEnv)
+  }
+  else {
+    stop("Internal error: get_envir(id): Erroneous id")
+  }
+}
+
 # This function returns a list information about the variables that have
 # been initialized in one of two environments (global or expected)
 get_all_var_info <- function(envir_id) {
-  env_name <- .GlobalEnv
-  if (envir_id == 2) {
-    env_name <- pkg.expected_env
-  }
+  env_name <- get_envir(envir_id)
 
   all <- ls(envir = env_name)
   var_info <- list()
@@ -208,11 +224,8 @@ get_all_var_info <- function(envir_id) {
 # This function runs a block of code in one of either two environments.
 # It returns the results as a list of variables and basic information
 # for each variable
-eval_code <- function(code, envir_id = 1, clear_first = TRUE) {
-  env_name <- .GlobalEnv
-  if (envir_id == 2) {
-    env_name <- pkg.expected_env
-  }
+eval_code <- function(code, envir_id, clear_first = TRUE) {
+  env_name <- get_envir(envir_id)
 
   if (clear_first == TRUE) {
     rm(list = ls(envir = env_name), envir = env_name)
@@ -232,11 +245,9 @@ eval_code <- function(code, envir_id = 1, clear_first = TRUE) {
 # This function looks for a variable in one of two environments,
 # global or expected, and returns basic information about that
 # variable.
-get_var_info <- function(var, envir_id = 1) {
-  env_name <- .GlobalEnv
-  if (envir_id == 2) {
-    env_name <- pkg.expected_env
-  }
+get_var_info <- function(var, envir_id) {
+  env_name <- get_envir(envir_id)
+
   new_info <- NULL
   if (exists(var, envir = env_name)) {
     val <- get(var, envir = env_name)
@@ -681,6 +692,9 @@ check_answers <- function(learner_code) {
     incorrect_v = c(),
     message_list = list()
   )
+
+  # STEP 0
+  # Initialize the xxx variables
 
   # STEP 1
   # Evaluate the learner's code and the expected code in two different
