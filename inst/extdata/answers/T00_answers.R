@@ -13,5 +13,3 @@ practice.begin("T00", learner="[your name]", uwnetid="[your UW NetId]")
 
 # a: What is 1 + 1 (Variable: t)
 t <- 2
-
-

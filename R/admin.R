@@ -166,17 +166,40 @@ admin.run <- function(short) {
   cat("\014admin.run()\n")
   cat(
     "Short ID: ", short,
-    "\n", "Code:\n",
     sep = ""
   )
 
-  # Show the expected code for this practice set
-  t <- ps_get_all_expected_code()
-  for (k in 1:length(t)) {
-    # cat("[", k, "] ", t[k], "\n", sep = "")
-    cat("   ", t[k], "\n", sep = "")
+  # Clear the environments
+  clear_all_envirs()
+
+  # Initialize the pre-set variables
+  initialize_static_vars()
+
+  # Show the preset variables
+  preset_vars <- ps_get_env_vars()
+  cat("Preset Variables:\n")
+  if (length(preset_vars) > 0) {
+    for (k in 1:length(preset_vars)) {
+      cat("   ", preset_vars[k], "\n", sep = "")
+    }
+  } else {
+    cat("   None.\n")
   }
 
+  # Show the expected code for this practice set
+  t <- ps_get_all_expected_code()
+  if (length(t) > 0) {
+    cat("\nCode:\n")
+    for (k in 1:length(t)) {
+      # cat("[", k, "] ", t[k], "\n", sep = "")
+      cat("   ", t[k], "\n", sep = "")
+    }
+  } else {
+    cat("   None.\n")
+  }
+
+  # Show the "copy" variables (variables to copy from learner's
+  # code environment to expected code environment)
   v <- ps_get_all_cp_vars()
   if (length(v) > 0) {
     cat(
@@ -187,16 +210,9 @@ admin.run <- function(short) {
     for (k in 1:length(cp_vars)) {
       cat("   ", cp_vars[k], "\n", sep = "")
     }
-
-    # eval_code_expected("t<-1",TRUE)
-    # cat(">>> ", ls(envir=pkg.expected_env))
-    # pkg.expected_env[[cp_vars[1]]] <- a1
-    # pkg.expected_env[[cp_vars[2]]] <- a2
-    # cat(">>> ", ls(envir=pkg.expected_env))
-
   } else {
     cat(
-      "Variables to copy: None.\n",
+      "Variables to copy:\n   None.\n",
       sep = ""
     )
   }
@@ -208,8 +224,7 @@ admin.run <- function(short) {
   )
   cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))
 
-  results <- eval_code_expected(t,FALSE)
-  print(results)
+  results <- eval_code_expected(t, FALSE)
   if (!is.null(results)) {
     for (r in results) {
       out <- sprintf("%-20s %-10s %-60s\n", r$vname, r$vtype, r$vstr)

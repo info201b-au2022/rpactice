@@ -14,15 +14,4 @@ X <- c(1,2,3)
 t <- 2
 #' @end
 
-#' @id ?
-#' @msg What is 1 + 1
-#' @code
-t <- 2
-#' @end
-
-#' @id ?
-#' @msg What is 1 + 1
-#' @code
-t <- 2
-#' @end
 

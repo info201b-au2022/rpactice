@@ -203,9 +203,15 @@ clear_all_envirs <- function() {
 }
 
 print_all_envirs <- function() {
-  rlang::env_print(get_envir(1))
-  rlang::env_print(get_envir(2))
-  rlang::env_print(get_envir(3))
+  cat("learner envir: ")
+  cat(paste0(names(get_envir(1)), collapse = " - "))
+  cat("\n")
+  cat("expected envir: ")
+  cat(paste0(names(get_envir(2)), collapse = " - "))
+  cat("\n")
+  cat(".GlobalEnv envir: ")
+  cat(paste0(names(get_envir(3)), collapse = " - "))
+  cat("\n")
 }
 
 # This function returns a list information about the variables that have
@@ -218,14 +224,14 @@ get_all_var_info <- function(envir_id) {
   e1 <- names(env_name)
   if (length(e1) > 0) {
     for (v in e1) {
-      var_list <- append(var_list, get_var_info(v, env_name))
+      var_list <- append(var_list, get_var_info(v, envir_id))
     }
   }
 
   e2 <- names(.GlobalEnv)
   if (length(e2) > 0) {
     for (v in e2) {
-      var_list <- append(var_list, get_var_info(v, env_name))
+      var_list <- append(var_list, get_var_info(v, 3))
     }
   }
 
@@ -589,8 +595,8 @@ DEFAULT_Check <- function(var_name, result) {
 
     # A function with ZERO parameters
     if (num_args == 0) {
-      learner_f_answers <- do.call(Li$vname, list())
-      expected_f_answers <- do.call(Ei$vname, list())
+      learner_f_answers <- do.call(Li$vname, list(), envir=get_envir(1))
+      expected_f_answers <- do.call(Ei$vname, list(), envir=get_envir(2))
 
       if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
@@ -612,8 +618,8 @@ DEFAULT_Check <- function(var_name, result) {
       }
 
       for (k in 1:length(checks)) {
-        t1 <- do.call(Li$vname, list(checks[k]))
-        t2 <- do.call(Ei$vname, list(checks[k]))
+        t1 <- do.call(Li$vname, list(checks[k]), envir=get_envir(1))
+        t2 <- do.call(Ei$vname, list(checks[k]), envir=get_envir(2))
         learner_answers <- append(learner_answers, t1)
         expected_answers <- append(expected_answers, t2)
       }
@@ -646,8 +652,8 @@ DEFAULT_Check <- function(var_name, result) {
 
       for (j in 1:length(checks_arg1)) {
         for (k in 1:length(checks_arg2)) {
-          t1 <- do.call(Li$vname, list(checks_arg1[j], checks_arg2[k]))
-          t2 <- do.call(Ei$vname, list(checks_arg1[j], checks_arg2[k]))
+          t1 <- do.call(Li$vname, list(checks_arg1[j], checks_arg2[k]), envir=get_envir(1))
+          t2 <- do.call(Ei$vname, list(checks_arg1[j], checks_arg2[k]), envir=get_envir(2))
           learner_answers <- append(learner_answers, t1)
           expected_answers <- append(expected_answers, t2)
         }
@@ -728,9 +734,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   # STEP 0
   # Initialize the static variables
   initialize_static_vars()
-
-  names(.GlobalEnv)
-
+  print_all_envirs()
   print("Step 0 done.")
 
   # STEP 1
@@ -744,7 +748,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     return(practice_result)
   }
 
-  print("Step 0 done.")
+  print("Step 1 done.")
   print_all_envirs()
 
 
@@ -769,6 +773,8 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   if (is.null(expected_vars)) {
     stop("check_answers: expected_vars: Internal Error: Likely R syntax error in expected code.")
   }
+
+  cat(learner_code)
 
   # STEP 4
   # Parse the learner's code and extract all variables and assignment

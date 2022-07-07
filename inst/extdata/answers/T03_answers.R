@@ -7,7 +7,7 @@
 practice.begin("T03", learner="[your name]", uwnetid="[your UW NetId]")
 
 # Initial variables ----
-   X <- c(1,2,3)
+# X <- c(1,2,3)
 
 # Your 1 prompts: (a)-(a) ----
 

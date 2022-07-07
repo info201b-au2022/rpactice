@@ -94,7 +94,7 @@ num.P01_Check <- function(var_name, result) {
 #          (1) Revise the mark-up to allow two checking variables
 #          (2) Update the default call back to handle this case
 #
-h.T03_Check <- function(var_name, result) {
+h.T05_Check <- function(var_name, result) {
   internal_id <- ps_var_name_to_id(var_name)
 
   # Get the learner and expected variable information
@@ -115,8 +115,8 @@ h.T03_Check <- function(var_name, result) {
 
   if (learner_r$info$vtype == "closure") {
     for (k in 1:length(checks_precision)) {
-      t1 <- do.call(learner_r$info$vname, list(checks_arg1, checks_precision[k]))
-      t2 <- do.call(expected_r$info$vname, list(checks_arg1, checks_precision[k]))
+      t1 <- do.call(learner_r$info$vname, list(checks_arg1, checks_precision[k]), envir=get_envir(1))
+      t2 <- do.call(expected_r$info$vname, list(checks_arg1, checks_precision[k]), envir=get_envir(2))
 
       learner_answers <- append(learner_answers, t1)
       expected_answers <- append(expected_answers, t2)
@@ -165,8 +165,8 @@ word_bin.DS_07_3_Check <- function(var_name, result) {
 
     for (j in 1:length(bound1)) {
       for (k in 1:length(bound2)) {
-        t1 <- do.call(learner_r$info$vname, list(checks_arg1, bound1[j], bound2[k]))
-        t2 <- do.call(expected_r$info$vname, list(checks_arg1, bound1[j], bound2[k]))
+        t1 <- do.call(learner_r$info$vname, list(checks_arg1, bound1[j], bound2[k]), envir=get_envir(1))
+        t2 <- do.call(expected_r$info$vname, list(checks_arg1, bound1[j], bound2[k]), envir=get_envir(2))
 
         learner_answers <- append(learner_answers, t1)
         expected_answers <- append(expected_answers, t2)

@@ -7,8 +7,8 @@
 practice.begin("T01", learner="[your name]", uwnetid="[your UW NetId]")
 
 # Initial variables ----
-   X <- c(1,2,3)
-   f <- function(x) {return(x+1)}
+#   X <- c(1,2,3)
+#  f <- function(x) {return(x+1)}
 
 # Your 8 prompts: (a)-(h) ----
 
