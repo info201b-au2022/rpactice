@@ -6,19 +6,32 @@
 #' @end
 #' @initial-vars
 X <- c(1,2,3,4)
+Y <- c(4,3,2,1)
+Z <- 1:1000
+#' @end
+
+#' #' @id ?
+#' @msg Create a vector with four elements, 1-4
+#' @code
+t00 <- X * 2
 #' @end
 
 #' @id ?
 #' @msg Create a vector with four elements, 1-4
 #' @code
-t01 <- c(1,2,3,4)
+t01 <- c(1,2,3,4) + X + Y
 #' @end
 
 #' @id ?
 #' @msg A vector
-#' @var t02
 #' @code
-t02 <- round(seq(1:15)*pi,1)
+t02a <- round(Z*pi,1)
+#' @end
+
+#' @id ?
+#' @msg A vector
+#' @code
+t02b <- (sum(round(Z*pi,1) == round((1:1000)*pi,1)) == 1000)
 #' @end
 
 #' @id ?

@@ -9,13 +9,13 @@ practice.begin("T07", learner="[your name]", uwnetid="[your UW NetId]")
 # Your 3 prompts: (a)-(c) ----
 
 #                                         Note 01.
-#    Testing the use of the @cp-var tag
+#    Testing the use of the @cp-var tagr
 
 
 # a: Assign your name to the variable my_name (Variable: fn_path)
-fn_path <- "~/Documents/_Code2/info201/data/gate_money.csv"
+fn_path <- "~/Documents/_Code2/info201/data/gates_money.csv"
 
-a <- 1 +_+ 4
+a <- 1 + 4
 
 # b: Read the df (Variable: df)
 df <- read.csv(fn_path)

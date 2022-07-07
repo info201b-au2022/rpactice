@@ -145,13 +145,10 @@ ps_get_all <- function() {
 }
 
 # Get the practice set initial variables
-ps_get_env_vars <- function(short = "") {
-  if (short == "") {
-    ps <- ps_get_current()
-  } else {
-    ps <- ps_get_by_short(short)
-  }
-  return(ps$ps_initial_vars)
+ps_get_env_vars <- function() {
+  ps <- ps_get_current()
+  t <- ps$ps_initial_vars
+  return(t)
 }
 
 # Return a list of practice set titles and ids, suited
@@ -180,6 +177,7 @@ ps_ui_get_titles <- function() {
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
 #----------------------------------------------------------------------------#
+
 get_envir <- function(id) {
   # The learner variable space
   if (id == 1) {
@@ -187,15 +185,27 @@ get_envir <- function(id) {
   }
   # The expected variable space
   else if (id == 2) {
-    return (pkg.expected_env)
+    return(pkg.expected_env)
   }
   # The global variable space (parent for pkg.learner_env and pkg.expected_env)
   else if (id == 3) {
-    return (.GlobalEnv)
-  }
-  else {
+    return(.GlobalEnv)
+  } else {
     stop("Internal error: get_envir(id): Erroneous id")
   }
+}
+
+# Remove the variables from all three environments
+clear_all_envirs <- function() {
+  rm(list = ls(envir = get_envir(1)), envir = get_envir(1))
+  rm(list = ls(envir = get_envir(2)), envir = get_envir(2))
+  rm(list = ls(envir = get_envir(3)), envir = get_envir(3))
+}
+
+print_all_envirs <- function() {
+  rlang::env_print(get_envir(1))
+  rlang::env_print(get_envir(2))
+  rlang::env_print(get_envir(3))
 }
 
 # This function returns a list information about the variables that have
@@ -203,22 +213,23 @@ get_envir <- function(id) {
 get_all_var_info <- function(envir_id) {
   env_name <- get_envir(envir_id)
 
-  all <- ls(envir = env_name)
-  var_info <- list()
-  if (length(all) == 0) {
-    return(var_info)
+  var_list <- list()
+
+  e1 <- names(env_name)
+  if (length(e1) > 0) {
+    for (v in e1) {
+      var_list <- append(var_list, get_var_info(v, env_name))
+    }
   }
 
-  for (k in 1:length(all)) {
-    var <- all[k]
-    val <- get(var, envir = env_name)
-    t <- typeof(val)
-    s <- format_variable(val)
-
-    new_info <- list(info = list(vname = var, vval = val, vtype = t, vstr = s))
-    var_info <- append(var_info, new_info)
+  e2 <- names(.GlobalEnv)
+  if (length(e2) > 0) {
+    for (v in e2) {
+      var_list <- append(var_list, get_var_info(v, env_name))
+    }
   }
-  return(var_info)
+
+  return(var_list)
 }
 
 # This function runs a block of code in one of either two environments.
@@ -248,31 +259,45 @@ eval_code <- function(code, envir_id, clear_first = TRUE) {
 get_var_info <- function(var, envir_id) {
   env_name <- get_envir(envir_id)
 
-  new_info <- NULL
+  # Try to find the variable
+  val <- NULL
   if (exists(var, envir = env_name)) {
     val <- get(var, envir = env_name)
+  } else if (exists(var, envir = .GlobalEnv)) {
+    val <- get(var, envir = .GlobalEnv)
+  }
+
+  # If the variable was found, return basic information
+  if (!is.null(val)) {
     t <- typeof(val)
     if (is.data.frame(val)) {
       t <- "dataframe"
     }
     s <- format_variable(val)
     new_info <- list(info = list(vname = var, vval = val, vtype = t, vstr = s))
+    return(new_info)
+  } else {
+    return(NULL)
   }
-  return(new_info)
 }
 
 cp_var_to_envir <- function(var_name, value) {
   pkg.expected_env[[var_name]] <- value
 }
 
+initialize_static_vars <- function() {
+  lines_of_code <- paste0(ps_get_env_vars(), collapse = "\n")
+  return(eval_code(lines_of_code, 3, FALSE))
+}
+
 
 ## Wrapper functions ----
 # Wrapper functions for accessing the global (learner) and
 # expected environments.
-eval_code_global <- function(code, clear_first = TRUE) {
+eval_code_global <- function(code, clear_first = FALSE) {
   return(eval_code(code, 1, clear_first))
 }
-eval_code_expected <- function(code, clear_first = TRUE) {
+eval_code_expected <- function(code, clear_first = FALSE) {
   return(eval_code(code, 2, clear_first))
 }
 
@@ -294,7 +319,8 @@ get__all_expected_var_info <- function() {
 # Evaluates a block of code and returns some details about the result
 eval_string_details <- function(code, run_envir = NULL) {
   if (is.null(run_envir)) {
-    run_envir <- .GlobalEnv
+    # run_envir <- .GlobalEnv
+    run_envir <- pkg.expected_env
   }
 
   tryCatch(
@@ -434,7 +460,7 @@ ps_get_expected_answer <- function(id) {
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
 DEFAULT_Check <- function(var_name, result) {
-  cDEBUG <- FALSE
+  cDEBUG <- TRUE
 
   internal_id <- ps_var_name_to_id(var_name)
   learner_r <- get_global_var_info(var_name)
@@ -453,13 +479,13 @@ DEFAULT_Check <- function(var_name, result) {
   # results in both the learner and expected environments.
   if (is.null(learner_r) || is.null(expected_r)) {
     t <- ""
-    if (is.null(Li)) {
+    if (is.null(learner_r)) {
       t <- paste0(t, "[learner variable is null]")
     }
-    if (is.null(Ei)) {
+    if (is.null(expected_r)) {
       t <- paste0(t, "[expected variable is null]")
     }
-    t <- result_prompt_error(internal_id, paste0("Check: Internal error: ", t))
+    t <- result_prompt_error(internal_id, paste0("Check: Internal error: ", t, sep = ""))
     result <- result_update(result, -1, FALSE, t)
     stop(paste0("Check: Internal error:", t))
     # return(result)
@@ -681,7 +707,7 @@ DEFAULT_Check <- function(var_name, result) {
 #     )
 # )
 #----------------------------------------------------------------------------#
-check_answers <- function(learner_code) {
+check_answers <- function(learner_code, clear_all = TRUE) {
   practice_result <- list(
     user_name = pkg.globals$gUSER_NAME,
     uwnetid = pkg.globals$gUWNETID,
@@ -693,8 +719,19 @@ check_answers <- function(learner_code) {
     message_list = list()
   )
 
+  if (clear_all == TRUE) {
+    clear_all_envirs()
+  }
+
+  print("Top.")
+
   # STEP 0
-  # Initialize the xxx variables
+  # Initialize the static variables
+  initialize_static_vars()
+
+  names(.GlobalEnv)
+
+  print("Step 0 done.")
 
   # STEP 1
   # Evaluate the learner's code and the expected code in two different
@@ -707,8 +744,12 @@ check_answers <- function(learner_code) {
     return(practice_result)
   }
 
+  print("Step 0 done.")
+  print_all_envirs()
+
+
   # If the learner has done nothing (no learner variables), we are done
-  if (length(learner_vars)==0) {
+  if (length(learner_vars) == 0) {
     t <- result_prompt_error(-1, "Currently nothing to evaluate!")
     practice_result <- result_update(practice_result, -1, FALSE, t)
     return(practice_result)
@@ -719,7 +760,7 @@ check_answers <- function(learner_code) {
   # into the Expected Env?  If so, copy those variables.
   cp_vars <- ps_get_all_cp_vars()
   for (v in cp_vars) {
-    cp_var_to_envir(v, get(v, envir = .GlobalEnv))
+    cp_var_to_envir(v, get(v, envir = pkg.learner_env))
   }
 
   # STEP 3
@@ -1005,11 +1046,11 @@ ps_get_expected_code <- function(id) {
 ps_get_all_expected_code <- function() {
   ps <- ps_get_current()
   code <- c()
-  if (length(ps$ps_initial_vars) > 0) {
-    for (k in 1:length(ps$ps_initial_vars)) {
-      code <- append(code, ps$ps_initial_vars[k])
-    }
-  }
+  # if (length(ps$ps_initial_vars) > 0) {
+  #   for (k in 1:length(ps$ps_initial_vars)) {
+  #     code <- append(code, ps$ps_initial_vars[k])
+  #   }
+  # }
   if (length(ps$task_list) > 0) {
     for (task in ps$task_list) {
       if (task$copy_var == FALSE) {
@@ -1146,11 +1187,11 @@ format_practice_script <- function(show_answers = TRUE) {
   }
 
   # The initial variables that are set at the top of the script.
-  lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n"))
+  lines_of_code <- str_trim(paste0(cTAB_IN_SPACES, ps_get_env_vars(), collapse = "\n#"))
   t_lines_of_code <- ""
   if (lines_of_code != "") {
     t_lines_of_code <- paste0(
-      "# Initial variables ----\n", cTAB_IN_SPACES,
+      "# Key practice set variables (already initialized) ----\n#", cTAB_IN_SPACES,
       lines_of_code, "\n\n"
     )
   }
@@ -1345,7 +1386,7 @@ result_prompt_error <- function(id, msg) {
   if (id == -1) {
     t <- paste0("", msg)
   } else {
-    t <- paste0("Prompt error: \"", ps_get_prompt(id), "\"\n")
+    t <- paste0(" Prompt error: \"", ps_get_prompt(id), "\"\n")
     t <- paste0(t, msg)
   }
   return(t)
@@ -1440,23 +1481,43 @@ format_result <- function(result) {
   # Show the results
   t <- paste0(t, "Checking your code:\n   ", num_correct, "/", total, " complete.")
   if (total == num_correct) {
+    # All prompts are correct !!
     t <- paste0(t, " Good work! ", get_smilely_face(), "\n")
 
     for (m in result$message_list) {
       t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
     }
 
+  # A (fun) adage - intended to be motivating
     t <- paste0(t, "\nFinal suggestion!\n   ", "<font color='green'>", get_adage(), "</font>\n")
 
-    t <- paste0(t, "\n<p style='text-align:center;'><b> Expected code:</b></p>\n   ")
-    the_code <- ps_get_all_expected_code()
-    for (k in 1:length(the_code)) {
-      t_code <- paste0(the_code[k], collpase = "\n   ")
-      t <- paste0(t, "", t_code)
+  # Show code that was expected in a complete and compact form
+    t <- paste0(t, "\n<p style='text-align:center;'><b> Expected code:</b></p>")
+
+  # The global variables
+    theGlobalVars <- ps_get_env_vars()
+    if (length(theGlobalVars) > 0) {
+      t <- paste0(t, "# Preset variables:\n")
+      t <- paste0(t, paste0(theGlobalVars, collapse = "\n"))
+    } else {
+      t <- paste0(t, "# Preset variables:\n")
+      t <- paste0(t, "# None.\n")
     }
 
-    # Errors are present
+  # The code
+    theCode <- ps_get_all_expected_code()
+    if (length(theCode) > 0) {
+      t <- paste0(t, "\n\n# The code:\n")
+      for (k in 1:length(theCode)) {
+        t <- paste0(t, "", paste0(theCode[k], collpase = "\n"))
+      }
+    } else {
+      t <- paste0(t, "\n\n# The code:\n")
+      t <- paste0(t, "#    None.\n\n")
+    }
+
   } else {
+    # Errors are present
     t <- paste0(t, " More work to do.\n\nYour progress:\n")
 
     for (m in result$message_list) {

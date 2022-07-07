@@ -1,4 +1,10 @@
-# expr_type <- function(x) {
+# X <- c(1,2,3,4)
+# pkg.test <- new.env()
+# pkg.test$C <- 10
+# eval(parse(text="Z <- X*2 + C"), envir=pkg.test)
+
+
+#expr_type <- function(x) {
 #   if (rlang::is_syntactic_literal(x)) {
 #     "constant"
 #   } else if (is.symbol(x)) {
