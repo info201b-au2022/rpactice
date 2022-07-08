@@ -13,11 +13,11 @@
 #'
 #' @param short The short ID for this practice set.
 #' @param learner The learner's name
-#' @param e_mail The learner's e-mail address
+#' @param email The learner's e-mail address
 #' @return `TRUE` if all goes well; otherwise, this function will stop with an message.
 #'
 #' @export
-practice.begin <- function(short = "P01", learner="Anonymous", e_mail="") {
+practice.begin <- function(short = "P01", learner="Anonymous", email="") {
   id <- ps_get_id_by_short(short)
   if (id == -1) {
     stop(paste0("Can't find practice set named ", short, " (id=", id, ")."))
@@ -28,7 +28,7 @@ practice.begin <- function(short = "P01", learner="Anonymous", e_mail="") {
 
   # Currently, no session information, so just a global variable
   pkg.globals$gUSER_NAME <- learner
-  pkg.globals$gUWNETID <-e_mail
+  pkg.globals$gUWNETID <-email
 
   return(TRUE)
 }

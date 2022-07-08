@@ -4,7 +4,7 @@
 #    For debugging - this practice set contains almost nothing!
 
 # Practice set info ----
-practice.begin("T00", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T00", learner="[your name]", email="[your UW NetId]")
 
 # Your 2 prompts: (a)-(b) ----
 

@@ -4,7 +4,7 @@
 #    Test different forms of assignment statements
 
 # Practice set info ----
-practice.begin("T01", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T01", learner="[your name]", email="[your UW NetId]")
 
 # Key practice set variables (already initialized) ----
 #   X <- c(1,2,3)

@@ -5,7 +5,7 @@
 #    data input. This is possible with the @cp-var tag.
 
 # Practice set info ----
-practice.begin("T02", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T02", learner="[your name]", email="[your UW NetId]")
 
 # Your 5 prompts: (a)-(e) ----
 

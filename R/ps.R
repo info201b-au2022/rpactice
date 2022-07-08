@@ -197,21 +197,38 @@ get_envir <- function(id) {
 
 # Remove the variables from all three environments
 clear_all_envirs <- function() {
-  rm(list = ls(envir = get_envir(1)), envir = get_envir(1))
-  rm(list = ls(envir = get_envir(2)), envir = get_envir(2))
-  rm(list = ls(envir = get_envir(3)), envir = get_envir(3))
+  rm(list = names(get_envir(1)), envir = get_envir(1))
+  rm(list = names(get_envir(2)), envir = get_envir(2))
+  rm(list = names(get_envir(3)), envir = get_envir(3))
 }
 
 print_all_envirs <- function() {
-  cat("learner envir: ")
-  cat(paste0(names(get_envir(1)), collapse = " - "))
-  cat("\n")
-  cat("expected envir: ")
-  cat(paste0(names(get_envir(2)), collapse = " - "))
-  cat("\n")
-  cat(".GlobalEnv envir: ")
-  cat(paste0(names(get_envir(3)), collapse = " - "))
-  cat("\n")
+  t <- names(get_envir(1))
+  if (length(t) == 0) {
+    cat("learner envir: no variables.\n")
+  } else {
+    cat("learner envir: ")
+    cat(paste0(t), collapse = " - ")
+    cat("\n")
+  }
+
+  t <- names(get_envir(2))
+  if (length(t) == 0) {
+    cat("expected envir: no variables.\n")
+  } else {
+    cat("expected envir: ")
+    cat(paste0(t), collapse = " - ")
+    cat("\n")
+  }
+
+  t <- names(get_envir(3))
+  if (length(t) == 0) {
+    cat(".GlobalEnv envir: no variables.\n")
+  } else {
+    cat(".GlobalEnv envir: ")
+    cat(paste0(t), collapse = " - ")
+    cat("\n")
+  }
 }
 
 # This function returns a list information about the variables that have
@@ -595,8 +612,8 @@ DEFAULT_Check <- function(var_name, result) {
 
     # A function with ZERO parameters
     if (num_args == 0) {
-      learner_f_answers <- do.call(Li$vname, list(), envir=get_envir(1))
-      expected_f_answers <- do.call(Ei$vname, list(), envir=get_envir(2))
+      learner_f_answers <- do.call(Li$vname, list(), envir = get_envir(1))
+      expected_f_answers <- do.call(Ei$vname, list(), envir = get_envir(2))
 
       if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
@@ -618,8 +635,8 @@ DEFAULT_Check <- function(var_name, result) {
       }
 
       for (k in 1:length(checks)) {
-        t1 <- do.call(Li$vname, list(checks[k]), envir=get_envir(1))
-        t2 <- do.call(Ei$vname, list(checks[k]), envir=get_envir(2))
+        t1 <- do.call(Li$vname, list(checks[k]), envir = get_envir(1))
+        t2 <- do.call(Ei$vname, list(checks[k]), envir = get_envir(2))
         learner_answers <- append(learner_answers, t1)
         expected_answers <- append(expected_answers, t2)
       }
@@ -652,8 +669,8 @@ DEFAULT_Check <- function(var_name, result) {
 
       for (j in 1:length(checks_arg1)) {
         for (k in 1:length(checks_arg2)) {
-          t1 <- do.call(Li$vname, list(checks_arg1[j], checks_arg2[k]), envir=get_envir(1))
-          t2 <- do.call(Ei$vname, list(checks_arg1[j], checks_arg2[k]), envir=get_envir(2))
+          t1 <- do.call(Li$vname, list(checks_arg1[j], checks_arg2[k]), envir = get_envir(1))
+          t2 <- do.call(Ei$vname, list(checks_arg1[j], checks_arg2[k]), envir = get_envir(2))
           learner_answers <- append(learner_answers, t1)
           expected_answers <- append(expected_answers, t2)
         }
@@ -725,17 +742,52 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     message_list = list()
   )
 
+  # Clear all pre-set variables. When grading a set of assignments
+  # it will likely be substantially more efficient to not clear the
+  # variables.
   if (clear_all == TRUE) {
     clear_all_envirs()
   }
 
-  print("Top.")
+  # Try to parse the learners code. If there is an error return
+  # immediately with a reasonable error message.
+  tryCatch(
+    expr = {
+      learer_expression <- parse(text=learner_code)
+    },
+    error = function(e) {
+      t <- result_prompt_error(-1, "Likely Syntax Error: Run and test code. Try again.")
+      practice_result <- result_update(practice_result, -1, FALSE, t)
+      return(practice_result)
+    }
+  )
+
+  # Find the practice.begin() statement and extract the short ID for the practic set
+  short_id <- ast_get_begin2(learner_expression)
+  if (is.null(short_id)) {
+    t <- result_prompt_error(-1, "The practice set must have a begin statement.")
+    practice_result <- result_update(practice_result, -1, FALSE, t)
+    return(practice_result)
+  }
+
+  # Set the practice set as the current one
+  ps_id <- ps_get_id_by_short(short_id)
+  if (ps_id == -1) {
+    t <- result_prompt_error(-1, "The practice set is not found.")
+    practice_result <- result_update(practice_result, -1, FALSE, t)
+    return(practice_result)
+  } else {
+    ps_set_current(ps_id)
+  }
+
+  cat("Top.\n")
 
   # STEP 0
   # Initialize the static variables
   initialize_static_vars()
+
   print_all_envirs()
-  print("Step 0 done.")
+  cat("Step 0 done.\n")
 
   # STEP 1
   # Evaluate the learner's code and the expected code in two different
@@ -748,9 +800,8 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     return(practice_result)
   }
 
-  print("Step 1 done.")
   print_all_envirs()
-
+  cat("Step 1 done.")
 
   # If the learner has done nothing (no learner variables), we are done
   if (length(learner_vars) == 0) {
@@ -774,7 +825,8 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     stop("check_answers: expected_vars: Internal Error: Likely R syntax error in expected code.")
   }
 
-  cat(learner_code)
+  print_all_envirs()
+  cat("Step 2 done.")
 
   # STEP 4
   # Parse the learner's code and extract all variables and assignment
@@ -1213,7 +1265,7 @@ format_practice_script <- function(show_answers = TRUE) {
     "\n# Practice set info ---- \n",
     "practice.begin(\"", ps$ps_short,
     "\", learner=\"[your name]\"",
-    ", uwnetid=\"[your UW NetId]\")",
+    ", email=\"[your e-mail]\")",
     "\n\n",
 
     # Initial lines of code
@@ -1494,13 +1546,13 @@ format_result <- function(result) {
       t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
     }
 
-  # A (fun) adage - intended to be motivating
+    # A (fun) adage - intended to be motivating
     t <- paste0(t, "\nFinal suggestion!\n   ", "<font color='green'>", get_adage(), "</font>\n")
 
-  # Show code that was expected in a complete and compact form
+    # Show code that was expected in a complete and compact form
     t <- paste0(t, "\n<p style='text-align:center;'><b> Expected code:</b></p>")
 
-  # The global variables
+    # The global variables
     theGlobalVars <- ps_get_env_vars()
     if (length(theGlobalVars) > 0) {
       t <- paste0(t, "# Preset variables:\n")
@@ -1510,7 +1562,7 @@ format_result <- function(result) {
       t <- paste0(t, "# None.\n")
     }
 
-  # The code
+    # The code
     theCode <- ps_get_all_expected_code()
     if (length(theCode) > 0) {
       t <- paste0(t, "\n\n# The code:\n")
@@ -1521,7 +1573,6 @@ format_result <- function(result) {
       t <- paste0(t, "\n\n# The code:\n")
       t <- paste0(t, "#    None.\n\n")
     }
-
   } else {
     # Errors are present
     t <- paste0(t, " More work to do.\n\nYour progress:\n")

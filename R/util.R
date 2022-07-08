@@ -71,7 +71,7 @@ ast_get_assignments <- function(e1) {
     var_name <- e2[[k]][[2]]
     e_t <- e2[[k]][[3]]
 
-    # For these sub-select cases, we need to return X:
+    # For these sub-select cases, we need to return X:as
     #    X[blah] <- val
     #    X$blah% <- val
     #    X[[blah]] <- val
@@ -88,6 +88,22 @@ ast_get_assignments <- function(e1) {
     result <- append(result, t)
   }
   return(result)
+}
+
+ast_get_begin2 <- function(e1) {
+  line_nums <- ast_scan(e1, "practice.begin")
+  if (length(line_nums) == 0) {
+    return(NULL)
+  }
+
+  begin_expr <- e1[[line_nums[length(line_nums)]]]
+  if (length(begin_expr) == 0) {
+    return(NULL)
+  }
+
+  ps_short <- begin_expr[[2]]
+
+  return(ps_short)
 }
 
 ast_get_begin <- function(e1) {
