@@ -76,7 +76,7 @@ admin.prompts <- function(short) {
   cat("\014") # Clear screen
   cat("[", short, "]: ", ps$ps_title, " (Prompts: ", length(ps$task_list), ")\n", sep = "")
 
-  v <- ps_get_env_vars(short)
+  v <- ps_get_env_vars()
   t <- paste0(v, collapse = "\n")
   cat("Envir Variables\n  ", t, "\n")
 
@@ -165,7 +165,7 @@ admin.run <- function(short) {
 
   cat("\014admin.run()\n")
   cat(
-    "Short ID: ", short,
+    "Short ID: ", short, "\n",
     sep = ""
   )
 
@@ -203,7 +203,7 @@ admin.run <- function(short) {
   v <- ps_get_all_cp_vars()
   if (length(v) > 0) {
     cat(
-      "Variables to copy: \n",
+      "\n\nVariables to copy: \n",
       sep = ""
     )
     cp_vars <- ps_get_all_cp_vars()

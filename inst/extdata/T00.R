@@ -4,14 +4,16 @@
 #' @descr
 #' For debugging - this practice set contains almost nothing!
 #' @end
-#' @initial-vars
-X <- c(1,2,3)
+
+#' @id ?
+#' @msg What is 1 + 1?
+#' @code
+t0 <- 2
 #' @end
 
 #' @id ?
-#' @msg What is 1 + 1
+#' @msg What is t0 + 10?
 #' @code
-t <- 2
+t1 <- t0 + 10
 #' @end
-
 

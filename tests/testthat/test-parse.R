@@ -899,8 +899,8 @@ ps <- check_ps(ps)
 
 test_that("parse_ps - @check input for functions", {
   expect_equal(ps$task_list[[1]]$assignment_var,"t01")
-  expect_equal(ps$task_list[[2]]$assignment_var,"t01.a")
-  expect_equal(ps$task_list[[3]]$assignment_var,"t01.ab")
+  expect_equal(ps$task_list[[2]]$assignment_var,"t01")
+  expect_equal(ps$task_list[[3]]$assignment_var,"t01")
 })
 
 #----------------------------------------------------------------------------#
@@ -927,7 +927,7 @@ ps <- check_ps(ps)
 
 test_that("parse_ps - @check input for functions", {
   expect_equal(ps$task_list[[1]]$assignment_var,"t01")
-  expect_equal(ps$task_list[[2]]$assignment_var,"t01.a")
+  expect_equal(ps$task_list[[2]]$assignment_var,"t01")
 })
 
 s <-

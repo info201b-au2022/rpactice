@@ -62,4 +62,3 @@ meals[[2]] <- 'cheese sandwich'
 meals_done <- meals
 #' @end
 
-

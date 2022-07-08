@@ -6,7 +6,11 @@
 #' @end
 #' @initial-vars
 library(dplyr)
-cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(TRUE,FALSE,TRUE,TRUE))
+cDF <- data.frame(
+  A=c(1,2,3,4),
+  B=c('a','b','c','d'),
+  C=c(TRUE,FALSE,TRUE,TRUE)
+  )
 #' @end
 
 #' @id ?

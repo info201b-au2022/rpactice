@@ -261,3 +261,6 @@ NULL
 
 #' @import tidyverse
 NULL
+
+#' @import stats
+NULL

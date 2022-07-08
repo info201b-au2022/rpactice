@@ -6,10 +6,12 @@
 # Practice set info ----
 practice.begin("T00", learner="[your name]", uwnetid="[your UW NetId]")
 
-# Initial variables ----
-   X <- c(1,2,3)
+# Your 2 prompts: (a)-(b) ----
 
-# Your 1 prompts: (a)-(a) ----
+# a: What is 1 + 1? (Variable: t0)
+t0 <- 2
 
-# a: What is 1 + 1 (Variable: t)
-t <- 2
+# b: What is t0 + 10? (Variable: t1)
+t1 <- t0 + 10
+
+

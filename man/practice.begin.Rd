@@ -4,12 +4,14 @@
 \alias{practice.begin}
 \title{Begin a practice set}
 \usage{
-practice.begin(short = "P01", learner = "Anonymous", uwnetid = "")
+practice.begin(short = "P01", learner = "Anonymous", e_mail = "")
 }
 \arguments{
 \item{short}{The short ID for this practice set.}
 
 \item{learner}{The learner's name}
+
+\item{e_mail}{The learner's e-mail address}
 }
 \value{
 `TRUE` if all goes well; otherwise, this function will stop with an message.

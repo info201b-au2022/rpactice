@@ -6,9 +6,9 @@
 # Practice set info ----
 practice.begin("T05", learner="[your name]", uwnetid="[your UW NetId]")
 
-# Initial variables ----
-   g <- function(x) {return(x+1)}
-   X <- c(1,2,3,4,5,6)
+# Key practice set variables (already initialized) ----
+#   g <- function(x) {return(x+1)}
+#   X <- c(1,2,3,4,5,6)
 
 # Your 8 prompts: (a)-(h) ----
 

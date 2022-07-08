@@ -13,14 +13,19 @@ f <- function(x) {return(x+1)}
 #' @msg Basic expressions
 
 #' @id ?
-#' @msg An expression (implicit variable) [t01 <- sqrt((1+2+3)^2)*2  # 12]
+#' @msg An expression, where t01 is assigned sqrt((1+2+3)^2)*2
 #' @code
-t01 <- sqrt((1+2+3)^2)*2  # 12
+t01 <- sqrt((1+2+3)^2)*2  # Answer: 12
 #' @end
 
 #' @id ?
 #' @msg
-#' A block expression - two lines (explicit variable)
+#' A block expression, where t02 is assigned the following:
+#' {
+#'    t <- 10
+#'    t <- t + 100
+#'    (t == 110)
+#' }
 #' t02 <- {  ... }
 #' @end
 #' @var t02
@@ -33,32 +38,26 @@ t02 <- {
 #' @end
 
 #' @id ?
-#' @msg Semi-colon  (explicit variable)
+#' @msg An expression with a semi-colon
 #' @code
 t03a <- t01 + 100; t03 <- t03a - 100
 #' @end
 
 #' @id ?
-#' @msg No braces - two lines (implicit variable)
+#' @msg An expression with two lines
 #' @code
 t04a <- t01 + 100
 t04 <- t04a - 100
 #' @end
 
 #' @id ?
-#' @msg Using previous variable (initialized by learner)
-#' @code
-t05 <- ((t01 - 12) == 0) # TRUE
-#' @end
-
-#' @id ?
-#' @msg Using an initial variable (initialized by practice set)
+#' @msg Using a pre-set variable (initialized by practice set)
 #' @code
 t06 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
 #' @end
-#
+
 #' @id ?
-#' @msg Calling a function, f(x), (initialized by the practice set)
+#' @msg Calling a pre-set function, f(x), (initialized by the practice set)
 #' @code
 t07 <- (f(10) == 11) # TRUE
 #' @end

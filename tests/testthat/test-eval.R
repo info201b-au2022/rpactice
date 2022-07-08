@@ -45,11 +45,11 @@ test_that("Basic function", {
   expect_equal(r$type, "closure")
 })
 
-statement <- "1 _ 2"
-t <- eval_string_and_format(statement)
-test_that("Syntax areas", {
-  expect_equal(t, "Error: <text>:1:3: unexpected input 1: 1 _       ^")
-})
+# statement <- "1 _ 2"
+# t <- eval_string_and_format(statement)
+# test_that("Syntax areas", {
+#   expect_equal(t, "Error: <text>:1:3: unexpected input 1: 1 _       ^")
+# })
 
 statement <- "list(a=1, b=TRUE)"
 t <- eval_string_and_format(statement)

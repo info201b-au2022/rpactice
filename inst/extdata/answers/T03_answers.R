@@ -1,51 +1,31 @@
 # pinfo201 / ps-1
 #
-# T03: Test cases: Assignment
-#    Test different forms of assignment statements
+# T02: Test cases: Copy variables
+#    Sometimes it is helpful to write a practice set based on a learner's
+#    data input. This is possible with the @cp-var tag.
 
 # Practice set info ----
-practice.begin("T03", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T02", learner="[your name]", uwnetid="[your UW NetId]")
 
-# Initial variables ----
-# X <- c(1,2,3)
-
-# Your 1 prompts: (a)-(a) ----
+# Your 5 prompts: (a)-(e) ----
 
 #                                         Note 01.
-#    Complex lhs structures and assignments
+#    Testing the use of the @cp-var tag
 
 
-#                                         Note 02.
-#    Currently, only ONE level of nested structure. For example, these structures will fail
-#    because pinfo201 cannot determine the name of the variable:
-#        t$x$y <- blah
-#        t[[a]][[b]] <- blah
-#        t[[k]]$x <- blah
+# a: Assign your name to the variable my_name (Variable: my_name)
+my_name <- "learner defined varaible"
 
+# b: How many characters are in your name? (Variable: num_characters)
+num_characters <- nchar(my_name)
 
-# a: Assignment to element of a vector. This works.
-#       U <- X
-#       U[1] <- 100 (Variable: U)
-U <- X
-U[1] <- 100
+# c: Assign your an absolute directory path to your csv file. (Variable: fname)
+fname <- "/Users/dhendry/Documents/_Code2/info201/data/gates_money.csv"
 
-#                                         Note 03.
-#    Assignment to two lists
-#       meals <- list(a="aa", b="bb")
-meals <- list(breakfaset="toast", lunch="soup", dinner="lentis and rice")
+# d: Read the csv file into the variable, `df`. (Variable: df)
+df <- read.csv(fname)
 
-#                                         Note 04.
-#    Sub-select a list with dollar sign ($)
-#       meals$breakfast <- "oatmeal"
-meals$breakfast <- "oatmeal"
-
-#                                         Note 05.
-#    Sub-select a list with double square brackets ([[]])
-#       meals2[[2]] <- 'cheese sandwich'
-meals[[2]] <- 'cheese sandwich'
-
-#                                         Note 06.
-#    Check that meals is correct, by assigning `meals` to `meals_done`.
-meals_done <- meals
+# e: How many rows are in the dataframe, `df`? (Variable: num_of_rows)
+num_of_rows <- nrow(df)
 
 

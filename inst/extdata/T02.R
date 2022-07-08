@@ -30,11 +30,11 @@ num_characters <- nchar(my_name)
 #' @msg Assign your an absolute directory path to your csv file.
 #' @cp-var fname
 #' @code
-fname <- NULL
+fname <- "/Users/dhendry/Documents/_Code2/info201/data/gates_money.csv"
 #' @end
 
 #' @id ?
-#' @msg Read the csv file into the variable `df`.
+#' @msg Read the csv file into the variable, `df`.
 #' @code
 df <- read.csv(fname)
 #' @end

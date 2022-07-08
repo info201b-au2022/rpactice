@@ -6,9 +6,13 @@
 # Practice set info ----
 practice.begin("T06", learner="[your name]", uwnetid="[your UW NetId]")
 
-# Initial variables ----
-   library(dplyr)
-   cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(TRUE,FALSE,TRUE,TRUE))
+# Key practice set variables (already initialized) ----
+#   library(dplyr)
+#   cDF <- data.frame(
+#     A=c(1,2,3,4),
+#     B=c('a','b','c','d'),
+#     C=c(TRUE,FALSE,TRUE,TRUE)
+#     )
 
 # Your 9 prompts: (a)-(i) ----
 
