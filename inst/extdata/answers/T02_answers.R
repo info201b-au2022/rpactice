@@ -20,7 +20,7 @@ my_name <- "learner defined varaible"
 num_characters <- nchar(my_name)
 
 # c: Assign your an absolute directory path to your csv file. (Variable: fname)
-fname <- NULL
+fname <- "/Users/dhendry/Documents/_Code2/info201/data/gates_money.csv"
 
 # d: Read the csv file into the variable `df`. (Variable: df)
 df <- read.csv(fname)

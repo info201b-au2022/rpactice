@@ -4,7 +4,7 @@
 #    Test statements that return vectors
 
 # Practice set info ----
-practice.begin("T04", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T04", learner="[your name]", email="[your UW NetId]")
 
 # Key practice set variables (already initialized) ----
 #   X <- c(1,2,3,4)

@@ -4,7 +4,7 @@
 #    Files
 
 # Practice set info ----
-practice.begin("T07", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T07", learner="[your name]", email="[your UW NetId]")
 
 # Your 3 prompts: (a)-(c) ----
 

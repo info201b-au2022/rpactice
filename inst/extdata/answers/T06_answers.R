@@ -4,7 +4,7 @@
 #    Test statements that return dataframes
 
 # Practice set info ----
-practice.begin("T06", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T06", learner="[your name]", email="[your UW NetId]")
 
 # Key practice set variables (already initialized) ----
 #   library(dplyr)
