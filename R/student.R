@@ -27,8 +27,8 @@ practice.begin <- function(short = "P01", learner="Anonymous", email="") {
   ps_set_current(id)
 
   # Currently, no session information, so just a global variable
-  pkg.globals$gLEARNER_NAME <- learner
-  pkg.globals$gLEARNER_NAME <-email
+  pinfo201.globals$gLEARNER_NAME <- learner
+  pinfo201.globals$gLEARNER_NAME <-email
 
   return(TRUE)
 }
@@ -41,7 +41,7 @@ practice.begin <- function(short = "P01", learner="Anonymous", email="") {
 practice.questions <- function(do_not_show = NULL) {
   ps <- ps_get_current()
   t <- format_prompts(do_not_show)
-  print_output(t, "questions")
+  print_to_viewer(t, "questions")
   return(TRUE)
 }
 
@@ -52,7 +52,7 @@ practice.questions <- function(do_not_show = NULL) {
 practice.check <- function() {
   results <-  check_answers_from_ui()
   t <- format_result(results)
-  print_output(t, "check")
+  print_to_viewer(t, "check")
   return(TRUE)
 }
 
@@ -60,16 +60,7 @@ practice.check <- function() {
 #'
 #' @export
 practice.answers <- function() {
-  # ps <- ps_get_current()
-  # t <- format_answers()
-  #
-  # t <- paste0(
-  #   "<b>", ps$ps_short, ": ", ps$ps_title, ": Answers</b>\n",
-  #   ps$ps_descr, "\n",
-  #   "---\n",
-  #   t
-  # )
-  print_output(format_answers(), "anwers")
+  print_to_viewer(format_answers(), "anwers")
   return(TRUE)
 }
 

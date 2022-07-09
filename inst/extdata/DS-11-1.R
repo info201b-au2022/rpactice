@@ -23,6 +23,7 @@ library(fueleconomy)
 # You should now have access to the `vehicles` data frame
 # You can use `View()` to inspect it
 View(vehicles)
+#' @code
 
 #' @id ?
 #' @msg
@@ -31,6 +32,7 @@ View(vehicles)
 #' @end
 #' @code
 makes <- vehicles$make
+#' @code
 
 #' @id ?
 #' @msg
@@ -39,6 +41,7 @@ makes <- vehicles$make
 #' @end
 #' @code
 length(unique(makes))
+#' @code
 
 #' @id ?
 #' @msg
@@ -46,6 +49,7 @@ length(unique(makes))
 #' @end
 #' @code
 cars_1997 <- vehicles[vehicles$year == 1997, ]
+#' @code
 
 #' @id ?
 #' @msg
@@ -56,6 +60,7 @@ cars_1997 <- vehicles[vehicles$year == 1997, ]
 #' @end
 #' @code
 cars_1997 <- cars_1997[order(cars_1997$hwy), ]
+#' @code
 
 #' @id ?
 #' @msg
@@ -64,6 +69,7 @@ cars_1997 <- cars_1997[order(cars_1997$hwy), ]
 #' @end
 #' @code
 cars_1997$average <- (cars_1997$hwy + cars_1997$cty) / 2
+#' @code
 
 #' @id ?
 #' @msg
@@ -73,6 +79,7 @@ cars_1997$average <- (cars_1997$hwy + cars_1997$cty) / 2
 #' @end
 #' @code
 two_wheel_20_mpg <- vehicles[vehicles$drive == "2-Wheel Drive" & vehicles$cty > 20, ]
+#' @code
 
 #' @id ?
 #' @msg
@@ -82,6 +89,7 @@ two_wheel_20_mpg <- vehicles[vehicles$drive == "2-Wheel Drive" & vehicles$cty > 
 #' @end
 #' @code
 worst_hwy <- two_wheel_20_mpg$id[two_wheel_20_mpg$hwy == min(two_wheel_20_mpg$hwy)]
+#' @code
 
 #' @id ?
 #' @msg
@@ -95,10 +103,12 @@ make_year_filter <- function(make_choice, year_choice) {
   filtered <- vehicles[vehicles$make == make_choice & vehicles$year == year_choice, ]
   filtered[filtered$hwy == max(filtered$hwy), "model"]
 }
+#' @code
+
 #' @id ?
 #' @msg
 # What was the most efficient Honda model of 1995?
 #' @end
 #' @code
 make_year_filter("Honda", 1995)
-
+#' @code

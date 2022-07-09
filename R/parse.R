@@ -498,7 +498,7 @@ check_test_code <- function(ps) {
   if (length(v) == 0) {
     results <- eval_code_expected(code)
     cat("\n",
-      "V. Environment: pkg.expected_env\n",
+      "V. Environment: pinfo201.expected_env\n",
       sep = ""
     )
     cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))

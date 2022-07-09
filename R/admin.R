@@ -219,7 +219,7 @@ admin.run <- function(short) {
 
   # Evaluate the code and show the variables and values
   cat("\n",
-    "Environment: pkg.expected_env\n",
+    "Environment: pinfo201.expected_env\n",
     sep = ""
   )
   cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))

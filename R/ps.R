@@ -2,19 +2,21 @@
 # Code for implementing the RStudio Addins
 #----------------------------------------------------------------------------#
 
-## Global Variables ----
-pkg.globals <- new.env()
-pkg.globals$gPRACTICE_SET_ID <- 1
-pkg.globals$gTO_CONSOLE <- FALSE
-pkg.globals$gLEARNER_NAME <- ""
-pkg.globals$gLEARNER_EMAIL <- ""
+## Global variables ----
+pinfo201.globals <- new.env()
+pinfo201.globals$gPRACTICE_SET_ID <- 1
+pinfo201.globals$gLEARNER_NAME <- ""
+pinfo201.globals$gLEARNER_EMAIL <- ""
 
-pkg.learner_env <- new.env()
-pkg.expected_env <- new.env()
+pinfo201.learner_env <- new.env()
+pinfo201.expected_env <- new.env()
 
 cLEARNER_ENV_ID <- 1
 cEXPECTED_ENV_ID <- 2
 cGLOBAL_ENV_ID <- 3
+
+#pinfo201.globals$gTO_CONSOLE <- FALSE
+
 
 ## Constants ----
 cDEBUG <- FALSE
@@ -77,30 +79,30 @@ ps_load_internal_ps <- function() {
 
 # Add a practice set into the running aplication
 ps_add <- function(ps) {
-  new_k <- length(pkg.globals$gPRACTICE_SETS) + 1
-  pkg.globals$gPRACTICE_SETS[[new_k]] <- ps
+  new_k <- length(pinfo201.globals$gPRACTICE_SETS) + 1
+  pinfo201.globals$gPRACTICE_SETS[[new_k]] <- ps
 }
 
 # Only one practice set is active at a time - A global variable is used
 # to keep track of the currently active practice set
 ps_set_current <- function(id) {
-  if (is.null(pkg.globals$gPRACTICE_SETS)) {
+  if (is.null(pinfo201.globals$gPRACTICE_SETS)) {
     stop("Error: Practice sets are not set.")
   }
-  if (id <= 0 || id > length(pkg.globals$gPRACTICE_SETS)) {
-    stop(paste0("Error: Practice Set ID must be between 1 and ", length(pkg.globals$gPRACTICE_SETS), "."))
+  if (id <= 0 || id > length(pinfo201.globals$gPRACTICE_SETS)) {
+    stop(paste0("Error: Practice Set ID must be between 1 and ", length(pinfo201.globals$gPRACTICE_SETS), "."))
   }
 
-  pkg.globals$gPRACTICE_SET_ID <- as.numeric(id)
+  pinfo201.globals$gPRACTICE_SET_ID <- as.numeric(id)
 }
 
 # Return the currently active practice set
 ps_get_current <- function() {
-  id <- pkg.globals$gPRACTICE_SET_ID
-  if (is.null(id) == TRUE || id < 1 || id > length(pkg.globals$gPRACTICE_SETS)) {
+  id <- pinfo201.globals$gPRACTICE_SET_ID
+  if (is.null(id) == TRUE || id < 1 || id > length(pinfo201.globals$gPRACTICE_SETS)) {
     stop("Error: Bad gPRACTICE_SET_ID")
   }
-  ps <- pkg.globals$gPRACTICE_SETS[[id]]
+  ps <- pinfo201.globals$gPRACTICE_SETS[[id]]
 
   return(ps)
 }
@@ -113,14 +115,14 @@ ps_get_short <- function() {
 
 # Update the current practice set to a new one
 ps_update_current <- function(ps) {
-  pkg.globals$gPRACTICE_SETS[[pkg.globals$gPRACTICE_SET_ID]] <- ps
+  pinfo201.globals$gPRACTICE_SETS[[pinfo201.globals$gPRACTICE_SET_ID]] <- ps
 }
 
 # Get the internal id of a practice set by its short id
 # NOTE: Practice sets are assumed to have UNIQUE short ids
 ps_get_id_by_short <- function(short_id) {
   k <- 1
-  for (ps in pkg.globals$gPRACTICE_SETS) {
+  for (ps in pinfo201.globals$gPRACTICE_SETS) {
     if (ps$ps_short == short_id) {
       return(k)
     }
@@ -135,14 +137,14 @@ ps_get_by_short <- function(short_id) {
   if (id == -1) {
     return(NULL)
   } else {
-    return(pkg.globals$gPRACTICE_SETS[[id]])
+    return(pinfo201.globals$gPRACTICE_SETS[[id]])
   }
 }
 
 # Get a vector of all of the practice set short ids
 ps_get_all <- function() {
   v <- c()
-  for (ps in pkg.globals$gPRACTICE_SETS) {
+  for (ps in pinfo201.globals$gPRACTICE_SETS) {
     v <- append(v, ps$ps_short)
   }
   return(v)
@@ -160,14 +162,14 @@ ps_get_env_vars <- function() {
 #    list("P01: <title>" = "P01", "P2: <title>" = "P02")
 # where "P01", "P02", and so on are the short ids for the practice sets
 ps_ui_get_titles <- function() {
-  if (is.null(pkg.globals$gPRACTICE_SETS)) {
+  if (is.null(pinfo201.globals$gPRACTICE_SETS)) {
     stop("practice-info-201.R: Practice sets are not set.")
   }
 
   items <- c()
   ids <- c()
 
-  for (ps in pkg.globals$gPRACTICE_SETS) {
+  for (ps in pinfo201.globals$gPRACTICE_SETS) {
     s <- paste0(ps$ps_short, ": ", ps$ps_title)
     items <- append(items, s)
     ids <- append(ids, ps$ps_short)
@@ -185,13 +187,13 @@ ps_ui_get_titles <- function() {
 get_envir <- function(id) {
   # The learner variable space
   if (id == cLEARNER_ENV_ID) {
-    return(pkg.learner_env)
+    return(pinfo201.learner_env)
   }
   # The expected variable space
   else if (id == cEXPECTED_ENV_ID) {
-    return(pkg.expected_env)
+    return(pinfo201.expected_env)
   }
-  # The global variable space (parent for pkg.learner_env and pkg.expected_env)
+  # The global variable space (parent for pinfo201.learner_env and pinfo201.expected_env)
   else if (id == cGLOBAL_ENV_ID) {
     return(.GlobalEnv)
   } else {
@@ -310,7 +312,7 @@ get_var_info <- function(var, envir_id) {
 }
 
 cp_var_to_envir <- function(var_name, value) {
-  pkg.expected_env[[var_name]] <- value
+  pinfo201.expected_env[[var_name]] <- value
 }
 
 initialize_static_vars <- function() {
@@ -348,7 +350,7 @@ get__all_expected_var_info <- function() {
 eval_string_details <- function(code, run_envir = NULL) {
   if (is.null(run_envir)) {
     # run_envir <- .GlobalEnv
-    run_envir <- pkg.expected_env
+    run_envir <- pinfo201.expected_env
   }
 
   tryCatch(
@@ -787,8 +789,8 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   tryCatch(
     expr = {
        eval(begin_expr)
-       practice_result$learner_name <- pkg.globals$gLEARNER_NAME
-       practice_result$learner_email <- pkg.globals$gLEARNER_EMAIL
+       practice_result$learner_name <- pinfo201.globals$gLEARNER_NAME
+       practice_result$learner_email <- pinfo201.globals$gLEARNER_EMAIL
     },
     error = function(e) {
       t <- result_prompt_error(-1, "practice.begin() failed.")
@@ -828,7 +830,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   # copied into the expected environment?  If so, copy those variables.
   cp_vars <- ps_get_all_cp_vars()
   for (v in cp_vars) {
-    cp_var_to_envir(v, get(v, envir = pkg.learner_env))
+    cp_var_to_envir(v, get(v, envir = pinfo201.learner_env))
   }
 
   # STEP 6
@@ -1158,13 +1160,13 @@ ps_get_formatted_hints <- function(id) {
 # Functions setting and getting learner's answers
 #----------------------------------------------------------------------------#
 ps_update_learner_answer <- function(var_name, answer) {
-  ps_id <- pkg.globals$gPRACTICE_SET_ID
-  ps <- pkg.globals$gPRACTICE_SETS[[ps_id]]
+  ps_id <- pinfo201.globals$gPRACTICE_SET_ID
+  ps <- pinfo201.globals$gPRACTICE_SETS[[ps_id]]
 
   id <- ps_var_name_to_id(var_name)
   if (id > 0) {
     ps$task_list[[id]]$learner_answer <- answer
-    pkg.globals$gPRACTICE_SETS[[ps_id]] <- ps
+    pinfo201.globals$gPRACTICE_SETS[[ps_id]] <- ps
   }
 
   return(TRUE)
@@ -1666,10 +1668,10 @@ print_to_viewer <- function(text, fn) {
   rstudioapi::viewer(html_file, height = 400)
 }
 
-print_output <- function(text, fn) {
-  if (pkg.globals$gTO_CONSOLE) {
-    print_to_console(text)
-  } else {
-    print_to_viewer(text, fn)
-  }
-}
+# print_output <- function(text, fn) {
+#   if (pinfo201.globals$gTO_CONSOLE) {
+#     print_to_console(text)
+#   } else {
+#     print_to_viewer(text, fn)
+#   }
+# }

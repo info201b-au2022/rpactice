@@ -13,7 +13,7 @@ addin.b <- function() {
   results <- check_answers_from_ui()
   if (!is.null(results)) {
     t <- format_result(results)
-    print_output(t, "check")
+    print_to_viewer(t, "check")
   }
   return(TRUE)
 }
