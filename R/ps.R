@@ -6,11 +6,15 @@
 pkg.globals <- new.env()
 pkg.globals$gPRACTICE_SET_ID <- 1
 pkg.globals$gTO_CONSOLE <- FALSE
-pkg.globals$gUSER_NAME <- ""
-pkg.globals$gUWNETID <- ""
+pkg.globals$gLEARNER_NAME <- ""
+pkg.globals$gLEARNER_EMAIL <- ""
 
 pkg.learner_env <- new.env()
 pkg.expected_env <- new.env()
+
+cLEARNER_ENV_ID <- 1
+cEXPECTED_ENV_ID <- 2
+cGLOBAL_ENV_ID <- 3
 
 ## Constants ----
 cDEBUG <- FALSE
@@ -180,30 +184,31 @@ ps_ui_get_titles <- function() {
 
 get_envir <- function(id) {
   # The learner variable space
-  if (id == 1) {
+  if (id == cLEARNER_ENV_ID) {
     return(pkg.learner_env)
   }
   # The expected variable space
-  else if (id == 2) {
+  else if (id == cEXPECTED_ENV_ID) {
     return(pkg.expected_env)
   }
   # The global variable space (parent for pkg.learner_env and pkg.expected_env)
-  else if (id == 3) {
+  else if (id == cGLOBAL_ENV_ID) {
     return(.GlobalEnv)
   } else {
     stop("Internal error: get_envir(id): Erroneous id")
   }
 }
 
+
 # Remove the variables from all three environments
 clear_all_envirs <- function() {
-  rm(list = names(get_envir(1)), envir = get_envir(1))
-  rm(list = names(get_envir(2)), envir = get_envir(2))
-  rm(list = names(get_envir(3)), envir = get_envir(3))
+  rm(list = names(get_envir(cLEARNER_ENV_ID)), envir = get_envir(cLEARNER_ENV_ID))
+  rm(list = names(get_envir(cEXPECTED_ENV_ID)), envir = get_envir(cEXPECTED_ENV_ID))
+  rm(list = names(get_envir(cGLOBAL_ENV_ID)), envir = get_envir(cGLOBAL_ENV_ID))
 }
 
 print_all_envirs <- function() {
-  t <- names(get_envir(1))
+  t <- names(get_envir(cLEARNER_ENV_ID))
   if (length(t) == 0) {
     cat("learner envir: no variables.\n")
   } else {
@@ -212,7 +217,7 @@ print_all_envirs <- function() {
     cat("\n")
   }
 
-  t <- names(get_envir(2))
+  t <- names(get_envir(cEXPECTED_ENV_ID))
   if (length(t) == 0) {
     cat("expected envir: no variables.\n")
   } else {
@@ -221,7 +226,7 @@ print_all_envirs <- function() {
     cat("\n")
   }
 
-  t <- names(get_envir(3))
+  t <- names(get_envir(cGLOBAL_ENV_ID))
   if (length(t) == 0) {
     cat(".GlobalEnv envir: no variables.\n")
   } else {
@@ -248,7 +253,7 @@ get_all_var_info <- function(envir_id) {
   e2 <- names(.GlobalEnv)
   if (length(e2) > 0) {
     for (v in e2) {
-      var_list <- append(var_list, get_var_info(v, 3))
+      var_list <- append(var_list, get_var_info(v, cGLOBAL_ENV_ID))
     }
   }
 
@@ -310,7 +315,7 @@ cp_var_to_envir <- function(var_name, value) {
 
 initialize_static_vars <- function() {
   lines_of_code <- paste0(ps_get_env_vars(), collapse = "\n")
-  return(eval_code(lines_of_code, 3, FALSE))
+  return(eval_code(lines_of_code, cGLOBAL_ENV_ID, FALSE))
 }
 
 
@@ -318,24 +323,24 @@ initialize_static_vars <- function() {
 # Wrapper functions for accessing the global (learner) and
 # expected environments.
 eval_code_global <- function(code, clear_first = FALSE) {
-  return(eval_code(code, 1, clear_first))
+  return(eval_code(code, cLEARNER_ENV_ID, clear_first))
 }
 eval_code_expected <- function(code, clear_first = FALSE) {
-  return(eval_code(code, 2, clear_first))
+  return(eval_code(code, cEXPECTED_ENV_ID, clear_first))
 }
 
 get_global_var_info <- function(var) {
-  return(get_var_info(var, 1))
+  return(get_var_info(var, cLEARNER_ENV_ID))
 }
 get_expected_var_info <- function(var) {
-  return(get_var_info(var, 2))
+  return(get_var_info(var, cEXPECTED_ENV_ID))
 }
 
 get_all_global_var_info <- function() {
-  return(get_var_info(1))
+  return(get_var_info(cLEARNER_ENV_ID))
 }
 get__all_expected_var_info <- function() {
-  return(get_var_info(2))
+  return(get_var_info(cEXPECTED_ENV_ID))
 }
 
 ## Misc eval functions ----
@@ -716,8 +721,8 @@ DEFAULT_Check <- function(var_name, result) {
 # A practice_result takes this structure:
 #
 # practice_result <- list(
-#        user_name = "",
-#        email = "",
+#        learner_name = "",
+#        learner_email = "",
 #     num_correct = <integer>,
 #     num_incorrect = <integer>,
 #     general_msg = <string>,
@@ -734,8 +739,8 @@ DEFAULT_Check <- function(var_name, result) {
 check_answers <- function(learner_code, clear_all = TRUE) {
 
   practice_result <- list(
-    user_name = "",
-    uwnetid = "",
+    learner_name = "",
+    learner_email = "",
     general_msg = "",
     num_correct = 0,
     num_incorrect = 0,
@@ -782,8 +787,8 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   tryCatch(
     expr = {
        eval(begin_expr)
-       practice_result$user_name <- pkg.globals$gUSER_NAME
-       practice_result$uwnetid <- pkg.globals$gUWNETID
+       practice_result$learner_name <- pkg.globals$gLEARNER_NAME
+       practice_result$learner_email <- pkg.globals$gLEARNER_EMAIL
     },
     error = function(e) {
       t <- result_prompt_error(-1, "practice.begin() failed.")
@@ -1536,8 +1541,8 @@ format_result <- function(result) {
   t <- ""
   t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n")
   t <- paste0(t, "<i>", date(), "</i>\n")
-  if (result$user_name != "") {
-    t <- paste0(t, "", result$user_name, "</i> (", result$uwnetid, ")\n")
+  if (result$learner_name != "") {
+    t <- paste0(t, "", result$learner_name, "</i> (", result$learner_email, ")\n")
     t <- paste0(t, "\n")
   } else {
     t <- paste0(t, "Learner name: ", "None.")

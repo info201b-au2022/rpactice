@@ -27,8 +27,8 @@ practice.begin <- function(short = "P01", learner="Anonymous", email="") {
   ps_set_current(id)
 
   # Currently, no session information, so just a global variable
-  pkg.globals$gUSER_NAME <- learner
-  pkg.globals$gUWNETID <-email
+  pkg.globals$gLEARNER_NAME <- learner
+  pkg.globals$gLEARNER_NAME <-email
 
   return(TRUE)
 }
