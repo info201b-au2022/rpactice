@@ -716,7 +716,8 @@ DEFAULT_Check <- function(var_name, result) {
 # A practice_result takes this structure:
 #
 # practice_result <- list(
-#    user_name = <string>,
+#        user_name = "",
+#        email = "",
 #     num_correct = <integer>,
 #     num_incorrect = <integer>,
 #     general_msg = <string>,
@@ -731,9 +732,10 @@ DEFAULT_Check <- function(var_name, result) {
 # )
 #----------------------------------------------------------------------------#
 check_answers <- function(learner_code, clear_all = TRUE) {
+
   practice_result <- list(
-    user_name = pkg.globals$gUSER_NAME,
-    uwnetid = pkg.globals$gUWNETID,
+    user_name = "",
+    uwnetid = "",
     general_msg = "",
     num_correct = 0,
     num_incorrect = 0,
@@ -742,6 +744,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     message_list = list()
   )
 
+  # Step 1
   # Clear all pre-set variables. When grading a set of assignments
   # it will likely be substantially more efficient to not clear the
   # variables.
@@ -749,49 +752,56 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     clear_all_envirs()
   }
 
+  # Step 2
   # Try to parse the learners code. If there is an error return
   # immediately with a reasonable error message.
   tryCatch(
     expr = {
-      learer_expression <- parse(text=learner_code)
+      learner_expression <- parse(text=learner_code)
     },
     error = function(e) {
-      t <- result_prompt_error(-1, "Likely Syntax Error: Run and test code. Try again.")
+      t <- result_prompt_error(-1, "Likely a Syntax Error: Run and test code. Try again.")
       practice_result <- result_update(practice_result, -1, FALSE, t)
       return(practice_result)
     }
   )
 
-  # Find the practice.begin() statement and extract the short ID for the practic set
-  short_id <- ast_get_begin2(learner_expression)
-  if (is.null(short_id)) {
+  # Step 3
+  # Find the practice.begin() function and evaluate it. practice.begin() sets the
+  # practice set ID  and basic learner information (name and email), currently
+  # represented awkwardly as global variables.
+  # Step 3a - get the practice.begin() statement from the student's code
+  begin_expr <- ast_get_begin2(learner_expression)
+  if (is.null(begin_expr)) {
     t <- result_prompt_error(-1, "The practice set must have a begin statement.")
     practice_result <- result_update(practice_result, -1, FALSE, t)
     return(practice_result)
   }
 
-  # Set the practice set as the current one
-  ps_id <- ps_get_id_by_short(short_id)
-  if (ps_id == -1) {
-    t <- result_prompt_error(-1, "The practice set is not found.")
-    practice_result <- result_update(practice_result, -1, FALSE, t)
-    return(practice_result)
-  } else {
-    ps_set_current(ps_id)
-  }
+  # Step 3b - evaluate practice.begin()
+  tryCatch(
+    expr = {
+       eval(begin_expr)
+       practice_result$user_name <- pkg.globals$gUSER_NAME
+       practice_result$uwnetid <- pkg.globals$gUWNETID
+    },
+    error = function(e) {
+      t <- result_prompt_error(-1, "practice.begin() failed.")
+      practice_result <- result_update(practice_result, -1, FALSE, t)
+      return(practice_result)
+    }
+  )
 
-  cat("Top.\n")
-
-  # STEP 0
-  # Initialize the static variables
+  # STEP 4
+  # Inspect the practice set, and initialize the pre-set variables
   initialize_static_vars()
 
   print_all_envirs()
   cat("Step 0 done.\n")
 
-  # STEP 1
+  # STEP 4
   # Evaluate the learner's code and the expected code in two different
-  # environments (global and expected)
+  # environments (learner and expected environments)
   # TODO: Deal with errors ...
   learner_vars <- eval_code_global(learner_code)
   if (is.null(learner_vars)) {
@@ -800,9 +810,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     return(practice_result)
   }
 
-  print_all_envirs()
-  cat("Step 1 done.")
-
+  # Step 4a
   # If the learner has done nothing (no learner variables), we are done
   if (length(learner_vars) == 0) {
     t <- result_prompt_error(-1, "Currently nothing to evaluate!")
@@ -810,15 +818,15 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     return(practice_result)
   }
 
-  # STEP 2
-  # Are there variables in the the GlobalEnv that need to be copied
-  # into the Expected Env?  If so, copy those variables.
+  # STEP 5
+  # Are there variables in the the learners environment that need to be
+  # copied into the expected environment?  If so, copy those variables.
   cp_vars <- ps_get_all_cp_vars()
   for (v in cp_vars) {
     cp_var_to_envir(v, get(v, envir = pkg.learner_env))
   }
 
-  # STEP 3
+  # STEP 6
   # Evaluate the expected code.
   expected_vars <- eval_code_expected(ps_get_all_expected_code(), FALSE)
   if (is.null(expected_vars)) {
@@ -828,12 +836,12 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   print_all_envirs()
   cat("Step 2 done.")
 
-  # STEP 4
+  # STEP 7
   # Parse the learner's code and extract all variables and assignment
   # operators. Update the practice set with this code.
   tryCatch(
     expr = {
-      learner_assign_ops <- ast_get_assignments(parse(text = learner_code))
+      learner_assign_ops <- ast_get_assignments(learner_expression)
     },
     error = function(e) {
       # This error should not happen -- since, the code has been evaluated above to get
@@ -844,6 +852,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     }
   )
 
+  # Step 8
   # Get the learner's variables and code - NOTE: Why flatten here?
   for (k in 1:length(learner_assign_ops)) {
     t <- learner_assign_ops[[k]]
@@ -853,7 +862,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
 
   # STEP 5
   # Get all of the variable names that need to be checked for correctness.
-  # Check if the equivalent variables hold the same values in the Global
+  # Check if the equivalent variables hold the same values in the Learner
   # and Expected environments.
   var_names <- ps_get_all_assignment_vars()
 
@@ -1506,7 +1515,11 @@ get_adage <- function() {
     "Review your code. Do you understand each step?",
     "Repeat practice sets! It is a good way to learn.",
     "Write your own prompts - then write your own code.",
-    "Do you understand each step? Consider explaining your code to others."
+    "Do you understand each step? Explaining your code to others is a good way to learn.",
+    "Practice sets are like baking a cake. It takes practice.",
+    "Does the code work, but is confusing. Ask a friend to clarify.",
+    "Practice sets are like fixing a car or bike. It takes practice.",
+    "You don't need to know everything. Coding by trial and error is a good way to learn."
   )
   num <- round(runif(1, 1, length(adage)), 0)
   return(sprintf("%s", adage[num]))
@@ -1522,11 +1535,12 @@ format_result <- function(result) {
 
   t <- ""
   t <- paste0(t, "<b>", ps$ps_short, ": ", ps$ps_title, "</b>\n")
+  t <- paste0(t, "<i>", date(), "</i>\n")
   if (result$user_name != "") {
-    t <- paste0(t, "Learner name and UW NetID:\n<i>   ", result$user_name, "</i> (", result$uwnetid, ")")
+    t <- paste0(t, "", result$user_name, "</i> (", result$uwnetid, ")\n")
     t <- paste0(t, "\n")
   } else {
-    t <- paste0(t, "Learner name:\n<i>   ", "No learner</i> (", "No e-mail address", ")")
+    t <- paste0(t, "Learner name: ", "None.")
     t <- paste0(t, "\n")
   }
 

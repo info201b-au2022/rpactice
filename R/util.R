@@ -100,10 +100,9 @@ ast_get_begin2 <- function(e1) {
   if (length(begin_expr) == 0) {
     return(NULL)
   }
-
-  ps_short <- begin_expr[[2]]
-
-  return(ps_short)
+  else {
+    return(begin_expr)
+  }
 }
 
 ast_get_begin <- function(e1) {
