@@ -497,8 +497,8 @@ DEFAULT_Check <- function(var_name, result) {
   cDEBUG <- TRUE
 
   internal_id <- ps_var_name_to_id(var_name)
-  learner_r <- get_global_var_info(var_name)
-  expected_r <- get_expected_var_info(var_name)
+  L <- get_global_var_info(var_name)
+  X <- get_expected_var_info(var_name)
 
   # This should never happen. The variable, var_name, should have an
   # internal id; if not, something is truly messed up.
@@ -511,12 +511,12 @@ DEFAULT_Check <- function(var_name, result) {
 
   # This should never happen. The variable, var_name, should lead to
   # results in both the learner and expected environments.
-  if (is.null(learner_r) || is.null(expected_r)) {
+  if (is.null(L) || is.null(X)) {
     t <- ""
-    if (is.null(learner_r)) {
+    if (is.null(L)) {
       t <- paste0(t, "[learner variable is null]")
     }
-    if (is.null(expected_r)) {
+    if (is.null(X)) {
       t <- paste0(t, "[expected variable is null]")
     }
     t <- result_prompt_error(internal_id, paste0("Check: Internal error: ", t, sep = ""))
@@ -525,8 +525,8 @@ DEFAULT_Check <- function(var_name, result) {
     # return(result)
   }
 
-  Li <- learner_r$info
-  Ei <- expected_r$info
+  Li <- L$info
+  X$info <- X$info
 
   if (cDEBUG) {
     ps <- ps_get_current()
@@ -538,19 +538,19 @@ DEFAULT_Check <- function(var_name, result) {
     cat("---\n")
 
     cat("...---...\n")
-    print(Li)
+    print(L$info)
     cat("...---...\n")
-    print(Ei)
+    print(X$info)
 
-    cat(sprintf("Learner: %-20s %-10s %-60s\n", Li$vname, Li$vtype, Li$vstr))
-    cat(sprintf("Expected: %-20s %-10s %-60s\n", Ei$vname, Ei$vtype, Ei$vstr))
+    cat(sprintf("Learner: %-20s %-10s %-60s\n", L$info$vname, L$info$vtype, L$info$vstr))
+    cat(sprintf("Expected: %-20s %-10s %-60s\n", X$info$vname, X$info$vtype, X$info$vstr))
     print("...---...\n")
   }
 
-  if (Li$vtype %in% c("double", "integer", "real", "logical", "complex", "character")) {
+  if (L$info$vtype %in% c("double", "integer", "real", "logical", "complex", "character")) {
 
     # Atomic values
-    if (length(Li$vval) == 1) {
+    if (length(L$info$vval) == 1) {
       if (cDEBUG) {
         cat(">> Atomic\n")
       }
@@ -559,9 +559,9 @@ DEFAULT_Check <- function(var_name, result) {
       re <- ps_get_re_checks(internal_id)
       good <- FALSE
       if (re != "") {
-        good <- str_detect(Li$vval, re)
+        good <- str_detect(L$info$vval, re)
       } else {
-        good <- identical(Li$vval, Ei$vval, ignore.environment = TRUE)
+        good <- identical(L$info$vval, X$info$vval, ignore.environment = TRUE)
       }
 
       if (good == TRUE) {
@@ -576,7 +576,7 @@ DEFAULT_Check <- function(var_name, result) {
         cat(">> Vector\n")
       }
 
-      if (identical(Li$vval, Ei$vval, ignore.environment = TRUE) == TRUE) {
+      if (identical(L$info$vval, X$info$vval, ignore.environment = TRUE) == TRUE) {
         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
       } else {
         result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
@@ -584,34 +584,34 @@ DEFAULT_Check <- function(var_name, result) {
     }
 
     # Check for dataframe
-  } else if (Li$vtype == "dataframe") {
+  } else if (L$info$vtype == "dataframe") {
     if (cDEBUG) {
       cat(">> Dataframe\n")
     }
-    if (identical(Li$vval, Ei$vval, ignore.environment = TRUE) == TRUE) {
+    if (identical(L$info$vval, X$info$vval, ignore.environment = TRUE) == TRUE) {
       result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
     } else {
       result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
     }
 
     # list
-  } else if (Li$vtype == "list") {
+  } else if (L$info$vtype == "list") {
     if (cDEBUG) {
       cat(">> List\n")
     }
-    if (identical(Li$vval, Ei$vval, ignore.environment = TRUE) == TRUE) {
+    if (identical(L$info$vval, X$info$vval, ignore.environment = TRUE) == TRUE) {
       result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
     } else {
       result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
     }
 
     # Functions
-  } else if (Li$vtype == "closure") {
+  } else if (L$info$vtype == "closure") {
     if (cDEBUG) {
       cat(">> Closure\n")
     }
 
-    num_args <- signature_ok(Li$vval, Ei$vval)
+    num_args <- signature_ok(L$info$vval, X$info$vval)
 
     # If the number of parameters differ from expected - note error message
     if (num_args < 0) {
@@ -623,8 +623,8 @@ DEFAULT_Check <- function(var_name, result) {
 
     # A function with ZERO parameters
     if (num_args == 0) {
-      learner_f_answers <- do.call(Li$vname, list(), envir = get_envir(1))
-      expected_f_answers <- do.call(Ei$vname, list(), envir = get_envir(2))
+      learner_f_answers <- do.call(L$info$vname, list(), envir = get_envir(1))
+      expected_f_answers <- do.call(X$info$vname, list(), envir = get_envir(2))
 
       if (identical(learner_f_answers, expected_f_answers, ignore.environment = TRUE) == TRUE) {
         result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
@@ -646,8 +646,8 @@ DEFAULT_Check <- function(var_name, result) {
       }
 
       for (k in 1:length(checks)) {
-        t1 <- do.call(Li$vname, list(checks[k]), envir = get_envir(1))
-        t2 <- do.call(Ei$vname, list(checks[k]), envir = get_envir(2))
+        t1 <- do.call(L$info$vname, list(checks[k]), envir = get_envir(1))
+        t2 <- do.call(X$info$vname, list(checks[k]), envir = get_envir(2))
         learner_answers <- append(learner_answers, t1)
         expected_answers <- append(expected_answers, t2)
       }
@@ -680,8 +680,8 @@ DEFAULT_Check <- function(var_name, result) {
 
       for (j in 1:length(checks_arg1)) {
         for (k in 1:length(checks_arg2)) {
-          t1 <- do.call(Li$vname, list(checks_arg1[j], checks_arg2[k]), envir = get_envir(1))
-          t2 <- do.call(Ei$vname, list(checks_arg1[j], checks_arg2[k]), envir = get_envir(2))
+          t1 <- do.call(L$info$vname, list(checks_arg1[j], checks_arg2[k]), envir = get_envir(1))
+          t2 <- do.call(X$info$vname, list(checks_arg1[j], checks_arg2[k]), envir = get_envir(2))
           learner_answers <- append(learner_answers, t1)
           expected_answers <- append(expected_answers, t2)
         }

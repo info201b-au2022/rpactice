@@ -50,7 +50,8 @@ admin.ls <- function() {
   for (k in 1:length(v)) {
     ps <- ps_get_by_short(v[k])
     num_prompts <- length(ps$task_list)
-    cat(paste0(k, ": [", v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
+    t <- sprintf("%2d", k)
+    cat(paste0(t, ": [", v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
     # cat(paste0("   Filename: ", ps$ps_filename, "\n"))
   }
 }
