@@ -1,22 +1,25 @@
 #----------------------------------------------------------------------------#
 # Code for implementing the RStudio Addins
 #----------------------------------------------------------------------------#
-
 ## Global variables ----
 pinfo201.globals <- new.env()
 pinfo201.globals$gPRACTICE_SET_ID <- 1
+
+# Two variables for modeling the learner
 pinfo201.globals$gLEARNER_NAME <- ""
 pinfo201.globals$gLEARNER_EMAIL <- ""
 
+# This environment is used to hold and run the learner's code
+cLEARNER_ENV_ID <- 1
 pinfo201.learner_env <- new.env()
+
+# This environment is used for the expected code
+cEXPECTED_ENV_ID <- 2
 pinfo201.expected_env <- new.env()
 
-cLEARNER_ENV_ID <- 1
-cEXPECTED_ENV_ID <- 2
+# This constant is used to map to the .GlobalEnv environment
+# .GlobalEnv is the parent of the learner_env and expected_env
 cGLOBAL_ENV_ID <- 3
-
-#pinfo201.globals$gTO_CONSOLE <- FALSE
-
 
 ## Constants ----
 cDEBUG <- FALSE
@@ -27,7 +30,7 @@ cPACKAGE_ENVIR_NAME <- "package:pinfo201"
 #----------------------------------------------------------------------------#
 # Functions for setting and accessing practice sets
 #----------------------------------------------------------------------------#
-# This function is called with the package is loaded. It is used to initialize
+# This function is called when the package is loaded. It is used to initialize
 # the "built-in" practice sets.
 #
 # Note: Because of the expected structure of packages, these file are located
@@ -56,7 +59,7 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
 
   # Test cases
-  ps_add(load_ps("T00.R")) # Supreme simplicity - helpful for debuggin
+  ps_add(load_ps("T00.R")) # Most simple - helpful for debugging
   ps_add(load_ps("T01.R")) # Assignment
   ps_add(load_ps("T02.R")) # Assignment: Copy variables
   ps_add(load_ps("T03.R")) # Assignment: Structures
@@ -73,11 +76,13 @@ ps_load_internal_ps <- function() {
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
 
+
+
+  # Set the current practice set to 1
   ps_set_current(1)
-  # clear_viewer_pane()
 }
 
-# Add a practice set into the running aplication
+# Add a practice set into the running application
 ps_add <- function(ps) {
   new_k <- length(pinfo201.globals$gPRACTICE_SETS) + 1
   pinfo201.globals$gPRACTICE_SETS[[new_k]] <- ps
@@ -472,8 +477,7 @@ signature_ok <- function(check_function, expected_function) {
 # This function formats a code block
 # TODO: Make improvements
 format_code <- function(code_text, indent = cTAB_IN_SPACES) {
-  t <- styler::style_text(code_text)
-  t <- paste0(indent, t)
+  t <- styler::style_text(code_text, base_indention = nchar(indent))
   t <- paste0(t, collapse = "\n")
   return(t)
 }
@@ -1437,12 +1441,12 @@ format_answers <- function() {
 #----------------------------------------------------------------------------#
 result_good_msg <- function(id) {
   expected_code <- ps_get_expected_code(id)
-  #  learner_code <- ps_get_learner_code(id)
   answer <- ps_get_expected_answer(id)
   t <- paste0(
     "<span style='color:green'>&#10004;",
     " ", answer, "</span>\n",
-    "   > ", format_code(expected_code)
+#    "   > ", format_code(expected_code)
+     "", format_code(expected_code), "\n"
   )
   return(t)
 }
@@ -1568,7 +1572,7 @@ format_result <- function(result) {
     }
 
     # A (fun) adage - intended to be motivating
-    t <- paste0(t, "\nFinal suggestion!\n   ", "<font color='green'>", get_adage(), "</font>\n")
+    t <- paste0(t, "Final suggestion!\n   ", "<font color='green'>", get_adage(), "</font>\n")
 
     # Show code that was expected in a complete and compact form
     t <- paste0(t, "\n<p style='text-align:center;'><b> Expected code:</b></p>")
@@ -1642,14 +1646,6 @@ format_grading <- function(results) {
 #----------------------------------------------------------------------------#
 # Functions for sending output to Console or Viewer
 #----------------------------------------------------------------------------#
-print_to_console <- function(text) {
-  t <- text
-  if (cDEBUG == FALSE) {
-    t <- paste0("\014", t) # Clear the console
-  }
-  cat(t)
-}
-
 format_for_html_file <- function(text) {
   t <- "<head></head><body><pre>"
   t <- paste0(t, text)
@@ -1667,11 +1663,3 @@ print_to_viewer <- function(text, fn) {
   write(t, html_file)
   rstudioapi::viewer(html_file, height = 400)
 }
-
-# print_output <- function(text, fn) {
-#   if (pinfo201.globals$gTO_CONSOLE) {
-#     print_to_console(text)
-#   } else {
-#     print_to_viewer(text, fn)
-#   }
-# }
