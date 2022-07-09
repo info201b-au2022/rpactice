@@ -58,6 +58,16 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("DS-10-4.R")) # External data sets: Gates Foundation Educational Grants
   ps_add(load_ps("DS-10-5.R")) # Large data sets: Baby Name Popularity Over Time
 
+  ps_add(load_ps("DS-11-1.R")) # Working with data frames
+  ps_add(load_ps("DS-11-2.R")) # Working with `dplyr`
+  # ps_add(load_ps("DS-11-3.R")) # Using the pipe operator
+  # ps_add(load_ps("DS-11-4.R")) # Practicing with dplyr
+  # ps_add(load_ps("DS-11-5.R")) # dplyr grouped operations
+  # ps_add(load_ps("DS-11-6.R")) # dplyr join operations
+  # ps_add(load_ps("DS-11-7.R")) # Using dplyr on external data
+  # ps_add(load_ps("DS-11-7.R")) # Exploring data sets
+
+
   # Test cases
   ps_add(load_ps("T00.R")) # Most simple - helpful for debugging
   ps_add(load_ps("T01.R")) # Assignment
@@ -524,9 +534,6 @@ DEFAULT_Check <- function(var_name, result) {
     stop(paste0("Check: Internal error:", t))
     # return(result)
   }
-
-  Li <- L$info
-  X$info <- X$info
 
   if (cDEBUG) {
     ps <- ps_get_current()
@@ -1516,7 +1523,7 @@ get_smilely_face <- function() {
     128175,
     128522
   )
-  num <- round(runif(1, 1, length(faces)), 0)
+  num <- round(stats::runif(1, 1, length(faces)), 0)
   return(sprintf("&#%d;", faces[num]))
 }
 
@@ -1532,7 +1539,7 @@ get_adage <- function() {
     "Practice sets are like fixing a car or bike. It takes practice.",
     "You don't need to know everything. Coding by trial and error is a good way to learn."
   )
-  num <- round(runif(1, 1, length(adage)), 0)
+  num <- round(stats::runif(1, 1, length(adage)), 0)
   return(sprintf("%s", adage[num]))
 }
 

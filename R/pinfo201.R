@@ -262,5 +262,8 @@ NULL
 #' @import tidyverse
 NULL
 
-#' @import stats
+#' #' @import stats
+#' NULL
+
+#' @importFrom stats runif
 NULL

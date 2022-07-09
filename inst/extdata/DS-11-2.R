@@ -1,99 +1,106 @@
 #' @version ps-1
-#' @short DS-10-5
-#' @title Large data sets: Baby Name Popularity Over Time
+#' @short DS-11-2
+#' @title Working with `dplyr`
 #' @descr
-#' Exercise 10.5 adapted from Programming Skills for Data Science by
+#' Exercise 11.2 adapted from Programming Skills for Data Science by
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
-
-# Exercise 2: working with `dplyr`
-#' @id ?
-#' @msg
-# Note that this exercise repeats the analysis from Exercise 1, but should be
-# performed using `dplyr` (do not directly access or manipulate the data frames)
-
-# Install and load the "fueleconomy" package
-# install.packages("devtools")
-# devtools::install_github("hadley/fueleconomy")
-library(fueleconomy)
-
-# Install and load the "dplyr" library
-install.packages("dplyr")
+#' @initial-vars
 library("dplyr")
+library("fueleconomy")
+#' @end
+
+#' @id -
+#' @msg
+#' This practice set repeats the analysis from practice set DS-11-1, but is to be
+#' completed using `dplyr` rather than directly access or manipulate the data
+#' frames.
+#'
+#' You will need to install and load the `fueleconomy` package. Here are
+#' the commands for doing so:
+#'    install.packages("devtools")                     # One time only
+#'    devtools::install_github("hadley/fueleconomy")   # One time only
+#'    library(fueleconomy)
+#'
+#' In addition, you will need to install the `dplyr` library.  Here are
+#' the commands:
+#'    install.packages("dplyr")     # One time only
+#'    library("dplyr")
+#' @end
 
 #' @id ?
 #' @msg
-# Select the different manufacturers (makes) of the cars in this data set.
-# Save this vector in a variable
+#' Select the different manufacturers (makes) of the cars in this data set.
+#' Save this vector in a variable, named `makes`.
 #' @end
 #' @code
 makes <- select(vehicles, make)
-#' @code
+#' @end
 
 #' @id ?
 #' @msg
-# Use the `distinct()` function to determine how many different car manufacturers
-# are represented by the data set
+#' Use the `distinct()` function to determine how many different car
+#' manufacturers are represented by the data set. Assign this number
+#' to the variable, `num_makes`.
 #' @end
 #' @code
-nrow(distinct(vehicles, make))
-length(unique(makes$make)) # without deplyr
-#' @code
+num_makes <- nrow(distinct(vehicles, make)) # base: length(unique(makes$make))
+#' @end
 
 #' @id ?
 #' @msg
-# Filter the data set for vehicles manufactured in 1997
+#' Filter the data set for vehicles manufactured in 1997.
 #' @end
 #' @code
 cars_1997 <- filter(vehicles, year == 1997)
-#' @code
+#' @end
 
 #' @id ?
 #' @msg
-# Arrange the 1997 cars by highway (`hwy`) gas milage
+#' Arrange the 1997 cars by highway (`hwy`) gas milage.
 #' @end
 #' @code
 cars_1997 <- arrange(cars_1997, hwy)
-#' @code
+#' @end
 
 #' @id ?
 #' @msg
-# Mutate the 1997 cars data frame to add a column `average` that has the average
-# gas milage (between city and highway mpg) for each car
+#' Mutate the 1997 cars data frame to add a column `average` that has the average
+#' gas mileage (between city and highway mpg) for each car.
 #' @end
 #' @code
 cars_1997 <- mutate(cars_1997, average = (hwy + cty) / 2)
-#' @code
+#' @end
 
 #' @id ?
 #' @msg
-# Filter the whole vehicles data set for 2-Wheel Drive vehicles that get more
-# than 20 miles/gallon in the city.
-# Save this new data frame in a variable.
+#' Filter the whole vehicles data set for 2-Wheel Drive vehicles that get more
+#' than 20 miles/gallon in the city. Save this new data frame in a variable,
+#' named `two_wheel_20_mpg`.
 #' @end
 #' @code
 two_wheel_20_mpg <- filter(vehicles, drive == "2-Wheel Drive", cty > 20)
-#' @code
+#' @end
 
 #' @id ?
 #' @msg
-# Of the above vehicles, what is the vehicle ID of the vehicle with the worst
-# hwy mpg?
-# Hint: filter for the worst vehicle, then select its ID.
+#' Of the above vehicles, what is the vehicle ID of the vehicle with the worst
+#' hwy mpg? (Hint: filter for the worst vehicle, then select its ID.)
 #' @end
 #' @code
 filtered <- filter(two_wheel_20_mpg, hwy == min(hwy))
 worst_hwy <- select(filtered, id)
-#' @code
+#' @end
 
 #' @id ?
 #' @msg
-# Write a function that takes a `year_choice` and a `make_choice` as parameters,
-# and returns the vehicle model that gets the most hwy miles/gallon of vehicles
-# of that make in that year.
-# You'll need to filter more (and do some selecting)!
+#' Write a function that takes a `year_choice` and a `make_choice` as parameters,
+#' and returns the vehicle model that gets the most hwy miles/gallon of vehicles
+#' of that make in that year.
+#' You'll need to filter more (and do some selecting)!
 #' @end
+#' @check list(arg1=c("Acura", "Aston Martin", "BMW"), arg2=c(1995, 2012, 1999))
 #' @code
 make_year_filter <- function(make_choice, year_choice) {
   filtered <- filter(vehicles, make == make_choice, year == year_choice)
@@ -101,13 +108,13 @@ make_year_filter <- function(make_choice, year_choice) {
   selected <- select(filtered, model)
   selected
 }
-#' @code
+#' @end
 
 #' @id ?
 #' @msg
-# What was the most efficient Honda model of 1995?
+#' What was the most efficient Honda model of 1995?
 #' @end
 #' @code
-make_year_filter("Honda", 1995)
-#' @code
+most_efficient <- make_year_filter("Honda", 1995)
+#' @end
 
