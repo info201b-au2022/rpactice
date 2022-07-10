@@ -1530,14 +1530,14 @@ get_smilely_face <- function() {
 # Randomly chose an adage
 get_adage <- function() {
   adage <- c(
-    "Review your code. Do you understand each step?",
-    "Repeat practice sets! It is a good way to learn.",
-    "Write your own prompts - then write your own code.",
+    "Review your code. Double check. Do you understand each step?",
+    "Repeating practice sets is a good way to learn!",
+    "To learn, you can write your own prompts and test your understandng!",
     "Do you understand each step? Explaining your code to others is a good way to learn.",
-    "Practice sets are like baking a cake. It takes practice.",
+    "Working on practice sets are like baking a cake. It takes practice.",
     "Does the code work, but is confusing. Ask a friend to clarify.",
-    "Practice sets are like fixing a car or bike. It takes practice.",
-    "You don't need to know everything. Coding by trial and error is a good way to learn."
+    "Working on practice sets are like fixing a car or bike. It takes practice.",
+    "Coding by thoughtful trial and error is a good way to learn."
   )
   num <- round(stats::runif(1, 1, length(adage)), 0)
   return(sprintf("%s", adage[num]))
@@ -1574,12 +1574,14 @@ format_result <- function(result) {
     # All prompts are correct !!
     t <- paste0(t, " Good work! ", get_smilely_face(), "\n")
 
+    # A (fun) adage - intended to be motivating
+    t <- paste0(t, "   ", "<font color='purple'>\"", get_adage(), "\"</font>")
+
+    t <- paste0(t, "\n<p style='text-align:center;'><b> Summary:</b></p>")
+
     for (m in result$message_list) {
       t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
     }
-
-    # A (fun) adage - intended to be motivating
-    t <- paste0(t, "Final suggestion!\n   ", "<font color='green'>", get_adage(), "</font>\n")
 
     # Show code that was expected in a complete and compact form
     t <- paste0(t, "\n<p style='text-align:center;'><b> Expected code:</b></p>")

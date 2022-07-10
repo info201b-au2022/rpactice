@@ -14,25 +14,28 @@ library("fueleconomy")
 #' @id -
 #' @msg
 #' This practice set repeats the analysis from practice set DS-11-1, but is to be
-#' completed using `dplyr` rather than directly access or manipulate the data
-#' frames.
+#' completed using `dplyr`.  With practice, you will find `dplyr` easier for
+#' complex data filtering an manipulation.
 #'
 #' You will need to install and load the `fueleconomy` package. Here are
 #' the commands for doing so:
-#'    install.packages("devtools")                     # One time only
-#'    devtools::install_github("hadley/fueleconomy")   # One time only
-#'    library(fueleconomy)
+#'    > install.packages("devtools")                     # One time only
+#'    > devtools::install_github("hadley/fueleconomy")   # One time only
+#'    > library(fueleconomy)
 #'
-#' In addition, you will need to install the `dplyr` library.  Here are
-#' the commands:
-#'    install.packages("dplyr")     # One time only
-#'    library("dplyr")
+#' In addition, you will need to install the `dplyr` library. `dplyr` comes with
+#' the `tidyverse`, which you should have already installed into your system. In
+#' case not, here is the command:
+#'    install.packages("tidyverse")     # One time only
+#'
+#' Then, to use `dplyr`, you use the `library()` statement, like this:
+#'    > library("dplyr")
 #' @end
 
 #' @id ?
 #' @msg
 #' Select the different manufacturers (makes) of the cars in this data set.
-#' Save this vector in a variable, named `makes`.
+#' Save this vector in a variable, named `makes`. (DPLYR command: `select()`.)
 #' @end
 #' @code
 makes <- select(vehicles, make)
@@ -42,7 +45,7 @@ makes <- select(vehicles, make)
 #' @msg
 #' Use the `distinct()` function to determine how many different car
 #' manufacturers are represented by the data set. Assign this number
-#' to the variable, `num_makes`.
+#' to the variable, `num_makes`. (DPLYR command: `distinct()`.)
 #' @end
 #' @code
 num_makes <- nrow(distinct(vehicles, make)) # base: length(unique(makes$make))
@@ -51,6 +54,7 @@ num_makes <- nrow(distinct(vehicles, make)) # base: length(unique(makes$make))
 #' @id ?
 #' @msg
 #' Filter the data set for vehicles manufactured in 1997.
+#' (DPLYR command: `filter()`.)
 #' @end
 #' @code
 cars_1997 <- filter(vehicles, year == 1997)
@@ -58,10 +62,60 @@ cars_1997 <- filter(vehicles, year == 1997)
 
 #' @id ?
 #' @msg
-#' Arrange the 1997 cars by highway (`hwy`) gas milage.
+#' Sort the 1997 cars by highway gas mileage (`hwy`). (DPLYR command: `arrange()`)
 #' @end
 #' @code
-cars_1997 <- arrange(cars_1997, hwy)
+cars_1997_sorted <- arrange(cars_1997, hwy)
+#' @end
+
+
+#' @id ?
+#' @msg
+#' Filter the data set for vehicles manufactured between 1997 and 2000. (Hint:
+#' You will need to use the `filter` DPLYR function, along with the logical
+#' operator `&` (AND) to combine the results of two relational operators (`>=`
+#' and `<=`)).
+#' @end
+#' @code
+cars_1997_to_2000 <- filter(vehicles, year >= 1997 & year <= 2000)
+#' @end
+#'
+
+#' @id ?
+#' @msg
+#' Filter the data set for vehicles manufactured either in 1997 or 2000. (Hint:
+#' You will need to use the `filter` DPLYR function, You along with the logical
+#' operator `|` (OR) to combine the results of two relational operators (`==`
+#' and `==`)).
+#' @end
+#' @code
+cars_1997_or_2000 <- filter(vehicles, year == 1997 | year == 2000)
+#' @end
+
+#' @id ?
+#' @msg
+#' In the `vehicles` dataframe, what is the highest highway gas mileage? (Hint:
+#' You will need to use the DPLYR `summarize()` command and the `max` function.)
+#' @end
+#' @code
+best_mpg_hwy <- summarize(vehicles, max(hwy))
+#' @end
+
+#' @id ?
+#' @msg
+#' In the `vehicles` dataframe, what is lowest highway gas mileage? (Hint:
+#' You will need to use the DPLYR `summarize()` command and the `min` function.)
+#' @end
+#' @code
+poorest_mpg_hwy <- summarize(vehicles, min(hwy))
+#' @end
+
+#' @id ?
+#' @msg
+#' In the `vehicles` dataframe, what is the average highway gas mileage?
+#' @end
+#' @code
+average_mpg_hwy <- summarize(vehicles, mean(hwy))
 #' @end
 
 #' @id ?
@@ -70,7 +124,7 @@ cars_1997 <- arrange(cars_1997, hwy)
 #' gas mileage (between city and highway mpg) for each car.
 #' @end
 #' @code
-cars_1997 <- mutate(cars_1997, average = (hwy + cty) / 2)
+cars_1997_new <- mutate(cars_1997, average = (hwy + cty) / 2)
 #' @end
 
 #' @id ?
@@ -85,12 +139,20 @@ two_wheel_20_mpg <- filter(vehicles, drive == "2-Wheel Drive", cty > 20)
 
 #' @id ?
 #' @msg
-#' Of the above vehicles, what is the vehicle ID of the vehicle with the worst
-#' hwy mpg? (Hint: filter for the worst vehicle, then select its ID.)
+#' Of the above vehicles, that is, `two_wheel_20_mpg`, what is the vehicle with the worst
+#' hwy gas mileage?  (Hint: Do this in two steps:  for the worst vehicle, then select its ID.)
 #' @end
 #' @code
 filtered <- filter(two_wheel_20_mpg, hwy == min(hwy))
-worst_hwy <- select(filtered, id)
+#' @end
+
+#' @id ?
+#' @msg
+#' Given the previous result, `filtered`, what is the id of the vehicle? (Hint: Use the
+#' DYPLR `select()` command and select the `id`.)
+#' @end
+#' @code
+worst_hwy_id <- filter(two_wheel_20_mpg, hwy == min(hwy))
 #' @end
 
 #' @id ?
