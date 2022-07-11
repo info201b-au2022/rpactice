@@ -60,12 +60,12 @@ ps_load_internal_ps <- function() {
 
   ps_add(load_ps("DS-11-1.R")) # Working with data frames
   ps_add(load_ps("DS-11-2.R")) # Working with `dplyr`
-  # ps_add(load_ps("DS-11-3.R")) # Using the pipe operator
-  # ps_add(load_ps("DS-11-4.R")) # Practicing with dplyr
-  # ps_add(load_ps("DS-11-5.R")) # dplyr grouped operations
-  # ps_add(load_ps("DS-11-6.R")) # dplyr join operations
-  # ps_add(load_ps("DS-11-7.R")) # Using dplyr on external data
-  # ps_add(load_ps("DS-11-7.R")) # Exploring data sets
+  ps_add(load_ps("DS-11-3.R")) # Using the pipe operator
+  ps_add(load_ps("DS-11-4.R")) # Practicing with dplyr
+  ps_add(load_ps("DS-11-5.R")) # dplyr grouped operations
+  ps_add(load_ps("DS-11-6.R")) # dplyr join operations
+  ps_add(load_ps("DS-11-7.R")) # Using dplyr on external data
+  ps_add(load_ps("DS-11-8.R")) # Exploring data sets
 
 
   # Test cases

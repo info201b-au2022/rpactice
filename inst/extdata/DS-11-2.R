@@ -28,7 +28,7 @@ library("fueleconomy")
 #' case not, here is the command:
 #'    install.packages("tidyverse")     # One time only
 #'
-#' Then, to use `dplyr`, you use the `library()` statement, like this:
+#' Finally, to use `dplyr`, you use the `library()` statement, like this:
 #'    > library("dplyr")
 #' @end
 

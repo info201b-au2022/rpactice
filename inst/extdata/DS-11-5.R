@@ -6,24 +6,33 @@
 #' Micheal Freeman and Joel Ross. See:
 #' https://github.com/programming-for-data-science/book-exercises
 #' @end
-
-#' Install the `"nycflights13"` package. Load (`library()`) the package.
-#' You'll also need to load `dplyr`
-#' install.packages("nycflights13")  #' should be done already
-library("nycflights13")
+#' @initial-vars
 library("dplyr")
+library(nycflights13)
+#' @end
+
+#' @id -
+#' @msg
+#' For this practice set, you will need to install and load the `nycflights13`
+#' package. Here are the commands for doing so:
+#'    > install.packages("nycflights13")  #' One time only
+#'    > library("nycflights13")
+#'
+#' In addition, you will need to install the `dplyr` library, as usual:
+#'    . install.packages("tidyverse")     #' One time only
+#'    > library("dplyr")
+#' @end
 
 #' @id ?
 #' @msg
-#' What was the average departure delay in each month?
-#' Save this as a data frame `dep_delay_by_month`
-#' Hint: you'll have to perform a grouping operation then summarizing your data
+#' What was the average departure delay in each month?. Save this as a data
+#' frame `dep_delay_by_month` Hint: you'll have to perform a grouping operation
+#' then summarizing your data.
 #' @end
 #' @code
 dep_delay_by_month <- flights %>%
   group_by(month) %>%
   summarize(delay = mean(dep_delay, na.rm = TRUE))
-dep_delay_by_month
 #' @end
 
 #' @id ?
@@ -31,14 +40,16 @@ dep_delay_by_month
 #' Which month had the greatest average departure delay?
 #' @end
 #' @code
-filter(dep_delay_by_month, delay == max(delay)) %>% select(month)
+departure_delay <-
+  filter(dep_delay_by_month, delay == max(delay)) %>%
+  select(month, delay)
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
 #' If your above data frame contains just two columns (e.g., "month", and "delay"
 #' in that order), you can create a scatterplot by passing that data frame to the
-#' `plot()` function
+#' `plot()` function.
 #' @end
 #' @code
 plot(dep_delay_by_month)
@@ -46,16 +57,15 @@ plot(dep_delay_by_month)
 
 #' @id ?
 #' @msg
-#' To which destinations were the average arrival delays the highest?
-#' Hint: you'll have to perform a grouping operation then summarize your data
-#' You can use the `head()` function to view just the first few rows
+#' To which destinations were the average arrival delays the highest? Hint:
+#' you'll have to perform a grouping operation then summarize your data. You can
+#' use the `head()` function to view just the first few rows.
 #' @end
 #' @code
 arr_delay_by_month <- flights %>%
   group_by(dest) %>%
   summarise(delay = mean(arr_delay, na.rm = TRUE)) %>%
   arrange(-delay)
-head(arr_delay_by_month)
 #' @end
 
 #' @id ?
@@ -63,7 +73,7 @@ head(arr_delay_by_month)
 #' You can look up these airports in the `airports` data frame!
 #' @end
 #' @code
-filter(airports, faa == arr_delay_by_month$dest[1]) #' for example
+the_airports <- filter(airports, faa == arr_delay_by_month$dest[1]) #' for example
 #' @end
 
 #' @id ?
@@ -71,10 +81,9 @@ filter(airports, faa == arr_delay_by_month$dest[1]) #' for example
 #' Which city was flown to with the highest average speed?
 #' @end
 #' @code
-city_fasted_speed <- flights %>%
+city_fast_speed <- flights %>%
   mutate(speed = distance / air_time * 60) %>%
   group_by(dest) %>%
   summarise(avg_speed = mean(speed, na.rm = TRUE)) %>%
   filter(avg_speed == max(avg_speed, na.rm = TRUE))
-city_fasted_speed
 #' @end
