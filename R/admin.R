@@ -293,18 +293,6 @@ admin.grade <- function(filename) {
     code_v <- readLines(file_list[k])
     code_string <- paste0(code_v, collapse = "\n")
 
-    # Try to evaluate the code
-    # out <- tryCatch(
-    #   {
-    #     eval(parse(text = code_string), envir = globalenv())
-    #   },
-    #   error = function(cond) {
-    #     message(paste0("Evaluation failed."))
-    #     message(paste0("Filename: ", file_list[k]))
-    #     message(cond)
-    #   }
-    # )
-
     # Check the answers and get the results
     result <- check_answers(code_v)
     t <- format_grading(result)

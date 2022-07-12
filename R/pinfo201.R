@@ -9,10 +9,11 @@
 #' learners who are just beginning. In addition, \code{pinfo201} provides functions
 #' for efficiently grading student work.
 #'
-#' @section Practice sets: The key idea is that an instructor creates a practice
-#'   set, which comprises prompts, expected answers, and hints. Once \code{pinfo201} is
-#'   installed, practice sets are loaded into RStudio and can be controlled with an
-#'   Addins menu. The \code{pinfo201} menu includes these options:
+#' @section Practice sets:
+#'   The key idea is that an instructor creates a practice set, which comprises
+#'   prompts, expected answers, and hints. Once \code{pinfo201} is installed,
+#'   practice sets are loaded into RStudio and can be controlled with an Addins
+#'   menu. The \code{pinfo201} menu includes these options:
 #'   \itemize{
 #'   \item 1. Begin Practice
 #'   \item 2. Check Answers
@@ -32,14 +33,18 @@
 #'   #' @short PS-Example
 #'   #' @title Example practice set
 #'   #' @descr
-#'   #' This file illustrates the essentials of specifying a practice set. It is
-#'   #' intended to informally show what kinds of prompts can be presented to
-#'   #' students and what can be tested.
+#'   #' This file illustrates the essentials of specifying a practice set. It
+#'   #' show what kinds of prompts can be presented to students and what can be
+#'   #' tested.
 #'   #' @end
 #'   #' @initial-vars
-#'   library(dplyr)
+#'   library(stats)
 #'   X <- c(1,2,3)
-#'   cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(T,F,T,T))
+#'   #' @end
+#'
+#'   #' @id -
+#'   #' @msg
+#'   #' A practice set that illustrates the basics.
 #'   #' @end
 #'
 #'   #' @id a
@@ -54,10 +59,12 @@
 #'   #' @end
 #'
 #'   #' @id b
-#'   #' @msg Create a variable `hometown` that stores the city in which you were born
+#'   #' @msg
+#'   #' Create a variable `hometown` that stores the city in which you were born.
+#'   #' @end
 #'   #' @check list(re="^[a-zA-Z\\s\\.]*$")
 #'   #' @code
-#'   #' hometown <- "St. Louis"
+#'   hometown <- "St. Louis"
 #'   #' @end
 #'
 #'   #' @id c
@@ -66,30 +73,38 @@
 #'   v1 <- X + 10
 #'   #' @end
 #'
+#'   #' @id d
+#'   #' @msg
+#'   #' Create 100 random numbers between 40000 and 50000. Round the numbers
+#'   #' to two decimal places.
+#'   #' @end
+#'   #' @cp-var salaries_2017
+#'   #' @code
+#'   salaries_2017 <- round(runif(100, 40000, 50000),2)
+#'   #' @end
+#'
 #'   #' @id -
 #'   #' @msg Working with functions.
 #'
-#'   #' @id c
+#'   #' @id e
 #'   #' @msg Write a function, named `what_is_pi`, which returns pi (3.1415).
 #'   #' @var what_is_pi
 #'   #' @code
-#'   what_is_pi <- function() {
-#'      pi
-#'   }
+#'   what_is_pi <- function() {pi}
 #'   #' @end
 #'
-#'   #' @id d
+#'   #' @id f
 #'   #' @msg Write a function, named `squared(x)`, which squares a number.
 #'   #' @var squared
 #'   #' @check list(arg1 = c(1, 2, 3, 0, -1, -2, -3, NA))
 #'   #' @code
 #'   squared <- function(x) {
-#'      t <- x^2
-#'   return(t)
+#'     t <- x^2
+#'     return(t)
 #'   }
 #'   #' @end
 #'
-#'   #' @id e
+#'   #' @id g
 #'   #' @msg
 #'   #' Define a function, named `imperial_to_metric`, that takes in two arguments: a
 #'   #' number of feet and a number of inches. The function should return the
@@ -98,53 +113,95 @@
 #'   #' @check list(arg1 = c(4, 5, 100, 0, NA), arg2 = c(0, 1, 1.5, 12.0, 24))
 #'   #' @code
 #'   imperial_to_metric <- function(feet, inches) {
-#'      total_inches <- feet * 12 + inches
-#'      meters <- total_inches * 0.0254
-#'      meters
+#'     total_inches <- feet * 12 + inches
+#'     meters <- total_inches * 0.0254
+#'     return(meters)
 #'   }
 #'   #' @end
-#'
-#'   #' @id -
-#'   #' @msg Working with dataframes
-#'
-#'   #' @id f
-#'   #' @msg Select rows from cDF, where C==TRUE. Show only A and C columns.
-#'   #' @code
-#'   df4 <- cDF %%>%%
-#'      filter(C==TRUE) %%>%%
-#'      select(A,C)
-#'   #' @end'
-#' }
+#'   }
 #'
 #' Practice sets have a title and an identifier (\code{short}), which is a short
 #' form for referring to a practice set. These identifiers must be unique.
 #' Optionally, one or more variables can be initialized with the
 #' \code{initial-vars} tag. Here, the idea is that prompts can require learners
-#' to use those variables. As can be seen in the example, specific libaries can
-#' also be loaded.
+#' to use those variables. As can be seen in the example, specific R libraries
+#' can also be loaded.
 #'
 #' The prompts comprise an ID, a message (the prompt), the expected
 #' answer, and a list of hints. If an \code{id} is "?" a set of prompt IDs
 #' will automatically be generated, which simplifies the development of
 #' prompts. If an \code{id} is a dash ("-"), a message is formatted. This is a
-#' simple method for guiding students through the prompts.
+#' way to guide students through the prompts.
 #'
-#' In addition, the \code{@checks} tag (see prompts "d" and "e") can be used to
+#' In addition, the \code{@checks} tag (see prompts f", and "g") can be used to
 #' check the implementation of a function. Currently, practice sets can ask
 #' learners to create functions with zero, one, or two arguments. For functions
 #' with two parameters, the function is tested on all combinations of
 #' inputs, \code{arg1} and \code{arg2}. More complex function checking, including
-#' checking functions with three or
-#' more arguments, is possible by implementing prompt-specific callback
-#' functions (see below).
+#' checking functions with three or more arguments, is possible by implementing
+#' prompt-specific callback functions (see below).
 #'
-#' Prompt "b" shows the use of a regular
-#' expression in a \code{@check} tag. This is a technique for matching a
-#' the value of variable assignment to a range of possible values. For variables
-#' without \code{@check} tags, \code{pinfo201} currently checks that the value
-#' of a student's variable is identical to the expected value.
+#' Prompt "b" shows the use of a regular expression in a \code{@check} tag. This
+#' is a technique for matching a the value of variable assignment to a range of
+#' possible values. For variables without \code{@check} tags, \code{pinfo201}
+#' currently checks that the value of a student's variable is identical to the
+#' expected value.
+#'
+#' Sometimes it is necessary to copy the value of a variable from the learner's
+#' code space to the expected code space. The tag \code{@cp-var} is used for
+#' this purpose. See prompt "d", where a vector of random numbers, is created
+#' by the learner's code and then used to check the learner's code.
 #'
 #' Basically, that's it.
+#'
+#' @section What do learners see?:
+#'
+#' The above specification is used to produce the following practice set, which
+#' guides learns to complete coding prompts.
+#'
+#'   \preformatted{
+#'   # pinfo201 / ps-1
+#'   #
+#'   # PS-Example: Example practice set
+#'   #    This file illustrates the essentials of specifying a practice set. It
+#'   #    show what kinds of prompts can be presented to #'
+#'   #   students and what can be tested.
+#'
+#'   # Practice set info ----
+#'   practice.begin("PS-Example", learner="[your name]", email="[your e-mail]")
+#'
+#'   # Key practice set variables (already initialized) ----
+#'   #   library(stats)
+#'   #   X <- c(1,2,3)
+#'
+#'   # Your 7 prompts: (a)-(g) ----
+#'
+#'   #                                         Note 01.
+#'   #    A practice set that illustrates the basics.
+#'
+#'
+#'   # a: Add ten, nine, and eight together. Assign the result to `sum1`. (Variable: sum1)
+#'
+#'   # b: Create a variable `hometown` that stores the city in which you were born. (Variable: hometown)
+#'
+#'   # c: Add 10 to each of the elements of vector `X`. (Variable: v1)
+#'
+#'   # d: Create 100 random numbers between 40000 and 50000. Round the numbers
+#'   #    to two decimal places. (Variable: salaries_2017)
+#'
+#'   #                                         Note 02.
+#'   #    Working with functions.
+#'
+#'
+#'   # e: Write a function, named `what_is_pi`, which returns pi (3.1415). (Variable: what_is_pi)
+#'
+#'   # f: Write a function, named `squared(x)`, which squares a number. (Variable: squared)
+#'
+#'   # g: Define a function, named `imperial_to_metric`, that takes in two arguments: a
+#'   #    number of feet and a number of inches. The function should return the
+#'   #    equivalent length in meters. (Variable: imperial_to_metric)
+#'
+#'   }
 #'
 #' @section One limitation:
 #'
@@ -155,16 +212,13 @@
 #' \preformatted{Use cat() to output two variables a and b.}
 #' It can, however, be used to evaluate the following:
 #' \preformatted{Create a string from two variables, `a` and `b, and assign the string to `out`.}
-#' This said, the building blocks are in place for
-#' modeling and analyzing a student's code through abstract syntax trees -- this is an area
-#' of interest.
 #'
 #' @section What do students see?:
 #'
 #' When students select a practice set from the RStudio Addin menu, an editor window
 #' is opened with the prompts from the practice set. For example:
 #'
-#' #'   \preformatted{
+#'   \preformatted{
 #'   # PS-Example: Example practice set
 #'   #    An example that illustrates the essentials of practice sets.
 #'   # ---
@@ -261,9 +315,6 @@ NULL
 
 #' @import tidyverse
 NULL
-
-#' #' @import stats
-#' NULL
 
 #' @importFrom stats runif
 NULL
