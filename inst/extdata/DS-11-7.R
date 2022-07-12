@@ -160,5 +160,5 @@ better_shooters <- function(team1, team2) {
 #' Call the function on two teams to compare them (remember the `*` if needed)
 #' @end
 #' @code
-better.shooter <- BetterShooters("Golden State Warriors*", "Cleveland Cavaliers*")
+better.shooter <- better_shooters("Golden State Warriors*", "Cleveland Cavaliers*")
 #' @end

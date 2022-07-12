@@ -24,7 +24,8 @@ library("fueleconomy")
 #' case not, here is the command:
 #'    install.packages("tidyverse")     #' One time only
 #'
-#' Finally, to use `dplyr`, you use the `library()` statement, like this:
+#' Finally, to load the `dplyr` package, you use the `library()` statement,
+#' like this:
 #'    > library("dplyr")
 #' @end
 
@@ -86,17 +87,19 @@ best_model3 <- filter(vehicles, make == "Acura", year == 2015) %>%
 #' @id -
 #' @msg
 #' **Enrichment**. You have computed the same result in three different ways.
-#' One question you might ask: Which approach is more efficient? One way to
-#' answer this question is to time how long it takes to compute the answers with
-#' each of the three above approaches and compare.
+#' You might ask: Which approach is more efficient? One way to answer this
+#' question is to time how long it takes to compute the answers with each of the
+#' three above approaches, and then compare the three results.
 #'
-#' R provides a function, `system.time()`, for doing so. This function
-#' takes an expression and reports the  time required to run the expression.
-#' If `f()` is simply a function that computes something, here's the code:
+#' R provides a function, `system.time()`, for doing so. This function takes an
+#' expression and reports the time required to run the expression. For example,
+#' if `f()` is a function that computes something, here's how we can measure
+#' how log it takes `f()` to compute a result:
 #'    > system.time(f())
 #'
-#' To see differences, we often repeat the execution of a function 100 to
-#' 1,000 times. So the general pattern is the following:
+#' Because many calculations are computed quickly, to see differences, we often
+#' repeat the execution of a function 100 to 1,000 times. So the general pattern
+#' is the following:
 #'    > system.time(for(k in 1:1000) f())
 #'
 #' This will run a function, `f()` one thousand times and report the length of
@@ -144,7 +147,7 @@ pipe_best_model <- function() {
 }
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
 #' How long does it take to compute `temp_vars_best_model()` 1000 times?
 #' @end
@@ -152,7 +155,7 @@ pipe_best_model <- function() {
 time_temp_vars <- system.time(for (i in 1:1000) temp_vars_best_model())
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
 #' How long does it take to compute `nested_best_model()` 1000 times?
 #' @end
@@ -160,7 +163,7 @@ time_temp_vars <- system.time(for (i in 1:1000) temp_vars_best_model())
 time_nested <- system.time(for (i in 1:1000) nested_best_model())
 #' @end
 
-#' @id ?
+#' @id -
 #' @msg
 #' How long does it take to compute `pipe_best_model()` 1000 times?
 #' @end

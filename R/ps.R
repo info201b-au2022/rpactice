@@ -67,7 +67,6 @@ ps_load_internal_ps <- function() {
   ps_add(load_ps("DS-11-7.R")) # Using dplyr on external data
   ps_add(load_ps("DS-11-8.R")) # Exploring data sets
 
-
   # Test cases
   ps_add(load_ps("T00.R")) # Most simple - helpful for debugging
   ps_add(load_ps("T01.R")) # Assignment
