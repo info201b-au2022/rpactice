@@ -1,60 +1,57 @@
 <head></head><body><pre><b>PS-Example: Example practice set</b>
-<i>Tue Jul 12 07:26:59 2022</i>
-Learner name: None.
+<i>Tue Jul 12 12:58:22 2022</i>
+[your e-mail]</i> ()
+
 Checking your code:
-   6/6 complete. Good work! &#128175;
-   <font color='purple'>"Review your code. Double check. Do you understand each step?"</font>
+   7/7 complete. Good work! &#128512;
+   <font color='purple'>"Working on practice sets are like fixing a car or bike. It takes practice."</font>
 <p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; atomic [1]: 27</span>
 sum1 <- 10 + 9 + 8
 
-b: <span style='color:green'>&#10004; vector [3]: 11 12 13</span>
+b: <span style='color:green'>&#10004; atomic [1]: St. Louis</span>
+hometown <- "St. Louis"
+
+c: <span style='color:green'>&#10004; vector [3]: 11 12 13</span>
 v1 <- X + 10
 
-c: <span style='color:green'>&#10004; funct: function() {...}</span>
+d: <span style='color:green'>&#10004; vector [100]: 44955.78 42117.77 49 ...</span>
+   salaries_2017 <- round(runif(100, 40000, 50000), 2)
+
+e: <span style='color:green'>&#10004; funct: function() {...}</span>
    what_is_pi <- function() {
      pi
    }
 
-d: <span style='color:green'>&#10004; funct: function(x) {...}</span>
+f: <span style='color:green'>&#10004; funct: function(x) {...}</span>
    squared <- function(x) {
      t <- x^2
      return(t)
    }
 
-e: <span style='color:green'>&#10004; funct: function(feet, inches) {...}</span>
+g: <span style='color:green'>&#10004; funct: function(feet, inches) {...}</span>
    imperial_to_metric <- function(feet, inches) {
      total_inches <- feet * 12 + inches
      meters <- total_inches * 0.0254
-     meters
+     return(meters)
    }
-
-f: <span style='color:green'>&#10004; dataframe: [3 rows x 2 columns]</span>
-   df4 <- cDF %>%
-     filter(C == TRUE) %>%
-     select(A, C)
 
 
 <p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
-library(dplyr)
+library(stats)
 X <- c(1,2,3)
-cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(T,F,T,T))
 
 # The code:
 sum1 <- 10 + 9 + 8
+hometown <- "St. Louis"
 v1 <- X + 10
-what_is_pi <- function() {
-pi
-}
+what_is_pi <- function() {pi}
 squared <- function(x) {
-  t <- x^2
-  return(t)
+   t <- x^2
+   return(t)
 }
 imperial_to_metric <- function(feet, inches) {
-  total_inches <- feet * 12 + inches
-  meters <- total_inches * 0.0254
-  meters
+   total_inches <- feet * 12 + inches
+   meters <- total_inches * 0.0254
+   return(meters)
 }
-df4 <- cDF %>%
-  filter(C==TRUE) %>%
-  select(A,C)
 </pre></body>
