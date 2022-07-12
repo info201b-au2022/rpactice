@@ -1,0 +1,57 @@
+<head></head><body><pre><b>DS-11-5: dplyr grouped operations</b>
+<i>Tue Jul 12 07:26:57 2022</i>
+[your e-mail]</i> ()
+
+Checking your code:
+   5/5 complete. Good work! &#128570;
+   <font color='purple'>"Working on practice sets are like baking a cake. It takes practice."</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; dataframe: [12 rows x 2 columns]</span>
+   dep_delay_by_month <- flights %>%
+     group_by(month) %>%
+     summarize(delay = mean(dep_delay, na.rm = TRUE))
+
+b: <span style='color:green'>&#10004; dataframe: [1 row x 2 columns]</span>
+   departure_delay <-
+     filter(dep_delay_by_month, delay == max(delay)) %>%
+     select(month, delay)
+
+c: <span style='color:green'>&#10004; dataframe: [105 rows x 2 columns]</span>
+   arr_delay_by_month <- flights %>%
+     group_by(dest) %>%
+     summarise(delay = mean(arr_delay, na.rm = TRUE)) %>%
+     arrange(-delay)
+
+d: <span style='color:green'>&#10004; dataframe: [1 row x 8 columns]</span>
+   the_airports <- filter(airports, faa == arr_delay_by_month$dest[1]) #' for example
+
+e: <span style='color:green'>&#10004; dataframe: [1 row x 2 columns]</span>
+   city_fast_speed <- flights %>%
+     mutate(speed = distance / air_time * 60) %>%
+     group_by(dest) %>%
+     summarise(avg_speed = mean(speed, na.rm = TRUE)) %>%
+     filter(avg_speed == max(avg_speed, na.rm = TRUE))
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+library("dplyr")
+library(nycflights13)
+
+# The code:
+dep_delay_by_month <- flights %>%
+  group_by(month) %>%
+  summarize(delay = mean(dep_delay, na.rm = TRUE))
+departure_delay <-
+  filter(dep_delay_by_month, delay == max(delay)) %>%
+  select(month, delay)
+plot(dep_delay_by_month)
+arr_delay_by_month <- flights %>%
+  group_by(dest) %>%
+  summarise(delay = mean(arr_delay, na.rm = TRUE)) %>%
+  arrange(-delay)
+the_airports <- filter(airports, faa == arr_delay_by_month$dest[1]) #' for example
+city_fast_speed <- flights %>%
+  mutate(speed = distance / air_time * 60) %>%
+  group_by(dest) %>%
+  summarise(avg_speed = mean(speed, na.rm = TRUE)) %>%
+  filter(avg_speed == max(avg_speed, na.rm = TRUE))
+</pre></body>

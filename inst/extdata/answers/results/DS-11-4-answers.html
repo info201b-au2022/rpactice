@@ -1,0 +1,64 @@
+<head></head><body><pre><b>DS-11-4: Practicing with dplyr</b>
+<i>Tue Jul 12 07:26:56 2022</i>
+[your e-mail]</i> ()
+
+Checking your code:
+   7/7 complete. Good work! &#128570;
+   <font color='purple'>"Do you understand each step? Explaining your code to others is a good way to learn."</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; dataframe: [336776 rows x 20 columns]</span>
+flights_new1 <- mutate(flights, gain_in_air = arr_delay - dep_delay)
+
+b: <span style='color:green'>&#10004; dataframe: [336776 rows x 20 columns]</span>
+flights_new2 <- arrange(flights_new1, desc(gain_in_air))
+
+c: <span style='color:green'>&#10004; dataframe: [336776 rows x 20 columns]</span>
+   flights <- flights %>%
+     mutate(gain_in_air = arr_delay - dep_delay) %>%
+     arrange(desc(gain_in_air))
+
+d: <span style='color:green'>&#10004; atomic [1]: -5.65977894949076</span>
+   time_change <- mean(flights$gain_in_air, na.rm = TRUE) #' Gained 5 minutes!
+
+e: <span style='color:green'>&#10004; dataframe: [3923 rows x 3 columns]</span>
+   to_sea <- flights %>%
+     select(origin, dest, gain_in_air) %>%
+     filter(dest == "SEA")
+
+f: <span style='color:green'>&#10004; atomic [1]: -11.6990990990991</span>
+   time_change_to_SEA <- mean(to_sea$gain_in_air, na.rm = TRUE) #' Gained 11 minutes!
+
+g: <span style='color:green'>&#10004; dataframe: [1 row x 3 columns]</span>
+   summary_info <- filter(flights, origin == "JFK", dest == "SEA") %>%
+     summarize(
+       avg_air_time = mean(air_time, na.rm = TRUE),
+       max_air_time = max(air_time, na.rm = TRUE),
+       min_air_time = min(air_time, na.rm = TRUE)
+     )
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+library("dplyr")
+library(nycflights13)
+
+# The code:
+num_rows <- nrow(flights)
+num_cols <- ncol(flights)
+col_names <- colnames(flights)
+flights_new1 <- mutate(flights, gain_in_air = arr_delay - dep_delay)
+flights_new2 <- arrange(flights_new1, desc(gain_in_air))
+flights <- flights %>%
+  mutate(gain_in_air = arr_delay - dep_delay) %>%
+  arrange(desc(gain_in_air))
+hist(flights$gain_in_air)
+time_change <- mean(flights$gain_in_air, na.rm = TRUE) #' Gained 5 minutes!
+to_sea <- flights %>%
+  select(origin, dest, gain_in_air) %>%
+  filter(dest == "SEA")
+time_change_to_SEA <- mean(to_sea$gain_in_air, na.rm = TRUE) #' Gained 11 minutes!
+summary_info <- filter(flights, origin == "JFK", dest == "SEA") %>%
+  summarize(
+    avg_air_time = mean(air_time, na.rm = TRUE),
+    max_air_time = max(air_time, na.rm = TRUE),
+    min_air_time = min(air_time, na.rm = TRUE)
+  )
+</pre></body>

@@ -1,0 +1,72 @@
+<head></head><body><pre><b>T05: Test cases: Functions</b>
+<i>Tue Jul 12 07:27:02 2022</i>
+[your email]</i> ()
+
+Checking your code:
+   8/8 complete. Good work! &#128570;
+   <font color='purple'>"Working on practice sets are like fixing a car or bike. It takes practice."</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; atomic [1]: 11</span>
+   t01 <- g(10) # A: 11
+
+b: <span style='color:green'>&#10004; funct: function() {...}</span>
+   what_is_pi <- function() {
+     return(pi)
+   }
+
+c: <span style='color:green'>&#10004; funct: function(x) {...}</span>
+   squared <- function(x) {
+     t <- x^2
+     return(t)
+   }
+
+d: <span style='color:green'>&#10004; atomic [1]: 10000</span>
+   t02 <- squared(100)
+
+e: <span style='color:green'>&#10004; funct: function(arg_one, arg_two) {...}</span>
+   f1 <- function(arg_one, arg_two) {
+     return(arg_one == arg_two)
+   }
+
+f: <span style='color:green'>&#10004; funct: function(arg1, precision) {...}</span>
+   h <- function(arg1, precision) {
+     t <- round(arg1 + pi, precision)
+     return(t)
+   }
+
+g: <span style='color:green'>&#10004; vector [6]: 1 2 200 4 5 6</span>
+   X[3] <- 200
+
+h: <span style='color:green'>&#10004; funct: function(v) {...}</span>
+   f_update <- function(v) {
+     v[3] <- 200
+     return(v)
+   }
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+g <- function(x) {return(x+1)}
+X <- c(1,2,3,4,5,6)
+
+# The code:
+t01 <- g(10)  #A: 11
+what_is_pi <- function() {
+  return(pi)
+}
+squared <- function(x) {
+  t <- x^2
+  return(t)
+}
+t02 <- squared(100)
+f1 <- function(arg_one, arg_two) {
+  return (arg_one == arg_two)
+}
+h <- function(arg1, precision) {
+  t <- round(arg1 + pi, precision)
+  return(t)
+}
+X[3] <- 200
+f_update <- function(v) {
+  v[3] <- 200
+  return(v)
+}
+</pre></body>

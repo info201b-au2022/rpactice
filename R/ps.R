@@ -79,8 +79,8 @@ ps_load_internal_ps <- function() {
   # ps_add(load_ps("T10.R")) # Issues, bugs, etc.
 
   # Problem sets   - Additional examples
-  # ps_add(load_ps("P01.R"))
-  # ps_add(load_ps("P02.R"))
+  ps_add(load_ps("P01.R"))
+  ps_add(load_ps("P02.R"))
 
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
@@ -503,7 +503,7 @@ ps_get_expected_answer <- function(id) {
 # Functions related to the callback functions for checking learner's work
 #----------------------------------------------------------------------------#
 DEFAULT_Check <- function(var_name, result) {
-  cDEBUG <- TRUE
+  cDEBUG <- FALSE
 
   internal_id <- ps_var_name_to_id(var_name)
   L <- get_global_var_info(var_name)
@@ -813,8 +813,8 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   # Inspect the practice set, and initialize the pre-set variables
   initialize_static_vars()
 
-  print_all_envirs()
-  cat("Step 0 done.\n")
+  #print_all_envirs()
+  #cat("Step 0 done.\n")
 
   # STEP 4
   # Evaluate the learner's code and the expected code in two different
@@ -850,8 +850,8 @@ check_answers <- function(learner_code, clear_all = TRUE) {
     stop("check_answers: expected_vars: Internal Error: Likely R syntax error in expected code.")
   }
 
-  print_all_envirs()
-  cat("Step 2 done.")
+  #print_all_envirs()
+  #cat("Step 2 done.")
 
   # STEP 7
   # Parse the learner's code and extract all variables and assignment

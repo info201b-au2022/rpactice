@@ -1,0 +1,84 @@
+<head></head><body><pre><b>DS-11-2: Working with `dplyr`</b>
+<i>Tue Jul 12 07:25:08 2022</i>
+[your e-mail]</i> ()
+
+Checking your code:
+   15/15 complete. Good work! &#128570;
+   <font color='purple'>"Does the code work, but is confusing. Ask a friend to clarify."</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; dataframe: [33442 rows x 1 column]</span>
+makes <- select(vehicles, make)
+
+b: <span style='color:green'>&#10004; atomic [1]: 128</span>
+   num_makes <- nrow(distinct(vehicles, make)) # base: length(unique(makes$make))
+
+c: <span style='color:green'>&#10004; dataframe: [762 rows x 12 columns]</span>
+cars_1997 <- filter(vehicles, year == 1997)
+
+d: <span style='color:green'>&#10004; dataframe: [762 rows x 12 columns]</span>
+cars_1997_sorted <- arrange(cars_1997, hwy)
+
+e: <span style='color:green'>&#10004; dataframe: [3261 rows x 12 columns]</span>
+cars_1997_to_2000 <- filter(vehicles, year >= 1997 & year <= 2000)
+
+f: <span style='color:green'>&#10004; dataframe: [1601 rows x 12 columns]</span>
+cars_1997_or_2000 <- filter(vehicles, year == 1997 | year == 2000)
+
+g: <span style='color:green'>&#10004; dataframe: [1 row x 1 column]</span>
+best_mpg_hwy <- summarize(vehicles, max(hwy))
+
+h: <span style='color:green'>&#10004; dataframe: [1 row x 1 column]</span>
+poorest_mpg_hwy <- summarize(vehicles, min(hwy))
+
+i: <span style='color:green'>&#10004; dataframe: [1 row x 1 column]</span>
+average_mpg_hwy <- summarize(vehicles, mean(hwy))
+
+j: <span style='color:green'>&#10004; dataframe: [762 rows x 13 columns]</span>
+cars_1997_new <- mutate(cars_1997, average = (hwy + cty) / 2)
+
+k: <span style='color:green'>&#10004; dataframe: [67 rows x 12 columns]</span>
+two_wheel_20_mpg <- filter(vehicles, drive == "2-Wheel Drive", cty > 20)
+
+l: <span style='color:green'>&#10004; dataframe: [2 rows x 12 columns]</span>
+filtered <- filter(two_wheel_20_mpg, hwy == min(hwy))
+
+m: <span style='color:green'>&#10004; dataframe: [2 rows x 12 columns]</span>
+worst_hwy_id <- filter(two_wheel_20_mpg, hwy == min(hwy))
+
+n: <span style='color:green'>&#10004; funct: function(make_choice, year_choice) {...}</span>
+   make_year_filter <- function(make_choice, year_choice) {
+     filtered <- filter(vehicles, make == make_choice, year == year_choice)
+     filtered <- filter(filtered, hwy == max(hwy))
+     selected <- select(filtered, model)
+     selected
+   }
+
+o: <span style='color:green'>&#10004; dataframe: [1 row x 1 column]</span>
+most_efficient <- make_year_filter("Honda", 1995)
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+library("dplyr")
+library("fueleconomy")
+
+# The code:
+makes <- select(vehicles, make)
+num_makes <- nrow(distinct(vehicles, make)) # base: length(unique(makes$make))
+cars_1997 <- filter(vehicles, year == 1997)
+cars_1997_sorted <- arrange(cars_1997, hwy)
+cars_1997_to_2000 <- filter(vehicles, year >= 1997 & year <= 2000)
+cars_1997_or_2000 <- filter(vehicles, year == 1997 | year == 2000)
+best_mpg_hwy <- summarize(vehicles, max(hwy))
+poorest_mpg_hwy <- summarize(vehicles, min(hwy))
+average_mpg_hwy <- summarize(vehicles, mean(hwy))
+cars_1997_new <- mutate(cars_1997, average = (hwy + cty) / 2)
+two_wheel_20_mpg <- filter(vehicles, drive == "2-Wheel Drive", cty > 20)
+filtered <- filter(two_wheel_20_mpg, hwy == min(hwy))
+worst_hwy_id <- filter(two_wheel_20_mpg, hwy == min(hwy))
+make_year_filter <- function(make_choice, year_choice) {
+  filtered <- filter(vehicles, make == make_choice, year == year_choice)
+  filtered <- filter(filtered, hwy == max(hwy))
+  selected <- select(filtered, model)
+  selected
+}
+most_efficient <- make_year_filter("Honda", 1995)
+</pre></body>

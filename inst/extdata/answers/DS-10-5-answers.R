@@ -6,7 +6,7 @@
 #    https://github.com/programming-for-data-science/book-exercises
 
 # Practice set info ----
-practice.begin("DS-10-5", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("DS-10-5", learner="[your name]", email="[your email]")
 
 # Your 8 prompts: (a)-(h) ----
 
@@ -80,8 +80,8 @@ most_popular_1994 <- most_popular_in_year(1994)
 number_in_million <- function(name, year) {
   name_popularity <- names[names$year == year & names$name == name, "prop"]
   round(name_popularity * 1000000, 1)
-  #' @end
 }
+#' @end
 
 #' @id ?
 #' @msg

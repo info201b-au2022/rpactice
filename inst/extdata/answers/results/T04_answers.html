@@ -1,0 +1,43 @@
+<head></head><body><pre><b>T04: Test cases: Vectors</b>
+<i>Tue Jul 12 07:27:01 2022</i>
+[your UW NetId]</i> ()
+
+Checking your code:
+   7/7 complete. Good work! &#128570;
+   <font color='purple'>"To learn, you can write your own prompts and test your understandng!"</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; vector [4]: 2 4 6 8</span>
+t00 <- X * 2
+
+b: <span style='color:green'>&#10004; vector [4]: 6 7 8 9</span>
+   t01 <- c(1, 2, 3, 4) + X + Y
+
+c: <span style='color:green'>&#10004; vector [1000]: 3.1 6.3 9.4 12.6 15. ...</span>
+   t02a <- round(Z * pi, 1)
+
+d: <span style='color:green'>&#10004; atomic [1]: TRUE</span>
+   t02b <- (sum(round(Z * pi, 1) == round((1:1000) * pi, 1)) == 1000)
+
+e: <span style='color:green'>&#10004; vector [4]: 12 14 16 18</span>
+   t03 <- t01 * 2 # A: c(2 4 6 8)
+
+f: <span style='color:green'>&#10004; vector [4]: 12 14 16 18</span>
+   t04 <- t03[t03 > 4] # A: c(6 8)
+
+g: <span style='color:green'>&#10004; vector [4]: 7 9 11 13</span>
+   t05 <- X + t01 # A: c(2,4,6,8)
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+X <- c(1,2,3,4)
+Y <- c(4,3,2,1)
+Z <- 1:1000
+
+# The code:
+t00 <- X * 2
+t01 <- c(1,2,3,4) + X + Y
+t02a <- round(Z*pi,1)
+t02b <- (sum(round(Z*pi,1) == round((1:1000)*pi,1)) == 1000)
+t03 <- t01 * 2 #A: c(2 4 6 8)
+t04 <- t03[t03 > 4] #A: c(6 8)
+t05 <- X + t01 #A: c(2,4,6,8)
+</pre></body>

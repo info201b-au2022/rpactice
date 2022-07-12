@@ -1,38 +1,30 @@
 <head></head><body><pre><b>DS-10-4: External data sets: Gates Foundation Educational Grants</b>
-Learner name and UW NetID:
-<i>   [your name]</i> ([your UW NetId])
+<i>Tue Jul 12 07:25:05 2022</i>
+[your email]</i> ()
+
 Checking your code:
-   9/9 complete. Good work! &#128512;
-a: <span style='color:green'>&#10004; atomic [1]: ~/Documents/_Code2/info201/data/gates_money.csv</span>
-   >    
-b: <span style='color:green'>&#10004; dataframe: [255 rows x 9 columns]</span>
-   >    grants <- read.csv(fn_path, stringsAsFactors = FALSE)
-c: <span style='color:green'>&#10004; vector [255]: New Mexico Business  ...</span>
-   >    organization <- grants$organization
-d: <span style='color:green'>&#10004; atomic [1]: TRUE</span>
-   >    is_vector <- is.vector(organization)
-e: <span style='color:green'>&#10004; atomic [1]: 2600196.60392157</span>
-   >    mean_spending <- mean(grants$total_amount)
-f: <span style='color:green'>&#10004; atomic [1]: 100000000</span>
-   >    highest_amount <- max(grants$total_amount)
-g: <span style='color:green'>&#10004; atomic [1]: 5000</span>
-   >    lowest_amount <- min(grants$total_amount)
-h: <span style='color:green'>&#10004; atomic [1]: Hillsborough County Public Schools</span>
-   >    largest_recipient <- organization[grants$total_amount == highest_amount]
-i: <span style='color:green'>&#10004; atomic [1]: New Mexico Business Roundtable for Educational Excellence</span>
-   >    smallest_recipient <- organization[grants$total_amount == lowest_amount]
+   6/9 complete. More work to do.
 
-Final suggestion!
-   <font color='green'>Write your own prompts - then write your own code.</font>
+Your progress:
+a: <span style='color:green'>&#10004; atomic [1]: ~/Documents/_Code2/info201/data/female_names.csv</span>
 
-<p style='text-align:center;'><b> Expected code:</b></p>
-   grants <- read.csv(fn_path, stringsAsFactors = FALSE)
-   organization <- grants$organization
-   is_vector <- is.vector(organization)
-   mean_spending <- mean(grants$total_amount)
-   highest_amount <- max(grants$total_amount)
-   lowest_amount <- min(grants$total_amount)
-   largest_recipient <- organization[grants$total_amount == highest_amount]
-   smallest_recipient <- organization[grants$total_amount == lowest_amount]
-   length(grants$total_amount[grants$start_year == 2010])
-   </pre></body>
+
+b: <span style='color:green'>&#10004; dataframe: [731574 rows x 5 columns]</span>
+grants <- read.csv(fn_path, stringsAsFactors = FALSE)
+
+d: <span style='color:green'>&#10004; atomic [1]: FALSE</span>
+is_vector <- is.vector(organization)
+
+e: <span style='color:green'>&#10004; atomic [1]: NA</span>
+mean_spending <- mean(grants$total_amount)
+
+f: <span style='color:green'>&#10004; atomic [1]: -Inf</span>
+highest_amount <- max(grants$total_amount)
+
+g: <span style='color:green'>&#10004; atomic [1]: Inf</span>
+lowest_amount <- min(grants$total_amount)
+
+
+Summary:
+   <span style='color:green'>&#10004; Correct: a b d e f g</span>
+   Still to do: c h i</pre></body>

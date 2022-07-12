@@ -1,0 +1,66 @@
+<head></head><body><pre><b>T06: Test cases: Dataframes</b>
+<i>Tue Jul 12 07:27:02 2022</i>
+[your UW NetId]</i> ()
+
+Checking your code:
+   9/9 complete. Good work! &#128175;
+   <font color='purple'>"Working on practice sets are like fixing a car or bike. It takes practice."</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; atomic [1]: 4</span>
+number_of_rows <- nrow(cDF)
+
+b: <span style='color:green'>&#10004; atomic [1]: 3</span>
+number_of_cols <- ncol(cDF)
+
+c: <span style='color:green'>&#10004; vector [3]: A B C</span>
+col_names <- colnames(cDF)
+
+d: <span style='color:green'>&#10004; vector [4]: a b c d</span>
+   col2 <- cDF[, 2]
+
+e: <span style='color:green'>&#10004; dataframe: [1 row x 3 columns]</span>
+   df1 <- cDF[1, ]
+
+f: <span style='color:green'>&#10004; dataframe: [4 rows x 2 columns]</span>
+   df2 <- dplyr::select(cDF, A, C)
+
+g: <span style='color:green'>&#10004; dataframe: [4 rows x 2 columns]</span>
+   df3 <- cDF %>% dplyr::select(A, C)
+
+h: <span style='color:green'>&#10004; dataframe: [3 rows x 2 columns]</span>
+   df4 <- cDF %>%
+     filter(C == TRUE) %>%
+     select(A, C)
+
+i: <span style='color:green'>&#10004; funct: function(f) {...}</span>
+   df5_f <- function(f) {
+     cDF %>%
+       filter(C == f) %>%
+       select(A, C)
+   }
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+library(dplyr)
+cDF <- data.frame(
+  A=c(1,2,3,4),
+  B=c('a','b','c','d'),
+  C=c(TRUE,FALSE,TRUE,TRUE)
+  )
+
+# The code:
+number_of_rows <- nrow(cDF)
+number_of_cols <- ncol(cDF)
+col_names <- colnames(cDF)
+col2 <- cDF[,2]
+df1 <- cDF[1,]
+df2 <- dplyr::select(cDF,A,C)
+df3 <- cDF %>% dplyr::select(A,C)
+df4 <- cDF %>%
+  filter(C==TRUE) %>%
+  select(A,C)
+df5_f <- function(f) {
+cDF %>%
+  filter(C==f) %>%
+  select(A,C)
+}
+</pre></body>

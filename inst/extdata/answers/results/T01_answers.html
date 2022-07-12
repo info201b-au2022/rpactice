@@ -1,0 +1,59 @@
+<head></head><body><pre><b>T01: Test cases: Assignment</b>
+<i>Tue Jul 12 07:27:00 2022</i>
+[your UW NetId]</i> ()
+
+Checking your code:
+   7/7 complete. Good work! &#127752;
+   <font color='purple'>"Do you understand each step? Explaining your code to others is a good way to learn."</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; atomic [1]: 12</span>
+   t01 <- sqrt((1 + 2 + 3)^2) * 2 # Answer: 12
+
+b: <span style='color:green'>&#10004; atomic [1]: TRUE</span>
+   t02 <- {
+     t <- 10
+     t <- t + 100
+     (t == 110)
+   }
+
+c: <span style='color:green'>&#10004; atomic [1]: 12</span>
+   t03a <- t01 + 100
+   t03 <- t03a - 100
+
+d: <span style='color:green'>&#10004; atomic [1]: 12</span>
+   t04a <- t01 + 100
+   t04 <- t04a - 100
+
+e: <span style='color:green'>&#10004; atomic [1]: TRUE</span>
+   t06 <- sum(c(6, 12, 18) == ((X + X) * 3)) == 3 # TRUE
+
+f: <span style='color:green'>&#10004; atomic [1]: TRUE</span>
+   t07 <- (f(10) == 11) # TRUE
+
+g: <span style='color:green'>&#10004; atomic [1]: 3</span>
+   x <- 1
+   y <- x + 1
+   z <- y + 1
+   w <- -10
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+X <- c(1,2,3)
+f <- function(x) {return(x+1)}
+
+# The code:
+t01 <- sqrt((1+2+3)^2)*2  # Answer: 12
+t02 <- {
+  t <- 10
+  t <- t + 100
+  (t == 110)
+}
+t03a <- t01 + 100; t03 <- t03a - 100
+t04a <- t01 + 100
+t04 <- t04a - 100
+t06 <- sum(c(6,12,18) == ((X + X) * 3)) == 3  # TRUE
+t07 <- (f(10) == 11) # TRUE
+x <- 1
+y <- x + 1
+z <- y + 1
+w <- -10
+</pre></body>

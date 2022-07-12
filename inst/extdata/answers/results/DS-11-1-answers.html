@@ -1,0 +1,87 @@
+<head></head><body><pre><b>DS-11-1: Working with data frames</b>
+<i>Tue Jul 12 07:25:07 2022</i>
+[your e-mail]</i> ()
+
+Checking your code:
+   16/16 complete. Good work! &#127752;
+   <font color='purple'>"To learn, you can write your own prompts and test your understandng!"</font>
+<p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; atomic [1]: 12</span>
+num_cols <- ncol(vehicles)
+
+b: <span style='color:green'>&#10004; atomic [1]: 33442</span>
+num_rows <- nrow(vehicles)
+
+c: <span style='color:green'>&#10004; vector [33442]: Acura Acura Acura Ac ...</span>
+makes <- vehicles$make
+
+d: <span style='color:green'>&#10004; atomic [1]: 128</span>
+num_makes <- length(unique(makes))
+
+e: <span style='color:green'>&#10004; dataframe: [762 rows x 12 columns]</span>
+cars_1997 <- vehicles[vehicles$year == 1997, ]
+
+f: <span style='color:green'>&#10004; dataframe: [3261 rows x 12 columns]</span>
+cars_1997_to_2000 <- vehicles[(vehicles$year >= 1997) & (vehicles$year <= 2000), ]
+
+g: <span style='color:green'>&#10004; dataframe: [1601 rows x 12 columns]</span>
+cars_1997_or_2000 <- vehicles[(vehicles$year == 1997) | (vehicles$year == 2000), ]
+
+h: <span style='color:green'>&#10004; atomic [1]: 109</span>
+best_mpg_hwy <- max(vehicles$hwy)
+
+i: <span style='color:green'>&#10004; atomic [1]: 9</span>
+poorest_mpg_hwy <- min(vehicles$hwy)
+
+j: <span style='color:green'>&#10004; atomic [1]: 23.55</span>
+average_mpg_hwy <- round(mean(vehicles$hwy), 2)
+
+k: <span style='color:green'>&#10004; dataframe: [762 rows x 12 columns]</span>
+cars_1997_sorted <- cars_1997[order(cars_1997$hwy), ]
+
+l: <span style='color:green'>&#10004; dataframe: [762 rows x 13 columns]</span>
+   cars_1997_new <- cars_1997
+   cars_1997_new$average <- (cars_1997$hwy + cars_1997$cty) / 2
+
+m: <span style='color:green'>&#10004; dataframe: [67 rows x 12 columns]</span>
+two_wheel_20_mpg <- vehicles[vehicles$drive == "2-Wheel Drive" & vehicles$cty > 20, ]
+
+n: <span style='color:green'>&#10004; vector [2]: 27221 27260</span>
+worst_hwy <- two_wheel_20_mpg$id[two_wheel_20_mpg$hwy == min(two_wheel_20_mpg$hwy)]
+
+o: <span style='color:green'>&#10004; funct: function(make_choice, year_choice) {...}</span>
+   make_year_filter <- function(make_choice, year_choice) {
+     filtered <- vehicles[vehicles$make == make_choice & vehicles$year == year_choice, ]
+     filtered[filtered$hwy == max(filtered$hwy), "model"]
+     return(filtered)
+   }
+
+p: <span style='color:green'>&#10004; dataframe: [33 rows x 12 columns]</span>
+most_efficient <- make_year_filter("Honda", 1995)
+
+
+<p style='text-align:center;'><b> Expected code:</b></p># Preset variables:
+library("fueleconomy")
+
+# The code:
+num_cols <- ncol(vehicles)
+num_rows <- nrow(vehicles)
+makes <- vehicles$make
+num_makes <- length(unique(makes))
+cars_1997 <- vehicles[vehicles$year == 1997, ]
+cars_1997_to_2000 <- vehicles[(vehicles$year >= 1997) & (vehicles$year <= 2000), ]
+cars_1997_or_2000 <- vehicles[(vehicles$year == 1997) | (vehicles$year == 2000), ]
+best_mpg_hwy <- max(vehicles$hwy)
+poorest_mpg_hwy <- min(vehicles$hwy)
+average_mpg_hwy <- round(mean(vehicles$hwy), 2)
+cars_1997_sorted <- cars_1997[order(cars_1997$hwy), ]
+cars_1997_new <- cars_1997
+cars_1997_new$average <- (cars_1997$hwy + cars_1997$cty) / 2
+two_wheel_20_mpg <- vehicles[vehicles$drive == "2-Wheel Drive" & vehicles$cty > 20, ]
+worst_hwy <- two_wheel_20_mpg$id[two_wheel_20_mpg$hwy == min(two_wheel_20_mpg$hwy)]
+make_year_filter <- function(make_choice, year_choice) {
+  filtered <- vehicles[vehicles$make == make_choice & vehicles$year == year_choice, ]
+  filtered[filtered$hwy == max(filtered$hwy), "model"]
+  return(filtered)
+}
+most_efficient <- make_year_filter("Honda", 1995)
+</pre></body>

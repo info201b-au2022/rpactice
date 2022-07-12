@@ -4,7 +4,7 @@
 #    Test statements that return functions (including the @check tag)
 
 # Practice set info ----
-practice.begin("T05", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("T05", learner="[your name]", email="[your email]")
 
 # Key practice set variables (already initialized) ----
 #   g <- function(x) {return(x+1)}

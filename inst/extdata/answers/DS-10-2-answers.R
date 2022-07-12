@@ -6,7 +6,7 @@
 #    https://github.com/programming-for-data-science/book-exercises
 
 # Practice set info ----
-practice.begin("DS-10-2", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("DS-10-2", learner="[your name]", email="[your email]")
 
 # Initial variables ----
    # salaries_2017 <-

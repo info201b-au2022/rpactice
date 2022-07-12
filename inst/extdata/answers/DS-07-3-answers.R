@@ -6,7 +6,7 @@
 #    https://github.com/programming-for-data-science/book-exercises
 
 # Practice set info ----
-practice.begin("DS-07-3", learner="[your name]", uwnetid="[your UW NetId]")
+practice.begin("DS-07-3", learner="[your name]", email="[your UW NetId]")
 
 # Your 6 prompts: (a)-(f) ----
 
