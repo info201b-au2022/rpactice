@@ -7,8 +7,10 @@
 \description{
 \code{pinfo201} refers to \emph{practice for INFO-201}. INFO-201 is an
 introduction to data science at the University of Washington, a class originally
-developed by Mike Freeman and Joel Ross.
-See \url{https://ischool.uw.edu/news/2018/12/ischools-freeman-and-ross-publish-textbook-informatics-classes}.
+developed by Mike Freeman and Joel Ross. See:
+\itemize{
+\item Freeman, M., & Ross, J. (2019). \emph{\href{https://github.com/programming-for-data-science}{Programming Skills for Data Science: Start Writing Code to Wrangle, Analyze, and Visualize Data with R.}} Boston, MA: Addison-Wesley.
+}
 }
 \details{
 \code{pinfo201} is a package for practicing basic R programming. It is intended for
@@ -17,25 +19,28 @@ for efficiently grading student work.
 }
 \section{Practice sets}{
 
-  The key idea is that an instructor creates a practice set, which comprises
-  prompts, expected answers, and hints. Once \code{pinfo201} is installed,
-  practice sets are loaded into RStudio and can be controlled with an Addins
-  menu. The \code{pinfo201} menu includes these options:
-  \itemize{
-  \item 1. Begin Practice
-  \item 2. Check Answers
-  \item 3. Show Prompts
-  \item 4. Show Answers}
+The key idea is that an instructor creates a practice set, which comprises
+prompts, expected answers, and hints. Once \code{pinfo201} is installed,
+practice sets are loaded into RStudio and can be controlled with an Addins
+menu. The \code{pinfo201} menu includes these options:
+\itemize{
+\item 1. Begin Practice
+\item 2. Check Answers
+\item 3. Show Prompts
+\item 4. Show Answers}
 
-  Learners select from the available practice sets (\code{1. Begin
+Learners select from the available practice sets (\code{1. Begin
   Practice}). They write code for one or more of the prompts. When ready,
-  learners check their code (\code{2. Check Answers}). If the learner's answer
-  differs from the expected answer, hints, if available, are shown.
+learners check their code (\code{2. Check Answers}). If the learner's answer
+differs from the expected answer, hints, if available, are shown.
+}
 
-  Instructors write practice sets in \code{.R} files, with tagged comments. Here
-  is a practice set, with illustrative prompts:
+\section{Practice sets mark-up}{
 
-  \preformatted{
+Instructors write practice sets in \code{.R} files, with tagged comments. Here
+is a practice set, with illustrative prompts:
+
+\preformatted{
   #' @version ps-1
   #' @short PS-Example
   #' @title Example practice set
@@ -146,10 +151,10 @@ learners to create functions with zero, one, or two arguments. For functions
 with two parameters, the function is tested on all combinations of
 inputs, \code{arg1} and \code{arg2}. More complex function checking, including
 checking functions with three or more arguments, is possible by implementing
-prompt-specific callback functions (see below).
+a prompt-specific callback function (see below).
 
 Prompt "b" shows the use of a regular expression in a \code{@check} tag. This
-is a technique for matching a the value of variable assignment to a range of
+is a technique for matching the value of variable assignment to a range of
 possible values. For variables without \code{@check} tags, \code{pinfo201}
 currently checks that the value of a student's variable is identical to the
 expected value.
@@ -157,7 +162,7 @@ expected value.
 Sometimes it is necessary to copy the value of a variable from the learner's
 code space to the expected code space. The tag \code{@cp-var} is used for
 this purpose. See prompt "d", where a vector of random numbers, is created
-by the learner's code and then used to check the learner's code.
+by the learner's code and then copied to the expected code space.
 
 Basically, that's it.
 }
@@ -165,16 +170,17 @@ Basically, that's it.
 \section{What do learners see?}{
 
 
-The above specification is used to produce the following practice set, which
-guides learns to complete coding prompts.
+The above markup is used to produce the following practice set. When students
+select a practice set from the RStudio Addin menu, an editor window is opened
+with the prompts from the practice set.
 
-  \preformatted{
+\preformatted{
   # pinfo201 / ps-1
   #
   # PS-Example: Example practice set
   #    This file illustrates the essentials of specifying a practice set. It
   #    show what kinds of prompts can be presented to #'
-  #   students and what can be tested.
+  #    students and what can be tested.
 
   # Practice set info ----
   practice.begin("PS-Example", learner="[your name]", email="[your e-mail]")
@@ -209,50 +215,28 @@ guides learns to complete coding prompts.
   # g: Define a function, named `imperial_to_metric`, that takes in two arguments: a
   #    number of feet and a number of inches. The function should return the
   #    equivalent length in meters. (Variable: imperial_to_metric)
-
   }
+
+When a learner sources this file, the command \code{practice.begin()} associates the code
+with the the practice set. When \code{practice.check()} is executed the student's code
+is checked and feedback (an \code{html} document ) is displayed in the RStudio Viewer.
 }
 
-\section{One limitation}{
+\section{A key assumption}{
 
 
 This package is oriented toward checking data values.
 Currently, \code{pinfo201} does not model the structure of student's code nor
 its execution. For example, the package cannot be used evaluate the
 correctness of a task like this:
-\preformatted{Use cat() to output two variables a and b.}
-It can, however, be used to evaluate the following:
-\preformatted{Create a string from two variables, `a` and `b, and assign the string to `out`.}
+\itemize{
+\item \preformatted{Use cat() to output two variables a and b.}
 }
 
-\section{What do students see?}{
-
-
-When students select a practice set from the RStudio Addin menu, an editor window
-is opened with the prompts from the practice set. For example:
-
-  \preformatted{
-  # PS-Example: Example practice set
-  #    An example that illustrates the essentials of practice sets.
-  # ---
-  practice.begin("PS-Example", learner="Dave H.")
-
-  # Initial variables
-  library(dplyr)
-  X <- c(1,2,3)
-  cDF <- data.frame(A=c(1,2,3,4), B=c('a','b','c','d'), C=c(T,F,T,T))
-
-  # a: Add ten, nine, and eight together. (sum1)
-  sum1 <- 10 + 9 + 8
-
-  # ... and so on ...
-
-  practice.check()
-  }
-
-When a learner sources this file, the command \code{practice.begin()} associates the code
-with the the practice set. When \code{practice.check()} is executed the student's code
-is checked and feedback (an \code{html} document ) is displayed in the RStudio Viewer.
+It can, however, be used to evaluate the following:
+\itemize{
+\item \preformatted{Create a string from two variables, `a` and `b, and assign the string to `out`.}
+}
 }
 
 \section{Auto-grading}{
@@ -262,17 +246,17 @@ is checked and feedback (an \code{html} document ) is displayed in the RStudio V
 example, will grade all assignments that are located in the directory,
 \code{dir}:
 
-  \preformatted{
+\preformatted{
   admin.grade(dir)
   }
 
-  It does so by linking the code in the file to the problem set with the
-  \code{practice.begin()} command. Then, it parses and evaluates the R file.
-  Currently, the output is one \code{.html} file per \code{.R} file, with
-  each output file summarizing correct and incorrect solutions.
+It does so by linking the code in the file to the problem set with the
+\code{practice.begin()} command. Then, it parses and evaluates the R file.
+Currently, the output is one \code{.html} file per \code{.R} file, with
+each output file summarizing correct and incorrect solutions.
 
-  Other admin functions are used to assist in the development of practice
-  sets.
+Other admin functions are used to assist in the development of practice
+sets.
 }
 
 \section{What can be evaluated?}{
@@ -281,9 +265,9 @@ example, will grade all assignments that are located in the directory,
 Currently, \code{pinfo201} is able to check the following data types:
 \itemize{
 \item Special constants (NULL, NA, Inf, -Inf, and NaN)
-\item Atomic vectors (scalars) (logical, numeric, integer, complex, charactter types)
+\item Atomic vectors (scalars) (logical, numeric, integer, complex, character types)
 \item Vectors greater than length 1 (comprising logical, numeric, integer, complex, and character types)
-\item Lists -- TBD
+\item Lists
 \item Data frames
 \item Functions with zero, one, or two unnamed arguments (with the @check tag)
 }

@@ -14,7 +14,7 @@ practice.begin(short = "P01", learner = "Anonymous", email = "")
 \item{email}{The learner's e-mail address}
 }
 \value{
-`TRUE` if all goes well; otherwise, this function will stop with an message.
+\code{TRUE} if all goes well; otherwise, this function will stop with an message.
 }
 \description{
 Call this function to install a specific practice

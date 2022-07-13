@@ -10,7 +10,7 @@ practice.questions(do_not_show = NULL)
 \item{do_not_show}{optional list of internal IDs of questions to not show}
 }
 \value{
-`TRUE` if all goes well.
+\code{TRUE} if all goes well.
 }
 \description{
 Show questions for a practice set

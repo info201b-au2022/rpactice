@@ -20,7 +20,7 @@
 #'    ~/Documents/info201
 #'
 #' So, the file should be located here:
-#'    ~/Documents/info201/data/data/female_names.csv
+#'    ~/Documents/info201/data/female_names.csv
 #'
 #' Hint: Use a spreadsheet or text editor and double-check that the file
 #' is located in this directory. When downloading data sets, this is

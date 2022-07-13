@@ -1,17 +1,17 @@
 <head></head><body><pre><b>DS-10-2: Working with data frames</b>
-<i>Tue Jul 12 12:56:24 2022</i>
+<i>Tue Jul 12 13:07:13 2022</i>
 [your e-mail]</i> ()
 
 Checking your code:
-   13/13 complete. Good work! &#127752;
+   13/13 complete. Good work! &#128522;
    <font color='purple'>"Does the code work, but is confusing. Ask a friend to clarify."</font>
 <p style='text-align:center;'><b> Summary:</b></p>a: <span style='color:green'>&#10004; vector [100]: Employee 1 Employee  ...</span>
 employees <- paste("Employee", 1:100)
 
-b: <span style='color:green'>&#10004; vector [100]: 40212.45 48593.72 42 ...</span>
+b: <span style='color:green'>&#10004; vector [100]: 44065.79 42894.9 480 ...</span>
    salaries_2017 <- round(runif(100, 40000, 50000), 2)
 
-c: <span style='color:green'>&#10004; vector [100]: -3773.14 7592.17 414 ...</span>
+c: <span style='color:green'>&#10004; vector [100]: -4081.19 -542.55 748 ...</span>
    salary_adjustments <- round(runif(100, -5000, 10000), 2)
 
 d: <span style='color:green'>&#10004; dataframe: [100 rows x 5 columns]</span>
@@ -20,28 +20,28 @@ salaries <- data.frame(employees, salaries_2017, salary_adjustments, stringsAsFa
 e: <span style='color:green'>&#10004; dataframe: [100 rows x 5 columns]</span>
 all_done <- salaries
 
-f: <span style='color:green'>&#10004; atomic [1]: 43715.93</span>
+f: <span style='color:green'>&#10004; atomic [1]: 51477.65</span>
 salary_57 <- salaries[salaries$employees == "Employee 57", "salaries_2018"]
 
-g: <span style='color:green'>&#10004; atomic [1]: 60</span>
+g: <span style='color:green'>&#10004; atomic [1]: 68</span>
 num_got_raise <- nrow(salaries[salaries$got_raise == TRUE, ])
 
-h: <span style='color:green'>&#10004; atomic [1]: 9875.38</span>
+h: <span style='color:green'>&#10004; atomic [1]: 9886.43</span>
 highest_raise <- max(salaries$salary_adjustments)
 
-i: <span style='color:green'>&#10004; atomic [1]: Employee 77</span>
+i: <span style='color:green'>&#10004; atomic [1]: Employee 18</span>
 got_biggest_raise <- salaries[salaries$salary_adjustments == highest_raise, "employees"]
 
-j: <span style='color:green'>&#10004; atomic [1]: -4741</span>
+j: <span style='color:green'>&#10004; atomic [1]: -4986.7</span>
 biggest_paycut <- min(salaries$salary_adjustments)
 
-k: <span style='color:green'>&#10004; atomic [1]: Employee 26</span>
+k: <span style='color:green'>&#10004; atomic [1]: Employee 20</span>
 got_biggest_paycut <- salaries[salaries$salary_adjustments == biggest_paycut, "employees"]
 
-l: <span style='color:green'>&#10004; atomic [1]: 2101.8629</span>
+l: <span style='color:green'>&#10004; atomic [1]: 2131.469</span>
 avg_increase <- mean(salaries$salary_adjustments)
 
-m: <span style='color:green'>&#10004; atomic [1]: -2803.53575</span>
+m: <span style='color:green'>&#10004; atomic [1]: -2956.1053125</span>
 avg_loss <- mean(salaries$salary_adjustments[salaries$got_raise == FALSE])
 
 

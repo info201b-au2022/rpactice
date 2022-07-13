@@ -9,8 +9,10 @@ Description: This package enables instructors to create practice sets for learni
     Instruction sets are specified with a small number of package-specific tags, which are wrapped around R code.
 License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 RoxygenNote: 7.2.0
+Roxygen: list(markdown = TRUE)
 Imports: 
     crayon, lobstr, miniUI, RCurl, rlang, rstudioapi, stats, stringr, styler, shiny, tidyverse
 Suggests: 

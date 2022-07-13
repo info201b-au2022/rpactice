@@ -7,7 +7,7 @@
 practice.check()
 }
 \value{
-`TRUE` if all goes well; otherwise, this function will stop with an message.
+\code{TRUE} if all goes well; otherwise, this function will stop with an message.
 }
 \description{
 Evaluate a practice set and provide feedback

@@ -16,5 +16,5 @@ That is, it will check student code against expected code and produce
 a reports - currently, one report for each student assignment.
 }
 \details{
-This reports are placed within a sub-folder, named `results`.
+This reports are placed within a sub-folder, named \code{results}.
 }
