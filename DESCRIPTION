@@ -1,12 +1,12 @@
 Package: pinfo201
 Type: Package
-Title: Practice coding for INFO 201, Foundation Skills for Data Science
+Title: Practice Sets for Foundation Skills for Data Science
 Version: 0.1.0
 Author: David Hendry
 Maintainer: David Hendry <dhendry@uw.edu>
-Description: This package enables instructors to create practice sets for learning to code in R. In addition to giving beginner coders coding tasks and feedback, this package provides functions for automatically grading student work.
-    This package installs an Addin menu into RStudio, which is intended for learners. Instructions are given a set of admin functions for working with instruction sets.  
-    Instruction sets are specified with a small number of package-specific tags, which are wrapped around R code.
+Description: This package enables instructors to create practice sets for learning to code in R. In addition to giving learners basic coding tasks and feedback, this package provides functions for automatically grading student work.
+    This package installs an Addin menu into RStudio, which learner use to select practice sets and have their work checked. Instructions are given a set of admin functions for creating practice sets and grading student work.
+    Instruction sets are specified with a small number of markup tags, which are used to wrap R code.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US
