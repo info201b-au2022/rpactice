@@ -16,7 +16,10 @@ Roxygen: list(markdown = TRUE)
 Imports: 
     crayon, lobstr, miniUI, RCurl, rlang, rstudioapi, stats, stringr, styler, shiny, tidyverse
 Suggests: 
+    rmarkdown,
+    knitr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
+VignetteBuilder: knitr

@@ -1,0 +1,148 @@
+---
+title: "Introduction to pinfo201"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to pinfo201}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(pinfo201)
+```
+
+# Hello 
+
+## Hello 
+_pinfo201_ refers to _practice for INFO-201_. INFO-201 is an
+introduction to data science at the University of Washington, a class originally
+developed by Mike Freeman and Joel Ross. See:
+
+* Freeman, M., & Ross, J. (2019). _[Programming Skills for Data Science: Start Writing Code to Wrangle, Analyze, and Visualize Data with R.](https://github.com/programming-for-data-science)_ Boston, MA: Addison-Wesley.
+
+
+
+#' \code{pinfo201} is a package for practicing basic R programming. It is intended for
+#' learners who are just beginning. In addition, \code{pinfo201} provides functions
+#' for efficiently grading student work.
+#'
+#' @section Practice sets:
+#'   The key idea is that an instructor creates a practice set, which comprises
+#'   prompts, expected answers, and hints. Once \code{pinfo201} is installed,
+#'   practice sets are loaded into RStudio and can be controlled with an Addins
+#'   menu. The \code{pinfo201} menu includes these options:
+#'   \itemize{
+#'   \item 1. Begin Practice
+#'   \item 2. Check Answers
+#'   \item 3. Show Prompts
+#'   \item 4. Show Answers}
+#'
+#'   Learners select from the available practice sets (\code{1. Begin
+#'   Practice}). They write code for one or more of the prompts. When ready,
+#'   learners check their code (\code{2. Check Answers}). If the learner's answer
+#'   differs from the expected answer, hints, if available, are shown.
+#'
+#' @section Practice sets mark-up:
+#'   Instructors write practice sets in \code{.R} files, with tagged comments. Here
+#'   is a practice set, with illustrative prompts:
+
+```
+#'   \preformatted{
+#'   #' @version ps-1
+#'   #' @short PS-Example
+#'   #' @title Example practice set
+#'   #' @descr
+#'   #' This file illustrates the essentials of specifying a practice set. It
+#'   #' show what kinds of prompts can be presented to students and what can be
+#'   #' tested.
+#'   #' @end
+#'   #' @initial-vars
+#'   library(stats)
+#'   X <- c(1,2,3)
+#'   #' @end
+#'
+#'   #' @id -
+#'   #' @msg
+#'   #' A practice set that illustrates the basics.
+#'   #' @end
+#'
+#'   #' @id a
+#'   #' @msg Add ten, nine, and eight together. Assign the result to `sum1`.
+#'   #' @code
+#'   sum1 <- 10 + 9 + 8
+#'   #' @end
+#'   #' @hints
+#'   #' Do you use the math plus operator (+)?
+#'   #' Do you use the assignment operator (<-)?
+#'   #' Is the expected variable name (sum1) used?
+#'   #' @end
+#'
+#'   #' @id b
+#'   #' @msg
+#'   #' Create a variable `hometown` that stores the city in which you were born.
+#'   #' @end
+#'   #' @check list(re="^[a-zA-Z\\s\\.]*$")
+#'   #' @code
+#'   hometown <- "St. Louis"
+#'   #' @end
+#'
+#'   #' @id c
+#'   #' @msg Add 10 to each of the elements of vector `X`.
+#'   #' @code
+#'   v1 <- X + 10
+#'   #' @end
+#'
+#'   #' @id d
+#'   #' @msg
+#'   #' Create 100 random numbers between 40000 and 50000. Round the numbers
+#'   #' to two decimal places.
+#'   #' @end
+#'   #' @cp-var salaries_2017
+#'   #' @code
+#'   salaries_2017 <- round(runif(100, 40000, 50000),2)
+#'   #' @end
+#'
+#'   #' @id -
+#'   #' @msg Working with functions.
+#'
+#'   #' @id e
+#'   #' @msg Write a function, named `what_is_pi`, which returns pi (3.1415).
+#'   #' @var what_is_pi
+#'   #' @code
+#'   what_is_pi <- function() {pi}
+#'   #' @end
+#'
+#'   #' @id f
+#'   #' @msg Write a function, named `squared(x)`, which squares a number.
+#'   #' @var squared
+#'   #' @check list(arg1 = c(1, 2, 3, 0, -1, -2, -3, NA))
+#'   #' @code
+#'   squared <- function(x) {
+#'     t <- x^2
+#'     return(t)
+#'   }
+#'   #' @end
+#'
+#'   #' @id g
+#'   #' @msg
+#'   #' Define a function, named `imperial_to_metric`, that takes in two arguments: a
+#'   #' number of feet and a number of inches. The function should return the
+#'   #' equivalent length in meters.
+#'   #' @end
+#'   #' @check list(arg1 = c(4, 5, 100, 0, NA), arg2 = c(0, 1, 1.5, 12.0, 24))
+#'   #' @code
+#'   imperial_to_metric <- function(feet, inches) {
+#'     total_inches <- feet * 12 + inches
+#'     meters <- total_inches * 0.0254
+#'     return(meters)
+#'   }
+#'   #' @end
+#'   }
+```
