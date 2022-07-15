@@ -2,9 +2,8 @@
 
 export(admin)
 export(admin.check)
-export(admin.create_answers)
 export(admin.grade)
-export(admin.grade_ui_dir)
+export(admin.grade_fn)
 export(admin.grade_ui_file)
 export(admin.load)
 export(admin.ls)

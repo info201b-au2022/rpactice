@@ -2,19 +2,11 @@
 % Please edit documentation in R/admin.R
 \name{admin.grade}
 \alias{admin.grade}
-\title{Evaluate a directory of practice sets}
+\title{Grade all files in a folder}
 \usage{
-admin.grade(filename)
-}
-\arguments{
-\item{filename}{either a directory for a particular file}
+admin.grade()
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin.grade()},
-this function will grade all of the practice sets within a directory.
-That is, it will check student code against expected code and produce
-a reports - currently, one report for each student assignment.
-}
-\details{
-This reports are placed within a sub-folder, named \code{results}.
+Intended for teaching assistants and instructors only, this function allows
+you to select a folder and grade all files within this folder.
 }

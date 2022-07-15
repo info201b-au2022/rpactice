@@ -134,7 +134,10 @@ ps_update_current <- function(ps) {
 
 # Get the internal id of a practice set by its short id
 # NOTE: Practice sets are assumed to have UNIQUE short ids
-ps_get_id_by_short <- function(short_id) {
+ps_get_id_by_short <- function(short_id="") {
+  if (short_id == "") {
+    return(-1)
+  }
   k <- 1
   for (ps in pinfo201.globals$gPRACTICE_SETS) {
     if (ps$ps_short == short_id) {

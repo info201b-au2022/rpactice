@@ -14,21 +14,19 @@ admin <- function() {
   cat("\014") # Clear screen
   cat(crayon::red("Function\t\t       "), crayon::red("Purpose"), "\n")
   cat("admin()                         List the current admin functions.\n")
-  cat("admin.check([fn|dir])           Check the integrity of a practice set file(s).\n")
-  cat("admin.create_answers(short)     Create the .R file, with the answers! (for debugging practice sets)\n")
-  cat("admin.grade(dir)                Grade all the .R assignments in the directory (dir).\n")
-  cat("admin.grade_ui_dir(dir)         Select a directory (dir) and grade all work (with file dialog).\n")
-  cat("admin.grade_ui_file(fname)      Select a file and grade it (with file dialog).\n")
-  cat("admin.load(dir)                 Load practice sets from the directory (must be loaded to grade work).\n")
-  cat("admin.ls()                      List installed practice sets and basic info.\n")
-  cat("admin.prompts(short)            List the practice prompts and expected results.\n")
+  cat("admin.grade()                   Select a directory (dir) and grade all work.\n")
+  cat("admin.grade_fn(fn)              Grade work in directory or grade single file.\n")
+  cat("admin.grade_ui_file()           Select a file and grade it.\n")
+  cat("admin.load(dir)                 Load practice sets from the directory.\n")
+  cat("admin.ls()                      List installed practice sets.\n")
+  cat("admin.prompts(short)            List the practice prompts and expected results - the answers!\n")
   cat("admin.run(short)                Execute the code in a practice set - and check if the code works.\n")
   cat("admin.vars()                    List all the variables that are currently 'alive' (experimental).\n")
   cat("---\n")
   cat("Examples:\n")
   cat("admin.check(\"~/Documents/_Code2/pinfo201/inst/extdata/<fname>\")\n")
   cat('admin.load("/Users/dhendry/Documents/_Code2/assignments/practice-sets")\n')
-  cat('admin.grade("/Users/dhendry/Documents/_Code2/assignments/A01")')
+  cat('admin.grade_fn("/Users/dhendry/Documents/_Code2/assignments/A01")')
 }
 
 #' List installed practice sets
@@ -47,68 +45,17 @@ admin.ls <- function() {
   v <- ps_get_all()
   cat("\014") # Clear screen
   cat("Practice sets:", str_trim(length(v)), "\n")
+  if (length(v) == 0) {
+    cat("   No practice sets loaded\n")
+    return(TRUE)
+  }
   for (k in 1:length(v)) {
     ps <- ps_get_by_short(v[k])
     num_prompts <- length(ps$task_list)
     t <- sprintf("%2d", k)
     cat(paste0(t, ": [", v[k], "]: ", ps$ps_title, " (Prompts: ", num_prompts, ")\n"))
-    # cat(paste0("   Filename: ", ps$ps_filename, "\n"))
   }
-}
-
-#' Show the practice set prompts
-#'
-#' Intended for teaching assistants and instructors only, \code{admin.prompts()}
-#' shows all of the practice sets, including the written prompts and the
-#' expected answers.
-#'
-#' @param short for the short name of the practice set
-#'
-#' @export
-#----------------------------------------------------------------------------#
-# List the prompts and some basic information for a practice set
-#----------------------------------------------------------------------------#
-admin.prompts <- function(short) {
-  practice.begin(short)
-  ps <- ps_get_by_short(short)
-  if (is.null(ps)) {
-    stop(paste0("Error. Practice set not found (", short, ")"))
-  }
-  cat("\014") # Clear screen
-  cat("[", short, "]: ", ps$ps_title, " (Prompts: ", length(ps$task_list), ")\n", sep = "")
-
-  v <- ps_get_env_vars()
-  t <- paste0(v, collapse = "\n")
-  cat("Envir Variables\n  ", t, "\n")
-
-  cat("ID\n")
-  k <- 1
-  for (task in ps$task_list) {
-    if (task$is_note_msg) {
-      m <- task$prompt_msg
-      if (nchar(m) > 39) {
-        m <- substr(m, 1, 40)
-        m <- paste0(" ", m, "...")
-      }
-      cat(k, "[-] ", m, sep = "")
-      t1 <- sprintf("%s", format_code(task$expected_answer))
-      cat("\n", t1, "\n")
-    } else {
-      # r <- eval_string_and_format(task$expected_answer)
-      r <- eval_string_and_format(task$assignment_var)
-      if (nchar(r) > 65) {
-        r <- substr(r, 1, 60)
-        r <- paste0(r, "...")
-      }
-
-      cat(k, ":", task$prompt_id, "[", task$assignment_var, "]: ", task$prompt_msg, "\n", sep = "")
-      t1 <- sprintf("%s", format_code(task$expected_answer))
-      cat("", t1, "\n", sep = "")
-      cat("", crayon::red(r), "\n", sep = "")
-    }
-    k <- k + 1
-    cat("\n")
-  }
+  return(TRUE)
 }
 
 #' List practice set objects
@@ -120,6 +67,7 @@ admin.prompts <- function(short) {
 #' @export
 #----------------------------------------------------------------------------#
 # List all the variable names that are current alive in the practice set
+# TODO: Do we need this?
 #----------------------------------------------------------------------------#
 admin.vars <- function() {
   v <- ps_get_live_var_names()
@@ -160,7 +108,8 @@ admin.vars <- function() {
 admin.run <- function(short) {
   id <- ps_get_id_by_short(short)
   if (id == -1) {
-    stop(paste0("Error. Practice set not found (", short, ")"))
+    message(paste0("Error. Practice set not found (", short, ")"))
+    return(FALSE)
   }
   ps_set_current(id)
 
@@ -248,7 +197,7 @@ admin.run <- function(short) {
 #' @param filename either a directory for a particular file
 #'
 #' @export
-admin.grade <- function(filename) {
+admin.grade_fn <- function(filename) {
   cResultsDir <- "results"
   if (!file.exists(filename)) {
     stop(paste0("Directory does not exist.\n", dir, ""), sep = "")
@@ -371,7 +320,7 @@ admin.grade <- function(filename) {
 #' you to select a folder and grade all files within this folder.
 #'
 #' @export
-admin.grade_ui_dir <- function() {
+admin.grade <- function() {
   t <- rstudioapi::selectDirectory(
     caption = "Select a Directory of Files to Grade",
     label = "Select",
@@ -379,9 +328,9 @@ admin.grade_ui_dir <- function() {
   )
 
   if (is.null(t)) {
-    return(TRUE)
+    return(FALSE)
   } else {
-    return(admin.grade(t))
+    return(admin.grade_fn(t))
   }
 }
 
@@ -403,27 +352,27 @@ admin.grade_ui_file <- function() {
   if (is.null(t)) {
     return(TRUE)
   } else {
-    return(admin.grade(t))
+    return(admin.grade_fn(t))
   }
 }
 
-#' Create an .R file of answers to a practice set
+#' Show the practice set prompts
 #'
-#' Intended for teaching assistants and instructors only,
-#' this function can be used to generate the "answers"
-#' for a practice set. In other words, this function
-#' can be used to simulate a student's work. The answers
-#' come from the expected code, as specific in the
-#' practice set.  Practically, this function helps you
-#' to debug your practice set.
+#' Intended for teaching assistants and instructors only, \code{admin.prompts()}
+#' shows the prompts and expected answers in a practice set. The output is
+#' R code showing the correct answers.
 #'
-#' @param short the unique identifier for a practice set
+#' @param short for the short name of the practice set
 #'
 #' @export
-admin.create_answers <- function(short) {
+#----------------------------------------------------------------------------#
+# List the prompts and some basic information for a practice set
+#----------------------------------------------------------------------------#
+admin.prompts <- function(short) {
   id <- ps_get_id_by_short(short)
   if (id == -1) {
-    stop(paste0("Error. Practice set not found (", short, ")"))
+    message(paste0("Error. Practice set not found (", short, ")"))
+    return(FALSE)
   }
   ps_set_current(id)
 
