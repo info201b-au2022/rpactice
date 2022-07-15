@@ -133,7 +133,7 @@ admin.run <- function(short) {
       cat("   ", preset_vars[k], "\n", sep = "")
     }
   } else {
-    cat("   None.\n")
+    cat("   None.")
   }
 
   # Show the expected code for this practice set
@@ -145,6 +145,7 @@ admin.run <- function(short) {
       cat("   ", t[k], "\n", sep = "")
     }
   } else {
+    cat("\nCode:\n")
     cat("   None.\n")
   }
 
