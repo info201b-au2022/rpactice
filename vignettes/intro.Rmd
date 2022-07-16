@@ -18,131 +18,417 @@ knitr::opts_chunk$set(
 library(pinfo201)
 ```
 
-# Hello 
+# Summary 
+This package enables instructors to efficiently create practice sets for
+students who are learning to code in R. It is intended for learners who are just
+beginning.
 
-## Hello 
-_pinfo201_ refers to _practice for INFO-201_. INFO-201 is an
-introduction to data science at the University of Washington, a class originally
-developed by Mike Freeman and Joel Ross. See:
+Practice sets include coding prompts, answers, and, optionally, hints. Learners
+write solutions in R to the coding prompts and receive feedback. In addition,
+this package provides functions, intended for instructors, for automatically
+grading student work.
 
-* Freeman, M., & Ross, J. (2019). _[Programming Skills for Data Science: Start Writing Code to Wrangle, Analyze, and Visualize Data with R.](https://github.com/programming-for-data-science)_ Boston, MA: Addison-Wesley.
+This package installs an Addin menu into RStudio, which learners use to select
+practice sets and have their work checked. Instructors are given a set of
+administrative functions for creating practice sets and for grading student
+work.
 
+Practice sets are specified with a small number of markup tags, which are used
+to wrap R code.
 
+# Practice Sets for Learning to Code in R
+The key idea is that an instructor creates a practice set, which comprises
+prompts, expected answers, and hints. Once the package is installed,
+practice sets are loaded into RStudio and can be controlled with an Addins
+menu. The Addin menu includes these options:
 
-#' \code{pinfo201} is a package for practicing basic R programming. It is intended for
-#' learners who are just beginning. In addition, \code{pinfo201} provides functions
-#' for efficiently grading student work.
-#'
-#' @section Practice sets:
-#'   The key idea is that an instructor creates a practice set, which comprises
-#'   prompts, expected answers, and hints. Once \code{pinfo201} is installed,
-#'   practice sets are loaded into RStudio and can be controlled with an Addins
-#'   menu. The \code{pinfo201} menu includes these options:
-#'   \itemize{
-#'   \item 1. Begin Practice
-#'   \item 2. Check Answers
-#'   \item 3. Show Prompts
-#'   \item 4. Show Answers}
-#'
-#'   Learners select from the available practice sets (\code{1. Begin
-#'   Practice}). They write code for one or more of the prompts. When ready,
-#'   learners check their code (\code{2. Check Answers}). If the learner's answer
-#'   differs from the expected answer, hints, if available, are shown.
-#'
-#' @section Practice sets mark-up:
-#'   Instructors write practice sets in \code{.R} files, with tagged comments. Here
-#'   is a practice set, with illustrative prompts:
+  * 1-Begin Practice
+  * 2-Check Answers
+  * 3-Show Prompts
+  * 4-Show Answers
+
+Learners select from the available practice sets (_1. Begin Practice_). They write code for one or more of the prompts. When ready, learners check their code (_2. Check Answers_). If the learner's answer
+differs from the expected answer, hints, if available, are shown.
+
+The checking process, works with two _variables spaces_: Learner's and expected 
+code environments. Basically, the pocess works as 
+follows: 
+
+   1. Execute the learner's code (learner's code environment)
+   1. Execute the expected code (expected code environment)
+   1. Compare the values of each variable in the learner's code environment with the corresponding values of the variables in the expected code environment
+   
+**Key idea**: The evaluation process is done by comparing the computed values _after the entire script has been executed_. 
+
+There are two extensions to this basic process: 
+
+  1. **Pre-sets**. A set of variables can be initialized prior to executing the code. Think of these 
+  variables as global static variables. They are available in both the 
+  learner's and expected code environments. Pre-sets are useful when, for example, a large dataframe needs to be loaded and then processed.
+  
+  2. **Copy variables**. Prior to executing the expected code those variables that have been marked as `copy variables` are copied to the expected code space. This allows the 
+  checking process to be dependent upon variables that are initialized by 
+  the learner.
+
+# Practice Sets Mark-up
+Instructors write practice sets in .R files, with tagged comments. Here is an example:
 
 ```
-#'   \preformatted{
-#'   #' @version ps-1
-#'   #' @short PS-Example
-#'   #' @title Example practice set
-#'   #' @descr
-#'   #' This file illustrates the essentials of specifying a practice set. It
-#'   #' show what kinds of prompts can be presented to students and what can be
-#'   #' tested.
-#'   #' @end
-#'   #' @initial-vars
-#'   library(stats)
-#'   X <- c(1,2,3)
-#'   #' @end
-#'
-#'   #' @id -
-#'   #' @msg
-#'   #' A practice set that illustrates the basics.
-#'   #' @end
-#'
-#'   #' @id a
-#'   #' @msg Add ten, nine, and eight together. Assign the result to `sum1`.
-#'   #' @code
-#'   sum1 <- 10 + 9 + 8
-#'   #' @end
-#'   #' @hints
-#'   #' Do you use the math plus operator (+)?
-#'   #' Do you use the assignment operator (<-)?
-#'   #' Is the expected variable name (sum1) used?
-#'   #' @end
-#'
-#'   #' @id b
-#'   #' @msg
-#'   #' Create a variable `hometown` that stores the city in which you were born.
-#'   #' @end
-#'   #' @check list(re="^[a-zA-Z\\s\\.]*$")
-#'   #' @code
-#'   hometown <- "St. Louis"
-#'   #' @end
-#'
-#'   #' @id c
-#'   #' @msg Add 10 to each of the elements of vector `X`.
-#'   #' @code
-#'   v1 <- X + 10
-#'   #' @end
-#'
-#'   #' @id d
-#'   #' @msg
-#'   #' Create 100 random numbers between 40000 and 50000. Round the numbers
-#'   #' to two decimal places.
-#'   #' @end
-#'   #' @cp-var salaries_2017
-#'   #' @code
-#'   salaries_2017 <- round(runif(100, 40000, 50000),2)
-#'   #' @end
-#'
-#'   #' @id -
-#'   #' @msg Working with functions.
-#'
-#'   #' @id e
-#'   #' @msg Write a function, named `what_is_pi`, which returns pi (3.1415).
-#'   #' @var what_is_pi
-#'   #' @code
-#'   what_is_pi <- function() {pi}
-#'   #' @end
-#'
-#'   #' @id f
-#'   #' @msg Write a function, named `squared(x)`, which squares a number.
-#'   #' @var squared
-#'   #' @check list(arg1 = c(1, 2, 3, 0, -1, -2, -3, NA))
-#'   #' @code
-#'   squared <- function(x) {
-#'     t <- x^2
-#'     return(t)
-#'   }
-#'   #' @end
-#'
-#'   #' @id g
-#'   #' @msg
-#'   #' Define a function, named `imperial_to_metric`, that takes in two arguments: a
-#'   #' number of feet and a number of inches. The function should return the
-#'   #' equivalent length in meters.
-#'   #' @end
-#'   #' @check list(arg1 = c(4, 5, 100, 0, NA), arg2 = c(0, 1, 1.5, 12.0, 24))
-#'   #' @code
-#'   imperial_to_metric <- function(feet, inches) {
-#'     total_inches <- feet * 12 + inches
-#'     meters <- total_inches * 0.0254
-#'     return(meters)
-#'   }
-#'   #' @end
-#'   }
+#' @version ps-1
+#' @short PS-Example
+#' @title Example practice set
+#' @descr
+#' This file illustrates the essentials of specifying a practice set. It
+#' shows the different kinds of prompts that can be created for learners.
+#' @end
+#' @initial-vars
+library(stats)
+X <- c(1,2,3)
+#' @end
+
+#' @id -
+#' @msg
+#' A practice set that illustrates the basics.
+#' @end
+
+#' @id a
+#' @msg Add ten, nine, and eight together. Assign the result to `sum1`.
+#' @code
+sum1 <- 10 + 9 + 8
+#' @end
+#' @hints
+#' Do you use the math plus operator (+)?
+#' Do you use the assignment operator (<-)?
+#' Is the expected variable name (sum1) used?
+#' @end
+
+#' @id b
+#' @msg
+#' Create a variable `hometown` that stores the city in which you were born.
+#' @end
+#' @check list(re="^[a-zA-Z\\s\\.]*$")
+#' @code
+hometown <- "St. Louis"
+#' @end
+
+#' @id c
+#' @msg Add 10 to each of the elements of vector `X`.
+#' @code
+v1 <- X + 10
+#' @end
+
+#' @id d
+#' @msg
+#' Create 100 random numbers between 40000 and 50000. Round the numbers
+#' to two decimal places.
+#' @end
+#' @cp-var salaries_2017
+#' @code
+salaries_2017 <- round(runif(100, 40000, 50000),2)
+#' @end
+
+#' @id -
+#' @msg Working with functions.
+
+#' @id e
+#' @msg Write a function, named `what_is_pi`, which returns pi (3.1415).
+#' @var what_is_pi
+#' @code
+what_is_pi <- function() {pi}
+#' @end
+
+#' @id f
+#' @msg Write a function, named `squared(x)`, which squares a number.
+#' @var squared
+#' @check list(arg1 = c(1, 2, 3, 0, -1, -2, -3, NA))
+#' @code
+squared <- function(x) {
+   t <- x^2
+   return(t)
+}
+#' @end
+
+#' @id g
+#' @msg
+#' Define a function, named `imperial_to_metric`, that takes in two arguments: a
+#' number of feet and a number of inches. The function should return the
+#' equivalent length in meters.
+#' @end
+#' @check list(arg1 = c(4, 5, 100, 0, NA), arg2 = c(0, 1, 1.5, 12.0, 24))
+#' @code
+imperial_to_metric <- function(feet, inches) {
+   total_inches <- feet * 12 + inches
+   meters <- total_inches * 0.0254
+   return(meters)
+}
+#' @end
 ```
+## About a practice set 
+Practice sets have a title and an identifier (`@short`), which is a short
+form for referring to a practice set. These identifiers must be unique.
+In addition, practice sets have a `@title` and brief description (`@descr`).
+
+```
+#' @version ps-1
+#' @short PS-Example
+#' @title Example practice set
+#' @descr
+#' This file illustrates the essentials of specifying a practice set. It
+#' shows the different kinds of prompts that can be created for learners.
+#' @end
+```
+Practice sets should begin with the `@version ps-1` tag.
+
+## Initial, pre-set variables
+The `@initial-vars` tag is used to, optionally, initialize one or more 
+variables. Here, the idea is that prompts can require learners
+to use those variables. As can be seen in the example, specific R libraries
+can also be loaded.
+
+```
+#' @initial-vars
+library(stats)
+X <- c(1,2,3)
+#' @end
+```
+
+## Coding prompts 
+The prompts comprise an ID (`@id`), a  prompt (`@msg`), the expected answer
+(`@code`), and a list of hints (`@hints`). If an `@id` is a question mark ("?"),
+when the practice set is loaded into R, IDs will automatically be generated, which simplifies the development of practice sets. 
+
+```
+#' @id ?
+#' @msg Add 10 to each of the elements of vector `X`.
+#' @code
+v1 <- X + 10
+#' @end
+```
+
+The prompts are formatted exactly as they appear between the `@msg` and `@end` tags.
+```
+#' @id d
+#' @msg
+#' Create 100 random numbers between 40000 and 50000. Round the numbers
+#' to two decimal places.
+#' @end
+```
+
+## Message prompts 
+If an `@id` is a dash ("-"), a message is formatted. This is a way to guide students through the prompts and provide clarifications.
+
+```
+#' @id -
+#' @msg Working with functions. Next you will practice two things: 
+#'    1. Blah, blah, blah ..
+#'    2. Wow, wow, wow ... 
+#' @end
+```
+
+## Ordinary variables 
+The variable tag (`@var`) is used to specify what variables should be tested. For
+example, in this prompt, the variable `squared` will be checked. 
+
+```
+#' @id f
+#' @msg Write a function, named `squared(x)`, which squares a number.
+#' @var squared
+#' @check list(arg1 = c(1, 2, 3, 0, -1, -2, -3, NA))
+#' @code
+squared <- function(x) {
+ t <- x^2
+ return(t)
+}
+#' @end
+```
+
+If the variable tag (`@var`) is missing, then the last assignment statement in the 
+code block will be taken as the variable. In this example, the variable 
+`v1` is extracted. (Note: The variable `X` was initialized earlier in the practice 
+set.)
+
+```
+#' @id c
+#' @msg Add 11 to each of the elements of vector `X`.
+#' @code
+t <- 1
+v1 <- X + 10 + t
+#' @end
+```
+
+## Copying variables
+Sometimes it is necessary to copy the value of a variable from the learner's
+code environment to the expected code environment. In this example, the learner's
+code creates a
+variable, `salaries_2017`, containing a vector of random numbers. The tag
+`@cp-var` causes this variable to be copied to the expected code environment. 
+This allows the checking process to
+use the values computed by the learner's code environment. 
+
+```
+#' @id d
+#' @msg
+#' Create 100 random numbers between 40000 and 50000. Round the numbers
+#' to two decimal places.
+#' @end
+#' @cp-var salaries_2017
+#' @code
+salaries_2017 <- round(runif(100, 40000, 50000),2)
+#' @end
+```
+
+## Checking functions
+In addition, the `@checks` tag can be used to
+check the implementation of a function. Currently, practice sets can ask
+learners to create functions with zero, one, or two arguments. For functions
+with two parameters, the function is tested on all combinations of
+inputs, `arg1` and `arg2`. 
+
+```
+#' @id g
+#' @msg
+#' Define a function, named `imperial_to_metric`, that takes in two arguments: a
+#' number of feet and a number of inches. The function should return the
+#' equivalent length in meters.
+#' @end
+#' @check list(arg1 = c(4, 5, 100, 0, NA), arg2 = c(0, 1, 1.5, 12.0, 24))
+#' @code
+imperial_to_metric <- function(feet, inches) {
+   total_inches <- feet * 12 + inches
+   meters <- total_inches * 0.0254
+   return(meters)
+}
+```
+
+More complex function checking, including
+checking functions with three or more arguments, is possible by implementing
+a prompt-specific callback function (see below).
+
+Prompt "b" shows the use of a regular expression in a \code{@check} tag. This
+is a technique for matching the value of variable assignment to a range of
+possible values. For variables without \code{@check} tags, \code{pinfo201}
+currently checks that the value of a student's variable is identical to the
+expected value.
+
+Basically, that's it.
+#'
+@section What do learners see?:
+#'
+The above markup is used to produce the following practice set. When students
+select a practice set from the RStudio Addin menu, an editor window is opened
+with the prompts from the practice set.
+#'
+\preformatted{
+# pinfo201 / ps-1
+#
+# PS-Example: Example practice set
+#    This file illustrates the essentials of specifying a practice set. It
+#    show what kinds of prompts can be presented to #'
+#    students and what can be tested.
+#'
+# Practice set info ----
+practice.begin("PS-Example", learner="[your name]", email="[your e-mail]")
+#'
+# Key practice set variables (already initialized) ----
+#   library(stats)
+#   X <- c(1,2,3)
+#'
+# Your 7 prompts: (a)-(g) ----
+#'
+#                                         Note 01.
+#    A practice set that illustrates the basics.
+#'
+#'
+# a: Add ten, nine, and eight together. Assign the result to `sum1`. (Variable: sum1)
+#'
+# b: Create a variable `hometown` that stores the city in which you were born. (Variable: hometown)
+#'
+# c: Add 10 to each of the elements of vector `X`. (Variable: v1)
+#'
+# d: Create 100 random numbers between 40000 and 50000. Round the numbers
+#    to two decimal places. (Variable: salaries_2017)
+#'
+#                                         Note 02.
+#    Working with functions.
+#'
+#'
+# e: Write a function, named `what_is_pi`, which returns pi (3.1415). (Variable: what_is_pi)
+#'
+# f: Write a function, named `squared(x)`, which squares a number. (Variable: squared)
+#'
+# g: Define a function, named `imperial_to_metric`, that takes in two arguments: a
+#    number of feet and a number of inches. The function should return the
+#    equivalent length in meters. (Variable: imperial_to_metric)
+}
+#'
+When a learner sources this file, the command \code{practice.begin()} associates the code
+with the the practice set. When \code{practice.check()} is executed the student's code
+is checked and feedback (an \code{html} document ) is displayed in the RStudio Viewer.
+#'
+@section A key assumption:
+#'
+This package is oriented toward checking data values.
+Currently, \code{pinfo201} does not model the structure of student's code nor
+its execution. For example, the package cannot be used evaluate the
+correctness of a task like this:
+* \preformatted{Use cat() to output two variables a and b.}
+#'
+It can, however, be used to evaluate the following:
+#'
+* \preformatted{Create a string from two variables, `a` and `b, and assign the string to `out`.}
+#'
+@section Auto-grading:
+#'
+\code{pinfo201} can be used for auto-grading assistance. This function, for
+example, will grade all assignments that are located in the directory,
+\code{dir}:
+#'
+\preformatted{
+admin.grade(dir)
+}
+#'
+It does so by linking the code in the file to the problem set with the
+\code{practice.begin()} command. Then, it parses and evaluates the R file.
+Currently, the output is one \code{.html} file per \code{.R} file, with
+each output file summarizing correct and incorrect solutions.
+#'
+Other admin functions are used to assist in the development of practice
+sets.
+#'
+@section What can be evaluated?:
+#'
+Currently, \code{pinfo201} is able to check the following data types:
+\itemize{
+\item Special constants (NULL, NA, Inf, -Inf, and NaN)
+\item Atomic vectors (scalars) (logical, numeric, integer, complex, character types)
+\item Vectors greater than length 1 (comprising logical, numeric, integer, complex, and character types)
+\item Lists
+\item Data frames
+\item Functions with zero, one, or two unnamed arguments (with the @check tag)
+}
+#'
+@section Checking callbacks:
+#'
+At present, the framework can be extended with prompt-specific callback
+functions for checking a learner's code, although this takes a good deal of
+effort. Thus, if you need to test a function with 3 or more parameters or
+test a data structure in some specific ways, you can write a checking
+callback function. This is the current structure of the checking callbacks:
+#'
+#'\preformatted{
+<funct_name>_Check <- function(internal_id, result) {
+  learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
+  expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
+#'
+  # Analyze learner's code (e.g., with an abstract syntax tree) and add feedback
+  # to the result
+  #     add.message(result, message)
+#'
+  if (identical(learner_result, expected_result)) {
+    result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
+  } else {
+    result <- result_update(result, internal_id, FALSE, result_error_msg(internal_id))
+ }
+ return(result)
+ }}
+#'

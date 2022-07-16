@@ -85,8 +85,6 @@ ps_load_internal_ps <- function() {
   # Basic illustrative example (used in documentation)
   ps_add(load_ps("PS_Example.R"))
 
-
-
   # Set the current practice set to 1
   ps_set_current(1)
 }
