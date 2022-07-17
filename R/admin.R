@@ -21,7 +21,6 @@ admin <- function() {
   cat("admin.ls()                      List installed practice sets.\n")
   cat("admin.prompts(short)            List the practice prompts and expected results - the answers!\n")
   cat("admin.run(short)                Execute the code in a practice set - and check if the code works.\n")
-  cat("admin.vars()                    List all the variables that are currently 'alive' (experimental).\n")
   cat("---\n")
   cat("Examples:\n")
   cat("admin.check(\"~/Documents/_Code2/pinfo201/inst/extdata/<fname>\")\n")
@@ -60,44 +59,10 @@ admin.ls <- function() {
 
 #' List practice set objects
 #'
-#' Intended for teaching assistants and instructors only, \code{admin.vars()}
-#' lists all of the objects associated with the currently active practice set,
-#' including expected variables and callback functions for checking code.
-#'
-#' @export
-#----------------------------------------------------------------------------#
-# List all the variable names that are current alive in the practice set
-# TODO: Do we need this?
-#----------------------------------------------------------------------------#
-admin.vars <- function() {
-  v <- ps_get_live_var_names()
-  cat("Live variables: ", "\n", sep = "")
-  for (k in 1:length(v)) {
-    cat("   ", k, ":[", v[k], "]:\t", sep = "")
-    cat("\n")
-  }
-  cat("Number: ", length(v), "\n")
-  cat("Callbacks loaded:\n")
-  any <- 0
-  for (k in 1:length(v)) {
-    if (is_callback_loaded(v[k])) {
-      cat("   ", k, ":CALLBACK:", v[k], "_Check(internal_id, result)\n", sep = "")
-      any <- any + 1
-    }
-  }
-  if (any > 0) {
-    cat("Number:", any)
-  } else {
-    cat("No callbacks.")
-  }
-  cat("\n")
-}
-
-#' List practice set objects
-#'
 #' Intended for teaching assistants and instructors only, \code{admin.run()}
-#' executes the all of the code for the practice set, \code{short}. Use this
-#' function to test the practice set.
+#' executes all of the code for the practice set, \code{short}. Use this
+#' function to test the practice set and to see that it is set-up
+#' correctly.
 #'
 #' @param short for the short name of the practice set
 #'
@@ -113,13 +78,14 @@ admin.run <- function(short) {
   }
   ps_set_current(id)
 
-  cat("\014admin.run()\n")
+  cat("\014")
+  cat("admin.run()\n")
   cat(
     "Short ID: ", short, "\n",
     sep = ""
   )
 
-  # Clear the environments
+  # Clear the learner and expected code environments
   clear_all_envirs()
 
   # Initialize the pre-set variables
@@ -133,13 +99,32 @@ admin.run <- function(short) {
       cat("   ", preset_vars[k], "\n", sep = "")
     }
   } else {
+    cat("   None.\n")
+  }
+
+  # Show callback evaluation functions (if any)
+  cat("Callbacks loaded (see checks.R):\n")
+  any <- 0
+  v <- ps_get_all_assignment_vars()
+  if (length(v) > 0) {
+    for (k in 1:length(v)) {
+      if (is_callback_loaded(v[k])) {
+        cat("   ", k, ":CALLBACK: ", get_callback_name(v[k]), "(internal_id, result)\n", sep = "")
+        any <- any + 1
+      }
+    }
+  }
+  if (any > 0) {
+    cat("   Number:", any)
+  } else {
     cat("   None.")
   }
+  cat("\n")
 
   # Show the expected code for this practice set
   t <- ps_get_all_expected_code()
   if (length(t) > 0) {
-    cat("\nCode:\n")
+    cat("Code:\n")
     for (k in 1:length(t)) {
       # cat("[", k, "] ", t[k], "\n", sep = "")
       cat("   ", t[k], "\n", sep = "")
@@ -337,9 +322,8 @@ admin.grade <- function() {
 
 #' Grade a single file
 #'
-#' Intended for teaching assistants and instructors only,
-#' this function allows you to select a single file
-#' and grade it.
+#' Intended for teaching assistants and instructors only, this function allows
+#' you to select a single file and grade it.
 #'
 #' @export
 admin.grade_ui_file <- function() {
@@ -351,7 +335,7 @@ admin.grade_ui_file <- function() {
   )
 
   if (is.null(t)) {
-    return(TRUE)
+    return(FALSE)
   } else {
     return(admin.grade_fn(t))
   }
@@ -376,10 +360,9 @@ admin.prompts <- function(short) {
     return(FALSE)
   }
   ps_set_current(id)
-
-  t <- format_practice_script(TRUE)
   cat("\014") # Clear screen
-  cat(t)
+  cat(format_practice_script(TRUE))
+  return(TRUE)
 }
 
 #' Check the integrity of practice set
@@ -394,6 +377,7 @@ admin.prompts <- function(short) {
 #' @export
 admin.check <- function(filename, silient = FALSE, detailed = FALSE) {
   check_file_integrity(filename, silient, detailed)
+  return(TRUE)
 }
 
 #' Load practice sets into the package
@@ -401,7 +385,7 @@ admin.check <- function(filename, silient = FALSE, detailed = FALSE) {
 #' Intended for teaching assistants and instructors only, \code{admin.load()}
 #' is used to load practice sets. All practice sets that are found in the
 #' the directory, \code{dir}, are loaded into the package. (Default practice
-#' sets are automatically added.  These defaults are installed when the
+#' sets are automatically added. These defaults are installed when the
 #' package is installed.)
 #'
 #' @param dir a directory

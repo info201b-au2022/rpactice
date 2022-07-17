@@ -11,6 +11,7 @@ admin.run(short)
 }
 \description{
 Intended for teaching assistants and instructors only, \code{admin.run()}
-executes the all of the code for the practice set, \code{short}. Use this
-function to test the practice set.
+executes all of the code for the practice set, \code{short}. Use this
+function to test the practice set and to see that it is set-up
+correctly.
 }
