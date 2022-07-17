@@ -365,6 +365,40 @@ admin.prompts <- function(short) {
   return(TRUE)
 }
 
+#' Generates the answer files and
+#'
+#' Intended for teaching assistants and instructors only, \code{admin.gen_answers()}
+#' creates answer files for all loaded practice sets and stores the answers in
+#' a directory.
+#'
+#' @param dir_path the direct into which answer files are to be saved
+
+#' @export
+admin.gen_answers <- function(dir_path) {
+  if (!dir.exists(dir_path)) {
+    dir.create(dir_path)
+  }
+  cat("\014") # Clear screen
+  cat("admin.gen_answers()\n")
+  cat("Writing answers to these files: ")
+
+  v <- ps_get_all()
+  if (length(v) > 0) {
+    for (k in 1:length(v)) {
+      id <- ps_get_id_by_short(v[k])
+      ps_set_current(id)
+      t <- format_practice_script(TRUE)
+      fname <- paste0(dir_path, "/", v[k], ".R")
+      cat("   ", fname,"\n")
+      fileConn <- file(fname, "w")
+      writeLines(t, fileConn)
+      close(fileConn)
+    }
+  }
+  cat("Done.\n")
+  return(TRUE)
+}
+
 #' Check the integrity of practice set
 #'
 #' Intended for teaching assistants and instructors only, \code{admin.ps()}
