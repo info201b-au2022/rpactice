@@ -1,9 +1,5 @@
 #' @version ps-1
 #' @short T00
-#' @title Basic for debugging
-#' @descr
-#' For debugging - this practice set contains almost nothing!
-#' @end
 
 #' @id ?
 #' @msg What is 1 + 1?
@@ -13,7 +9,10 @@ t0 <- 2
 
 #' @id ?
 #' @msg What is t0 + 10?
+#' @end
+#' @var t2
 #' @code
 t1 <- t0 + 10
 #' @end
+
 

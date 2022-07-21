@@ -1,0 +1,41 @@
+---
+title: "Introduction to pinfo201"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to pinfo201}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Summary 
+Xxx xxx 
+
+# Admin() Functions 
+Xxx xxx
+
+```
+Function                Purpose 
+admin()                 List the current admin functions.
+admin.grade()           Select a directory (dir) and grade all work.
+admin.grade_fn(fn)      Grade work in directory or grade single file.
+admin.grade_ui_file()   Select a file and grade it.
+admin.load(dir)         Load practice sets from the directory.
+admin.ls()              List installed practice sets.
+admin.prompts(short)    List the practice prompts and expected results - the answers!
+admin.run(short)        Execute the code in a practice set - and check if the code works.
+
+Examples:
+admin.check("~/Documents/_Code2/pinfo201/inst/extdata/<fname>")
+admin.load("/Users/dhendry/Documents/_Code2/assignments/practice-sets")
+admin.grade_fn("/Users/dhendry/Documents/_Code2/assignments/A01")
+```
+
+## Xxx xxx
+
