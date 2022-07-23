@@ -77,3 +77,18 @@ practice.load_url <- function(fn = paste0(
   ps_add(ps)
   return(TRUE)
 }
+
+#' Set a path to a root directory for R practice sets
+#'
+#' @param dir_path An absolute path directory working directory
+#' @export
+practice.setwd <- function(dir_path) {
+  pinfo201.globals$gWD <- dir_path
+}
+
+#' Show path to a root directory for R practice sets
+#'
+#' @export
+practice.wd <- function() {
+  cat("\n",pinfo201.globals$gWD)
+}

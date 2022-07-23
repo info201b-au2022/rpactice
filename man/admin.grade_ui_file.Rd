@@ -7,7 +7,6 @@
 admin.grade_ui_file()
 }
 \description{
-Intended for teaching assistants and instructors only,
-this function allows you to select a single file
-and grade it.
+Intended for teaching assistants and instructors only, this function allows
+you to select a single file and grade it.
 }

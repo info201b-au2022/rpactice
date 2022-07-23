@@ -3,11 +3,20 @@
 #----------------------------------------------------------------------------#
 ## Global variables ----
 pinfo201.globals <- new.env()
+
+# This data structure holds the currently practice sets
 pinfo201.globals$gPRACTICE_SET_ID <- 1
+pinfo201.globals$gPRACTICE_SETS <- c()
 
 # Two variables for modeling the learner
 pinfo201.globals$gLEARNER_NAME <- ""
 pinfo201.globals$gLEARNER_EMAIL <- ""
+
+# Directory path for rpractice data files, etc.
+# ~/Documents/rpractice
+# A paths are created as follows:
+#    data directory: ~/Documents/rpractice/data
+pinfo201.globals$gWD <- "~/Documents/_Code2/info201"
 
 # This environment is used to hold and run the learner's code
 cLEARNER_ENV_ID <- 1
@@ -25,6 +34,7 @@ cGLOBAL_ENV_ID <- 3
 cDEBUG <- FALSE
 cTAB_IN_SPACES <- "   "
 cPACKAGE_ENVIR_NAME <- "package:pinfo201"
+cROOT_DIR_STRING <- "_RPRACTICE_PATH_"
 
 # Manage Practice Sets ----
 #----------------------------------------------------------------------------#
@@ -94,6 +104,12 @@ ps_add <- function(ps) {
   new_k <- length(pinfo201.globals$gPRACTICE_SETS) + 1
   pinfo201.globals$gPRACTICE_SETS[[new_k]] <- ps
 }
+
+ps_clear <- function() {
+  pinfo201.globals$gPRACTICE_SET_ID <- 1
+  pinfo201.globals$gPRACTICE_SETS <- c()
+}
+
 
 # Only one practice set is active at a time - A global variable is used
 # to keep track of the currently active practice set

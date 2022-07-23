@@ -1,8 +1,8 @@
 ---
-title: "Introduction to pinfo201"
+title: "Introduction to Admin Functions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to pinfo201}
+  %\VignetteIndexEntry{Introduction to Admin Functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,10 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 # Summary 
-Xxx xxx 
-
-# Admin() Functions 
-Xxx xxx
+The package provides a set of administrative functions for creating practice sets and for
+auto-grading. The current auto-grading functions are: 
 
 ```
 Function                Purpose 
@@ -30,12 +28,15 @@ admin.load(dir)         Load practice sets from the directory.
 admin.ls()              List installed practice sets.
 admin.prompts(short)    List the practice prompts and expected results - the answers!
 admin.run(short)        Execute the code in a practice set - and check if the code works.
-
-Examples:
-admin.check("~/Documents/_Code2/pinfo201/inst/extdata/<fname>")
-admin.load("/Users/dhendry/Documents/_Code2/assignments/practice-sets")
-admin.grade_fn("/Users/dhendry/Documents/_Code2/assignments/A01")
 ```
 
-## Xxx xxx
+# The Functions 
+## Creating and managing practice sets 
+
+## Loading practice sets 
+
+## Grading practice sets
+
+## 
+
 

@@ -18,6 +18,47 @@ create_ps_from_url <- function(url) {
   return(ps)
 }
 
+mk_github_dir_path <- function(dir_path) {
+  t <- "https://api.github.com/repos/dghendry/rpractice/contents/"
+  return(paste0(t, dir_path))
+}
+
+# START HERE
+# https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html
+# https://cran.r-project.org/web/packages/jsonlite/jsonlite.pdf
+create_ps_from_github <- function(dir, clear=FALSE) {
+
+  # Should the list of practice sets be cleared?
+  if (clear == TRUE) {
+    ps_clear()
+  }
+
+  # Create the correct path and check that the directory exists
+  dir_path <- mk_github_dir_path(dir)
+  if (RCurl::url.exists(dir_path) == FALSE) {
+    #stop(paste0("create_ps_from_github: directory does not exist\n", dir_path))
+  }
+  cat("\n github path", dir_path, "\n")
+
+  # Read the list of filenames from the directory into a dataframe and
+  # build the practice set for each filename
+  conn <- curl(dir_path)
+  tryCatch(
+    expr = {
+      file_data <- jsonlite::prettify(readLines(conn, warn=FALSE))
+    }, error = function(e) {
+      stop(paste0("create_ps_from_github: file access error\n", e, "\n", dir_path))
+    }
+  )
+  file_data <- jsonlite::prettify(readLines(conn, warn=FALSE))
+  files_to_process <- fromJSON(file_data)
+  for (k in 1:length(files_to_process$download_url)) {
+    cat(k, ": ", files_to_process$download_url[k], "\n")
+    ps <- create_ps_from_url(files_to_process$download_url[k])
+    ps_add(ps)
+  }
+}
+
 #----------------------------------------------------------------------------#
 # This function loads practice sets that are "internal" to the package. The
 # practice sets are found in the special directory inst/extdata.
