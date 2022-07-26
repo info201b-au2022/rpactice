@@ -42,7 +42,7 @@ create_ps_from_github <- function(dir, clear=FALSE) {
 
   # Read the list of filenames from the directory into a dataframe and
   # build the practice set for each filename
-  conn <- curl(dir_path)
+  conn <- curl::curl(dir_path)
   tryCatch(
     expr = {
       file_data <- jsonlite::prettify(readLines(conn, warn=FALSE))
@@ -51,7 +51,7 @@ create_ps_from_github <- function(dir, clear=FALSE) {
     }
   )
   file_data <- jsonlite::prettify(readLines(conn, warn=FALSE))
-  files_to_process <- fromJSON(file_data)
+  files_to_process <- jsonlite::fromJSON(file_data)
   for (k in 1:length(files_to_process$download_url)) {
     cat(k, ": ", files_to_process$download_url[k], "\n")
     ps <- create_ps_from_url(files_to_process$download_url[k])

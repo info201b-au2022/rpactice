@@ -214,7 +214,6 @@ ps_ui_get_titles <- function() {
 #----------------------------------------------------------------------------#
 # Functions for evaluating and formatting expressions
 #----------------------------------------------------------------------------#
-
 get_envir <- function(id) {
   # The learner variable space
   if (id == cLEARNER_ENV_ID) {
@@ -231,7 +230,6 @@ get_envir <- function(id) {
     stop("Internal error: get_envir(id): Erroneous id")
   }
 }
-
 
 # Remove the variables from all three environments
 clear_all_envirs <- function() {
@@ -770,6 +768,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
   practice_result <- list(
     learner_name = "",
     learner_email = "",
+    learner_code = paste0(learner_code, collapse="\n"),
     general_msg = "",
     num_correct = 0,
     num_incorrect = 0,
@@ -780,8 +779,7 @@ check_answers <- function(learner_code, clear_all = TRUE) {
 
   # Step 1
   # Clear all pre-set variables. When grading a set of assignments
-  # it will likely be substantially more efficient to not clear the
-  # variables.
+  # it will likely be  more efficient to not clear the variables.
   if (clear_all == TRUE) {
     clear_all_envirs()
   }
@@ -1199,9 +1197,21 @@ ps_update_learner_answer <- function(var_name, answer) {
   return(TRUE)
 }
 
+# TODO: Check for a valid id (or this will break)
 ps_get_learner_code <- function(id) {
   ps <- ps_get_current()
   t <- ps$task_list[[id]]$learner_answer
+  return(t)
+}
+
+ps_get_all_learner_code <- function() {
+  ps <- ps_get_current()
+  t <- ""
+  if (length(ps$task_list) > 0) {
+  for (k in 1:length(ps$task_list)) {
+    t <- paste0(t, ps$task_list[[k]]$learner_answer, "\n")
+  }
+  }
   return(t)
 }
 
@@ -1599,7 +1609,7 @@ format_result <- function(result) {
       t <- paste0(t, m$prompt_id, ": ", m$msg_text, "\n")
     }
 
-    # Show code that was expected in a complete and compact form
+    # Show code that was expected in a compact form
     t <- paste0(t, "\n<p style='text-align:center;'><b> Expected code:</b></p>")
 
     # The global variables
@@ -1623,6 +1633,12 @@ format_result <- function(result) {
       t <- paste0(t, "\n\n# The code:\n")
       t <- paste0(t, "#    None.\n\n")
     }
+
+    # Show learner's code
+    t <- paste0(t, "\n<p style='text-align:center;'><b> Learner's code:</b></p>")
+    t <- paste0(t,ps_get_all_learner_code())
+    t <- paste0(t, "\n---\n", result$learner_code)
+
   } else {
     # Errors are present
     t <- paste0(t, " More work to do.\n\nYour progress:\n")
@@ -1655,6 +1671,11 @@ format_result <- function(result) {
     if (still_to_do_list != "") {
       t <- paste0(t, "\n   Still to do: ", still_to_do_list)
     }
+
+    # Show learner's code
+    t <- paste0(t, "\n<p style='text-align:center;'><b> Learner's code:</b></p>")
+    t <- paste0(t,ps_get_all_learner_code())
+    t <- paste0(t, "\n---\n", result$learner_code)
   }
   return(t)
 }

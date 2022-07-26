@@ -1,13 +1,17 @@
 #' @version ps-1
 #' @short T00
 
-#' @id ?
+#' @id 1.a
 #' @msg What is 1 + 1?
 #' @code
 t0 <- 2
 #' @end
 
-#' @id ?
+#' @id -
+#' @msg REFLECTION:
+#' @end
+
+#' @id 2.c
 #' @msg What is t0 + 10?
 #' @end
 #' @var t2
@@ -15,4 +19,8 @@ t0 <- 2
 t1 <- t0 + 10
 #' @end
 
+#' @id -
+#' @msg
+#' PART 3: Locations ....
+#' @end
 

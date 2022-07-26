@@ -15,7 +15,7 @@ LazyData: true
 RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 Imports: 
-    crayon, lobstr, miniUI, RCurl, rlang, rstudioapi, stats, stringr, styler, shiny, tidyverse
+    crayon, curl, jsonlite, lobstr, miniUI, RCurl, rlang, rstudioapi, stats, stringr, styler, shiny, tidyverse
 Suggests: 
     rmarkdown,
     knitr,
