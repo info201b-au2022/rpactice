@@ -26,9 +26,9 @@ practice.begin <- function(short = "P01", learner="Anonymous", email="") {
   # Set the current practice set ID
   ps_set_current(id)
 
-  # Currently, no session information, so just a global variable
+  # Currently, no session data structure, so just two global variables
   pinfo201.globals$gLEARNER_NAME <- learner
-  pinfo201.globals$gLEARNER_NAME <-email
+  pinfo201.globals$gLEARNER_EMAIL <-email
 
   return(TRUE)
 }
