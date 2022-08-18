@@ -8,12 +8,7 @@ Description: Have RStudio check your answers
 Binding: addin.b
 Interactive: false
 
-Name: 2-Show Prompts
+Name: 3-Show Prompts
 Description: Show the prompts in the Viewer
 Binding: addin.c
-Interactive: false
-
-Name: 4-Show Answers
-Description: Show the answers to the prompts
-Binding: addin.d
 Interactive: false

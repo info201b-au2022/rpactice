@@ -33,7 +33,7 @@ cGLOBAL_ENV_ID <- 3
 ## Constants ----
 cDEBUG <- FALSE
 cTAB_IN_SPACES <- "   "
-cPACKAGE_ENVIR_NAME <- "package:pinfo201"
+cPACKAGE_ENVIR_NAME <- "package:rpractice"
 cROOT_DIR_STRING <- "_RPRACTICE_PATH_"
 
 # Manage Practice Sets ----
