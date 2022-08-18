@@ -1,4 +1,4 @@
-# pinfo201
+# rpractice
 
 This package enables instructors to efficiently create practice sets for
 students who are learning to code in R. It is intended for learners who are just
