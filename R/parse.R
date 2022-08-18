@@ -71,7 +71,7 @@ create_ps_from_github <- function(dir, clear=FALSE) {
 #       are available in the package and while developing the package
 #----------------------------------------------------------------------------#
 load_ps <- function(fn, silent = TRUE) {
-  filename <- system.file("extdata", fn, package = "pinfo201", mustWork = TRUE)
+  filename <- system.file("extdata", fn, package = "rpractice", mustWork = TRUE)
   ps <- read_ps_doc(filename)
   ps$ps_filename <- filename
   ps <- check_ps(ps, silent)
@@ -539,7 +539,7 @@ check_test_code <- function(ps) {
   if (length(v) == 0) {
     results <- eval_code_expected(code)
     cat("\n",
-      "V. Environment: pinfo201.expected_env\n",
+      "V. Environment: rpractice.expected_env\n",
       sep = ""
     )
     cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))

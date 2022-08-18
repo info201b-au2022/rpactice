@@ -23,7 +23,7 @@ admin <- function() {
   cat("admin.run(short)                Execute the code in a practice set - and check if the code works.\n")
   cat("---\n")
   cat("Examples:\n")
-  cat("admin.check(\"~/Documents/_Code2/pinfo201/inst/extdata/<fname>\")\n")
+  cat("admin.check(\"~/Documents/_Code2/rpractice/inst/extdata/<fname>\")\n")
   cat('admin.load("/Users/dhendry/Documents/_Code2/assignments/practice-sets")\n')
   cat('admin.grade_fn("/Users/dhendry/Documents/_Code2/assignments/A01")')
 }
@@ -155,7 +155,7 @@ admin.run <- function(short) {
 
   # Evaluate the code and show the variables and values
   cat("\n",
-    "Environment: pinfo201.expected_env\n",
+    "Environment: rpractice.expected_env\n",
     sep = ""
   )
   cat(sprintf("%-20s %-10s %-80s\n", "Variable", "Type", "Value"))
