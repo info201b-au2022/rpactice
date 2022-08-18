@@ -1,20 +1,20 @@
-#' pinfo201
+#' rpractice
 #'
-#' \code{pinfo201} refers to \emph{practice for INFO-201}. INFO-201 is an
+#' \code{rpractice} refers to \emph{practice for INFO-201}. INFO-201 is an
 #' introduction to data science at the University of Washington, a class originally
 #' developed by Mike Freeman and Joel Ross. See:
 #' * Freeman, M., & Ross, J. (2019). _[Programming Skills for Data Science: Start Writing Code to Wrangle, Analyze, and Visualize Data with R.](https://github.com/programming-for-data-science)_ Boston, MA: Addison-Wesley.
 #'
 #'
-#' \code{pinfo201} is a package for practicing basic R programming. It is intended for
-#' learners who are just beginning. In addition, \code{pinfo201} provides functions
+#' \code{rpractice} is a package for practicing basic R programming. It is intended for
+#' learners who are just beginning. In addition, \code{rpractice} provides functions
 #' for efficiently grading student work.
 #'
 #' @section Practice sets:
 #'   The key idea is that an instructor creates a practice set, which comprises
-#'   prompts, expected answers, and hints. Once \code{pinfo201} is installed,
+#'   prompts, expected answers, and hints. Once \code{rpractice} is installed,
 #'   practice sets are loaded into RStudio and can be controlled with an Addins
-#'   menu. The \code{pinfo201} menu includes these options:
+#'   menu. The \code{rpractice} menu includes these options:
 #'   \itemize{
 #'   \item 1. Begin Practice
 #'   \item 2. Check Answers
@@ -145,7 +145,7 @@
 #'
 #' Prompt "b" shows the use of a regular expression in a \code{@check} tag. This
 #' is a technique for matching the value of variable assignment to a range of
-#' possible values. For variables without \code{@check} tags, \code{pinfo201}
+#' possible values. For variables without \code{@check} tags, \code{rpractice}
 #' currently checks that the value of a student's variable is identical to the
 #' expected value.
 #'
@@ -163,7 +163,7 @@
 #' with the prompts from the practice set.
 #'
 #'   \preformatted{
-#'   # pinfo201 / ps-1
+#'   # rpractice / ps-1
 #'   #
 #'   # PS-Example: Example practice set
 #'   #    This file illustrates the essentials of specifying a practice set. It
@@ -212,7 +212,7 @@
 #' @section A key assumption:
 #'
 #' This package is oriented toward checking data values.
-#' Currently, \code{pinfo201} does not model the structure of student's code nor
+#' Currently, \code{rpractice} does not model the structure of student's code nor
 #' its execution. For example, the package cannot be used evaluate the
 #' correctness of a task like this:
 #' * \preformatted{Use cat() to output two variables a and b.}
@@ -223,7 +223,7 @@
 #'
 #' @section Auto-grading:
 #'
-#' \code{pinfo201} can be used for auto-grading assistance. This function, for
+#' \code{rpractice} can be used for auto-grading assistance. This function, for
 #' example, will grade all assignments that are located in the directory,
 #' \code{dir}:
 #'
@@ -241,7 +241,7 @@
 #'
 #' @section What can be evaluated?:
 #'
-#' Currently, \code{pinfo201} is able to check the following data types:
+#' Currently, \code{rpractice} is able to check the following data types:
 #' \itemize{
 #' \item Special constants (NULL, NA, Inf, -Inf, and NaN)
 #' \item Atomic vectors (scalars) (logical, numeric, integer, complex, character types)
@@ -278,7 +278,7 @@
 #'
 
 #' @docType package
-#' @name pinfo201
+#' @name rpractice
 NULL
 
 #' @import miniUI

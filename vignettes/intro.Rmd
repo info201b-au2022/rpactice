@@ -1,8 +1,8 @@
 ---
-title: "Introduction to pinfo201"
+title: "Introduction to rpractice"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to pinfo201}
+  %\VignetteIndexEntry{Introduction to rpractice}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(pinfo201)
+library(rpractice)
 ```
 
 # Summary 
@@ -372,7 +372,7 @@ Here the learner has responded to the prompts with the expected working
 code:
 
 ```
-# pinfo201 / ps-1
+# rpractice / ps-1
 #
 # PS-Example: Example practice set
 #    This file illustrates the essentials of specifying a practice set. It
@@ -449,7 +449,7 @@ It can, however, be used to evaluate the following:
 
 # Auto-grading
 
-\code{pinfo201} can be used for auto-grading assistance. This function, for
+\code{rpractice} can be used for auto-grading assistance. This function, for
 example, will grade all assignments that are located in the directory,
 \code{dir}:
 
@@ -468,7 +468,7 @@ sets.
 
 @section What can be evaluated?:
 #'
-Currently, \code{pinfo201} is able to check the following data types:
+Currently, \code{rpractice} is able to check the following data types:
 \itemize{
 \item Special constants (NULL, NA, Inf, -Inf, and NaN)
 \item Atomic vectors (scalars) (logical, numeric, integer, complex, character types)
