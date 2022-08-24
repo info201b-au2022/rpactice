@@ -1280,21 +1280,20 @@ format_practice_script <- function(show_answers = TRUE) {
     if (task$is_note_msg == TRUE) {
       snum <- sprintf("%02d", note_msg_num)
       
-      # This creates a "simple" comment 
-      msg <- str_replace_all(task$prompt_msg, "\n", "\n#    ")
-      
-      # This cleans up comments, in case that "complex" comments are found in 
-      # the practice set markup file. This, e.g., prevents this: 
-      #   |#   # Heading 1 ----
-      #   |#   ## Heading 1.1 ----   
-      # 
-      # Instead if formats as the following: 
-      #  |# Heading 1 ----
-      #  |## Heading 1.1 ---- 
-      msg <- str_replace(msg, "#", "\n#" )
-      msg <- str_replace_all(msg, "\n#     #", "\n#" )
-      
-      t <- paste0(t, "#                                         Note ", snum, ".\n#    ", msg, "\n")
+      if (str_detect(task$prompt_msg, "^#")) {
+        # This formats the following: 
+        #    |#'# Heading 1 ----
+        #    |#'## Heading 1.1 ----
+        msg <- task$prompt_msg
+        t <- paste0(t, "#                                         Note ", snum, ".\n", msg, "\n")
+      }
+      else {
+        # This formats the following: 
+        #    |#' Heading 1 
+        #    |#' Heading 1.1
+        msg <- str_replace_all(task$prompt_msg, "\n", "\n#abcd")
+        t <- paste0(t, "#                                         Note ", snum, ".\n#", msg, "\n")
+      }
       note_msg_num <- note_msg_num + 1
     } else {
       msg <- str_replace_all(task$prompt_msg, "\n", "\n#   ")

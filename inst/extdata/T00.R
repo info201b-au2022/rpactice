@@ -3,10 +3,14 @@
 
 #' @id -
 #' @msg 
-#' # What is 1 + 1? ----
-#' # What is 1 + 1? ----
-#' ## two ----
-#' # blah blah
+#'# Heading 1 ----
+#'#'# blah blah
+#'
+#'# Heading 2 ----
+#'#'# blah blah
+#'#
+#'## Heading 2.1 
+#'# blah blah
 #' @end
 #' @code
 t0 <- 2
@@ -20,6 +24,7 @@ t0 <- 2
 
 #' @id -
 #' @msg 
+#' 
 #' REFLECTION:
 #' blah blah ... 
 #' blah blah ...

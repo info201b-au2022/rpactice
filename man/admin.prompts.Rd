@@ -8,6 +8,8 @@ admin.prompts(short, show_answers = FALSE)
 }
 \arguments{
 \item{short}{for the short name of the practice set}
+
+\item{show_answers}{if TRUE the answers will be shown}
 }
 \description{
 Intended for teaching assistants and instructors only, \code{admin.prompts()}
