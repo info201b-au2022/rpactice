@@ -350,6 +350,7 @@ admin.grade_ui_file <- function() {
 #' R code showing the correct answers.
 #'
 #' @param short for the short name of the practice set
+#' @param show_answers if TRUE the answers will be shown
 #'
 #' @export
 #----------------------------------------------------------------------------#
