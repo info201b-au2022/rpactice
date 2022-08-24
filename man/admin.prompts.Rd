@@ -4,7 +4,7 @@
 \alias{admin.prompts}
 \title{Show the practice set prompts}
 \usage{
-admin.prompts(short)
+admin.prompts(short, show_answers = FALSE)
 }
 \arguments{
 \item{short}{for the short name of the practice set}

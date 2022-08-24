@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Imports: 
     crayon, curl, jsonlite, lobstr, miniUI, RCurl, rlang, rstudioapi, stats, stringr, styler, shiny, tidyverse

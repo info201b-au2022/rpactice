@@ -229,7 +229,7 @@ appear between the `@msg` and `@end` tags.
 ```
 
 ## Message prompts 
-If an `@id` is a dash ("-"), a message is formatted. This is a way to guide students through the prompts and provide clarifications.  Message prompts are not check for correctness.
+If an `@id` is a dash ("-"), a message is formatted. This is a way to guide students through the prompts and provide clarifications.  Message prompts are not checked for correctness.
 
 ```
 #' @id -
@@ -250,7 +250,7 @@ depend on them.
 #'    2. Wow, wow, wow ... 
 #' @end
 #' @code
-v1 <- X + 10
+library(stringr)
 #' @end
 ```
 
@@ -304,6 +304,9 @@ random numbers.
 The tag `@cp-var` causes this variable to be copied to the expected code
 environment. This allows the checking process to use the values computed by the
 learner's code environment.
+
+This can be *very* useful when a learner is required read a file into a
+variable. 
 
 ```
 #' @id d

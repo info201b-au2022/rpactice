@@ -1253,7 +1253,7 @@ all_prompt_ids <- function() {
 format_practice_script <- function(show_answers = TRUE) {
   ps <- ps_get_current()
 
-  # Count the number of prompts and create the `num_pompts_msg`, which is
+  # Count the number of prompts and create the `num_prompts_msg`, which is
   # presented below.
   note_msg_num <- 0
   for (task in ps$task_list) {
@@ -1279,12 +1279,26 @@ format_practice_script <- function(show_answers = TRUE) {
     msg <- ""
     if (task$is_note_msg == TRUE) {
       snum <- sprintf("%02d", note_msg_num)
-      msg <- str_replace_all(task$prompt_msg, "\n", "\n#   ")
+      
+      # This creates a "simple" comment 
+      msg <- str_replace_all(task$prompt_msg, "\n", "\n#    ")
+      
+      # This cleans up comments, in case that "complex" comments are found in 
+      # the practice set markup file. This, e.g., prevents this: 
+      #   |#   # Heading 1 ----
+      #   |#   ## Heading 1.1 ----   
+      # 
+      # Instead if formats as the following: 
+      #  |# Heading 1 ----
+      #  |## Heading 1.1 ---- 
+      msg <- str_replace(msg, "#", "\n#" )
+      msg <- str_replace_all(msg, "\n#     #", "\n#" )
+      
       t <- paste0(t, "#                                         Note ", snum, ".\n#    ", msg, "\n")
       note_msg_num <- note_msg_num + 1
     } else {
       msg <- str_replace_all(task$prompt_msg, "\n", "\n#   ")
-      t <- paste0(t, "# ", task$prompt_id, ": ", msg, " (Variable: ", task$assignment_var, ")", "\n")
+      t <- paste0(t, "# ", task$prompt_id, ": ", msg, " (Variable: `", task$assignment_var, "`)", "\n")
     }
 
     # NOTE: This will show the expected answers, which is very useful for
@@ -1309,7 +1323,7 @@ format_practice_script <- function(show_answers = TRUE) {
 
   # Put all the bits together
   t <- paste0(
-    "# pinfo201 / ", ps$ps_version, "\n",
+    "# rpractice / ", ps$ps_version, "\n",
     "#\n",
     "# ", ps$ps_short, ": ", ps$ps_title, "\n",
     "#   ", str_replace_all(ps$ps_descr, "\n", "\n#   "), "\n", "",
@@ -1674,7 +1688,7 @@ format_result <- function(result) {
 
     # Show learner's code
     t <- paste0(t, "\n<p style='text-align:center;'><b> Learner's code:</b></p>")
-    t <- paste0(t,ps_get_all_learner_code())
+    # t <- paste0(t,ps_get_all_learner_code())
     t <- paste0(t, "\n---\n", result$learner_code)
   }
   return(t)

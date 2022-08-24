@@ -14,17 +14,19 @@ admin <- function() {
   cat("\014") # Clear screen
   cat(crayon::red("Function\t\t       "), crayon::red("Purpose"), "\n")
   cat("admin()                         List the current admin functions.\n")
+  cat("clear()                         TODO: Clear all practice sets.\n")
   cat("admin.grade()                   Select a directory (dir) and grade all work.\n")
   cat("admin.grade_fn(fn)              Grade work in directory or grade single file.\n")
   cat("admin.grade_ui_file()           Select a file and grade it.\n")
   cat("admin.load(dir)                 Load practice sets from the directory.\n")
   cat("admin.ls()                      List installed practice sets.\n")
-  cat("admin.prompts(short)            List the practice prompts and expected results - the answers!\n")
+  cat("admin.prompts(short, show_a)    List the practice prompts and expected results\n")
+  cat("                                   show_a (T|F) show answers!\n")
   cat("admin.run(short)                Execute the code in a practice set - and check if the code works.\n")
   cat("---\n")
   cat("Examples:\n")
   cat("admin.check(\"~/Documents/_Code2/rpractice/inst/extdata/<fname>\")\n")
-  cat('admin.load("/Users/dhendry/Documents/_Code2/assignments/practice-sets")\n')
+  cat('admin.load("/Users/dhendry/Documents/_Teaching/_Code/markup/A2")\n')
   cat('admin.grade_fn("/Users/dhendry/Documents/_Code2/assignments/A01")')
 }
 
@@ -353,7 +355,7 @@ admin.grade_ui_file <- function() {
 #----------------------------------------------------------------------------#
 # List the prompts and some basic information for a practice set
 #----------------------------------------------------------------------------#
-admin.prompts <- function(short) {
+admin.prompts <- function(short, show_answers=FALSE) {
   id <- ps_get_id_by_short(short)
   if (id == -1) {
     message(paste0("Error. Practice set not found (", short, ")"))
@@ -361,7 +363,7 @@ admin.prompts <- function(short) {
   }
   ps_set_current(id)
   cat("\014") # Clear screen
-  cat(format_practice_script(TRUE))
+  cat(format_practice_script(show_answers))
   return(TRUE)
 }
 
@@ -450,6 +452,6 @@ admin.load <- function(dir) {
     ps$ps_filename <- fname
     ps <- check_ps(ps)
     ps_add(ps)
-    cat("Added: ", ps$ps_short, "(", fname, ").\n")
+    cat("Added: ", ps$ps_short, "(\"", file_list[k], "\").\n", sep="")
   }
 }

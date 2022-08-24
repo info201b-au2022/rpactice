@@ -1,4 +1,4 @@
 library(testthat)
-library(pinfo201)
+library(rpractice)
 
-test_check("pinfo201")
+test_check("rpractice")
