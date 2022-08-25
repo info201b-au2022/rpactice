@@ -100,9 +100,23 @@ ps_load_internal_ps <- function() {
 }
 
 # Add a practice set into the running application
-ps_add <- function(ps) {
+ps_add <- function(new_ps) {
+  
+  # If the practice set already loaded - replace it
+  k <- 1
+  for (ps in pinfo201.globals$gPRACTICE_SETS) {
+    if (ps$ps_short == new_ps$ps_short) {
+      pinfo201.globals$gPRACTICE_SETS[[k]] <- new_ps
+      return(TRUE)
+    }
+    k <- k + 1
+  }
+  
+  # The practice set was not previously loaded, so 
+  # add it as a new one
   new_k <- length(pinfo201.globals$gPRACTICE_SETS) + 1
-  pinfo201.globals$gPRACTICE_SETS[[new_k]] <- ps
+  pinfo201.globals$gPRACTICE_SETS[[new_k]] <- new_ps
+  return(TRUE)
 }
 
 ps_clear <- function() {

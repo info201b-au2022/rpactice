@@ -64,8 +64,8 @@ create_ps_from_github <- function(dir, clear=FALSE) {
 # practice sets are found in the special directory inst/extdata.
 # The calling order for this function is as follows:
 #   .onLoad() - a hook function which runs when the package is loaded
-#      ps_load_internal_ps() - for loading all internal practice sets
-#        load_ps() - for loading a specific practice set
+#   ps_load_internal_ps() - for loading all internal practice sets
+#   load_ps() - for loading a specific practice set
 #
 # NOTE: system.file is the preferred way to do this, so that the files
 #       are available in the package and while developing the package
@@ -73,7 +73,7 @@ create_ps_from_github <- function(dir, clear=FALSE) {
 load_ps <- function(fn, silent = TRUE) {
   filename <- system.file("extdata", fn, package = "rpractice", mustWork = TRUE)
   ps <- read_ps_doc(filename)
-  ps$ps_filename <- filename
+  ps$ps_filename <- fn
   ps <- check_ps(ps, silent)
   return(ps)
 }

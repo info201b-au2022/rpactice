@@ -450,7 +450,7 @@ admin.load <- function(dir) {
   for (k in 1:length(file_list)) {
     fname <- file(file_list[k])
     ps <- read_ps_doc(fname)
-    ps$ps_filename <- fname
+    ps$ps_filename <- file_list[k]
     ps <- check_ps(ps)
     ps_add(ps)
     cat("Added: ", ps$ps_short, "(\"", file_list[k], "\").\n", sep="")
