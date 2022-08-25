@@ -32,7 +32,7 @@ cGLOBAL_ENV_ID <- 3
 
 ## Constants ----
 cDEBUG <- FALSE
-cTAB_IN_SPACES <- "   "
+cTAB_IN_SPACES <- "    "
 cPACKAGE_ENVIR_NAME <- "package:rpractice"
 cROOT_DIR_STRING <- "_RPRACTICE_PATH_"
 
@@ -1288,11 +1288,8 @@ format_practice_script <- function(show_answers = TRUE) {
         t <- paste0(t, "#                                         Note ", snum, ".\n", msg, "\n")
       }
       else {
-        # This formats the following: 
-        #    |#' Heading 1 
-        #    |#' Heading 1.1
-        msg <- str_replace_all(task$prompt_msg, "\n", "\n#abcd")
-        t <- paste0(t, "#                                         Note ", snum, ".\n#", msg, "\n")
+        msg <- str_replace_all(task$prompt_msg, "\n", "\n#    ")
+        t <- paste0(t, "#                                         Note ", snum, ".\n#     ", msg, "\n")
       }
       note_msg_num <- note_msg_num + 1
     } else {
