@@ -7,6 +7,6 @@
 admin.grade()
 }
 \description{
-Intended for teaching assistants and instructors only, this function allows
+Intended for instructors, this function allows
 you to select a folder and grade all files within this folder.
 }

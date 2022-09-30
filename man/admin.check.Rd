@@ -14,7 +14,7 @@ admin.check(filename, silient = FALSE, detailed = FALSE)
 \item{detailed}{show (or do not show) detailed messages}
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin.ps()}
+Intended for instructors only, \code{admin.ps()}
 checks the integrity of a practice set. It loads the source file and provides
 feedback on the mark-up.
 }

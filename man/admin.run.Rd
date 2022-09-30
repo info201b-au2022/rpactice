@@ -2,7 +2,7 @@
 % Please edit documentation in R/admin.R
 \name{admin.run}
 \alias{admin.run}
-\title{List practice set objects}
+\title{List practice set objects and test the practice set}
 \usage{
 admin.run(short)
 }
@@ -10,7 +10,7 @@ admin.run(short)
 \item{short}{for the short name of the practice set}
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin.run()}
+Intended for instructors, \code{admin.run()}
 executes all of the code for the practice set, \code{short}. Use this
 function to test the practice set and to see that it is set-up
 correctly.

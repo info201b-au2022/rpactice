@@ -1264,7 +1264,7 @@ all_prompt_ids <- function() {
 
 # This function is used to create a template script - learners can start
 # here and write code for each of the prompts
-format_practice_script <- function(show_answers = TRUE) {
+format_practice_script <- function(show_answers = FALSE) {
   ps <- ps_get_current()
 
   # Count the number of prompts and create the `num_prompts_msg`, which is

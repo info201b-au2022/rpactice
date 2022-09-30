@@ -12,7 +12,7 @@ admin.prompts(short, show_answers = FALSE)
 \item{show_answers}{if TRUE the answers will be shown}
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin.prompts()}
+Intended for instructors, \code{admin.prompts()}
 shows the prompts and expected answers in a practice set. The output is
 R code showing the correct answers.
 }

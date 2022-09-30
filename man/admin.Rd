@@ -7,7 +7,6 @@
 admin()
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin} simply
-lists all the available administrative functions. Use these functions to
-create practice sets and to grade student work.
+Intended for instructors, \code{admin} lists the administrative functions.
+Use these functions to create practice sets and to grade student work.
 }

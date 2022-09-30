@@ -19,40 +19,29 @@ library(rpractice)
 ```
 
 # Summary 
-This package enables   instructors to efficiently create practice sets for
-students who are learning to code in R. It is intended for learners who are just
-beginning.
+This package enables instructors to create practice sets for learning R. Practice sets include coding prompts, answers, and, optionally, hints. Learners write R solutions to the coding prompts and receive feedback.
 
-Practice sets include coding prompts, answers, and, optionally, hints. Learners
-write solutions in R to the coding prompts and receive feedback. In addition,
-this package provides functions, intended for instructors, for automatically
-grading student work.
+This package installs an Addin menu into RStudio, which learners use to select practice sets and have their work checked. Instructors are given a set of administrative functions for creating practice sets and for grading student work.
 
-This package installs an Addin menu into RStudio, which learners use to select
-practice sets and have their work checked. Instructors are given a set of
-administrative functions for creating practice sets and for grading student
-work.
-
-Practice sets are specified with a small number of markup tags, which are used
-to wrap R code.
+Practice sets are specified with a small number of markup tags, which are used to wrap R code.
 
 # Practice Sets for Learning to Code in R
-The key idea is that an instructor creates a practice set, which comprises
-prompts, expected answers, and hints. Once the package is installed,
+Once the package is installed,
 practice sets are loaded into RStudio and can be controlled with an Addins
 menu. The Addin menu includes these options:
 
   * 1-Begin Practice
   * 2-Check Answers
   * 3-Show Prompts
-  * 4-Show Answers
 
 Learners select from the available practice sets (_1. Begin Practice_). They write code for one or more of the prompts. When ready, learners check their code (_2. Check Answers_). If the learner's answer
 differs from the expected answer, hints, if available, are shown.
 
-The checking process, works with two _variables spaces_: Learner's and expected 
-code environments. Basically, the process works as 
-follows: 
+The checking process, works with two _variable spaces_:
+   * Learner's code environment
+   * Expected code environment
+
+Basically, the evaluation process works as follows: 
 
    1. Execute the learner's code (learner's code environment)
    1. Execute the expected code (expected code environment)
@@ -78,8 +67,7 @@ Instructors write practice sets in .R files, with tagged comments. Here is an ex
 #' @short PS-Example
 #' @title Example practice set
 #' @descr
-#' This file illustrates the essentials of specifying a practice set. It
-#' shows the different kinds of prompts that can be created for learners.
+#' This file illustrates the essentials of specifying a practice set.
 #' @end
 #' @initial-vars
 library(stats)
@@ -167,14 +155,14 @@ imperial_to_metric <- function(feet, inches) {
 Practice sets are uniquely identified a short name (`@short`). Short IDs should
 be valid file names without an `.R` extension.
 
-In addition each practice set has a title (`@title`) and a brief description
+In addition, each practice set has a title (`@title`) and a brief description
 (`@descr`). These two tags are optional.
 
 Keep mind that learners will see short IDs, titles, and descriptions.
 Accordingly, choose clear and usable language for these tags.
 
-Finally, all practice sets should begin with the version tag (`@version`), which
-simply indicates the mark-up version for process practice set files.
+Finally, all practice sets should begin with the version tag (`@version ps-1`), which
+indicates the mark-up version for process practice set files.
 
 ```
 #' @version ps-1
@@ -205,9 +193,7 @@ The prompts comprise an ID (`@id`), a  prompt (`@msg`), the expected answer
 (`@code`), and a list of hints (`@hints`). 
 
 If an `@id` is a question mark ("?"), when the practice set is loaded into R,
-IDs will automatically be generated, which greatly simplifies the development of
-practice sets, since during development you do not need to reorder ids when 
-new prompts are inserted.
+IDs will automatically be generated.
 
 ```
 #' @id ?
@@ -260,7 +246,7 @@ left-hand-side variable of the _last_ assignment statement is extracted. It is
 this variable that is to be checked.
 
 Sometimes it is necessary or convenient to explicitly specify the variable with
-the variable tag (`@var`). For example, in the following the variable to be
+the variable tag (`@var`). For example, in the following example, the variable to be
 checked is `squared` not `t`.
 
 For most prompts, that `@var` tag is not needed; instead, let the system 
@@ -301,11 +287,11 @@ code environment to the expected code environment. In this example, the
 learner's code creates a variable, `salaries_2017`, containing a vector of
 random numbers. 
 
-The tag `@cp-var` causes this variable to be copied to the expected code
+The tag `@cp-var` causes the values of this variable to be copied to the expected code
 environment. This allows the checking process to use the values computed by the
 learner's code environment.
 
-This can be *very* useful when a learner is required read a file into a
+This can be *very* useful when, for example, a learner is required read a file into a
 variable. 
 
 ```
@@ -365,7 +351,7 @@ More complex function checking, including checking functions with three or more
 arguments, is possible by implementing a prompt-specific callback function (see
 below).
 
-# What do learners see?:
+# What do learners see?
 
 The above markup is used to produce the following practice set, a `.R` file.
 When students select a practice set from the RStudio Addin menu, an editor
@@ -378,9 +364,7 @@ code:
 # rpractice / ps-1
 #
 # PS-Example: Example practice set
-#    This file illustrates the essentials of specifying a practice set. It
-#    show what kinds of prompts can be presented to #' students and what can be
-#    tested.
+#      This file illustrates the essentials of specifying a practice set.
 
 # Practice set info ---- 
 practice.begin("PS-Example", learner="[your name]", email="[your e-mail]")
@@ -448,56 +432,46 @@ package cannot be used to evaluate the correctness of a task like this:
 
 It can, however, be used to evaluate the following:
 
-* _Create a string from two variables, `a` and `b, and assign the string to `out`._
+* _Create a string from two variables, `a` and `b`, and assign the string to `out`._
 
 # Auto-grading
 
-\code{rpractice} can be used for auto-grading assistance. This function, for
-example, will grade all assignments that are located in the directory,
-\code{dir}:
+`rpractice`can be used for auto-grading. This function, for
+example, will grade all assignments that are located in the directory and produce 
+a report: 
 
-\preformatted{
-admin.grade(dir)
-}
-
-It does so by linking the code in the file to the problem set with the
-\code{practice.begin()} command. Then, it parses and evaluates the R file.
-Currently, the output is one \code{.html} file per \code{.R} file, with
-each output file summarizing correct and incorrect solutions.
+`admin.grade(dir)`
 
 Other admin functions are used to assist in the development of practice
 sets.
 
+# What can be evaluated?
 
-@section What can be evaluated?:
-#'
-Currently, \code{rpractice} is able to check the following data types:
-\itemize{
-\item Special constants (NULL, NA, Inf, -Inf, and NaN)
-\item Atomic vectors (scalars) (logical, numeric, integer, complex, character types)
-\item Vectors greater than length 1 (comprising logical, numeric, integer, complex, and character types)
-\item Lists
-\item Data frames
-\item Functions with zero, one, or two unnamed arguments (with the @check tag)
-}
-#'
-@section Checking callbacks:
-#'
+Currently, `rpractice` is able to check the following data types:
+
+* Special constants (NULL, NA, Inf, -Inf, and NaN)
+* Atomic vectors (scalars) (logical, numeric, integer, complex, character types)
+* Vectors greater than length 1 (comprising logical, numeric, integer, complex, and character types)
+* Lists
+* Data frames
+* Functions with zero, one, or two unnamed arguments (with the @check tag)
+
+# Checking callbacks:
+
 At present, the framework can be extended with prompt-specific callback
 functions for checking a learner's code, although this takes a good deal of
 effort. Thus, if you need to test a function with 3 or more parameters or
 test a data structure in some specific ways, you can write a checking
 callback function. This is the current structure of the checking callbacks:
-#'
-#'\preformatted{
+
 <funct_name>_Check <- function(internal_id, result) {
   learner_result <- eval_string_details(ps_get_assignment_var(internal_id))
   expected_result <- eval_string_details(ps_get_expected_answer(internal_id))
-#'
+
   # Analyze learner's code (e.g., with an abstract syntax tree) and add feedback
   # to the result
   #     add.message(result, message)
-#'
+
   if (identical(learner_result, expected_result)) {
     result <- result_update(result, internal_id, TRUE, result_good_msg(internal_id))
   } else {
@@ -505,4 +479,4 @@ callback function. This is the current structure of the checking callbacks:
  }
  return(result)
  }}
-#'
+

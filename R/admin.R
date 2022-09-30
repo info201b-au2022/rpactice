@@ -5,9 +5,8 @@
 
 #' List the available admin functions
 #'
-#' Intended for teaching assistants and instructors only, \code{admin} simply
-#' lists all the available administrative functions. Use these functions to
-#' create practice sets and to grade student work.
+#' Intended for instructors, \code{admin} lists the administrative functions. 
+#' Use these functions to create practice sets and to grade student work.
 #'
 #' @export
 admin <- function() {
@@ -18,12 +17,14 @@ admin <- function() {
   cat("admin.grade()                   Select a directory (dir) and grade all work.\n")
   cat("admin.grade_fn(fn)              Grade work in directory or grade single file.\n")
   cat("admin.grade_ui_file()           Select a file and grade it.\n")
-  cat("admin.grade_repos(fn)           Grade a set of repos (fn/user-id/analysis.R\n")
+  cat("admin.grade_repos(fn)           Grade a set of repos (fn/learner-dir*/analysis.R)")
   cat("admin.load(dir)                 Load practice sets from the directory.\n")
   cat("admin.ls()                      List installed practice sets.\n")
   cat("admin.prompts(short, show_a)    List the practice prompts and expected results\n")
   cat("                                   show_a (T|F) show answers!\n")
   cat("admin.run(short)                Execute the code in a practice set - and check if the code works.\n")
+  cat("---\n")
+  cat("Use ?function() to get help")
   cat("---\n")
   cat("Examples:\n")
   cat("admin.check(\"~/Documents/_Code2/rpractice/inst/extdata/<fname>\")\n")
@@ -34,7 +35,7 @@ admin <- function() {
 
 #' List installed practice sets
 #'
-#' Intended for teaching assistants and instructors only, \code{admin.ls()}
+#' Intended for instructors, \code{admin.ls()}
 #' simply lists all currently installed practice sets. Each of these
 #' practice sets are available to learners and for grading.
 #'
@@ -61,9 +62,9 @@ admin.ls <- function() {
   return(TRUE)
 }
 
-#' List practice set objects
+#' List practice set objects and test the practice set
 #'
-#' Intended for teaching assistants and instructors only, \code{admin.run()}
+#' Intended for instructors, \code{admin.run()}
 #' executes all of the code for the practice set, \code{short}. Use this
 #' function to test the practice set and to see that it is set-up
 #' correctly.
@@ -177,12 +178,11 @@ admin.run <- function(short) {
 
 #' Evaluate a directory of practice sets
 #'
-#' Intended for teaching assistants and instructors only, \code{admin.grade()},
+#' Intended for instructors only, \code{admin.grade()},
 #' this function will grade all of the practice sets within a directory.
-#' That is, it will check student code against expected code and produce
-#' a reports - currently, one report for each student assignment.
-#'
-#' This reports are placed within a sub-folder, named `results`.
+#' 
+#' Each R file in the directory (*.R) will be evaluated. The evaluation 
+#' reports are place in a sub-folder, named `results`.
 #'
 #' @param filename either a directory for a particular file
 #'
@@ -307,13 +307,18 @@ admin.grade_fn <- function(filename) {
 #
 
 
-#' Evaluate a directory of practice sets that are structured as 
-#' follows: 
-#'     /A1/user-name1/analysis.R
-#'     /A1/user-name2/analysis.R
-#'     /A1/user-name3/analysis.R
-#'
-#' This reports are placed within a sub-folder, named `results`.
+#' Evaluate a directory of GitHub repos 
+#' 
+#' @description
+#' This function is similar to `admin.grade_fn`. The difference 
+#' is that the directory structure is assumed to be the following: 
+#' 
+#'  /A1/user-name1/analysis.R \cr
+#'  /A1/user-name2/analysis.R \cr
+#'  /A1/user-name3/analysis.R \cr
+#'  ... 
+#'  
+#' The evaluation reports are place in a sub-folder, named `results`.
 #'
 #' @param filename a directory (topmost assignment directory)
 #'
@@ -443,7 +448,7 @@ admin.grade_repos <- function(filename) {
 
 #' Grade all files in a folder
 #'
-#' Intended for teaching assistants and instructors only, this function allows
+#' Intended for instructors, this function allows
 #' you to select a folder and grade all files within this folder.
 #'
 #' @export
@@ -463,7 +468,7 @@ admin.grade <- function() {
 
 #' Grade a single file
 #'
-#' Intended for teaching assistants and instructors only, this function allows
+#' Intended instructors only, this function allows
 #' you to select a single file and grade it.
 #'
 #' @export
@@ -484,7 +489,7 @@ admin.grade_ui_file <- function() {
 
 #' Show the practice set prompts
 #'
-#' Intended for teaching assistants and instructors only, \code{admin.prompts()}
+#' Intended for instructors, \code{admin.prompts()}
 #' shows the prompts and expected answers in a practice set. The output is
 #' R code showing the correct answers.
 #'
@@ -543,7 +548,7 @@ admin.gen_answers <- function(dir_path) {
 
 #' Check the integrity of practice set
 #'
-#' Intended for teaching assistants and instructors only, \code{admin.ps()}
+#' Intended for instructors only, \code{admin.ps()}
 #' checks the integrity of a practice set. It loads the source file and provides
 #' feedback on the mark-up.
 #'
@@ -558,7 +563,7 @@ admin.check <- function(filename, silient = FALSE, detailed = FALSE) {
 
 #' Load practice sets into the package
 #'
-#' Intended for teaching assistants and instructors only, \code{admin.load()}
+#' Intended for instructors only, \code{admin.load()}
 #' is used to load practice sets. All practice sets that are found in the
 #' the directory, \code{dir}, are loaded into the package. (Default practice
 #' sets are automatically added. These defaults are installed when the

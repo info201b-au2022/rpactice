@@ -10,11 +10,10 @@ admin.grade_fn(filename)
 \item{filename}{either a directory for a particular file}
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin.grade()},
+Intended for instructors only, \code{admin.grade()},
 this function will grade all of the practice sets within a directory.
-That is, it will check student code against expected code and produce
-a reports - currently, one report for each student assignment.
 }
 \details{
-This reports are placed within a sub-folder, named \code{results}.
+Each R file in the directory (*.R) will be evaluated. The evaluation
+reports are place in a sub-folder, named \code{results}.
 }

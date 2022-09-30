@@ -2,11 +2,7 @@
 % Please edit documentation in R/admin.R
 \name{admin.grade_repos}
 \alias{admin.grade_repos}
-\title{Evaluate a directory of practice sets that are structured as
-follows:
-/A1/user-name1/analysis.R
-/A1/user-name2/analysis.R
-/A1/user-name3/analysis.R}
+\title{Evaluate a directory of GitHub repos}
 \usage{
 admin.grade_repos(filename)
 }
@@ -14,5 +10,13 @@ admin.grade_repos(filename)
 \item{filename}{a directory (topmost assignment directory)}
 }
 \description{
-This reports are placed within a sub-folder, named \code{results}.
+This function is similar to \code{admin.grade_fn}. The difference
+is that the directory structure is assumed to be the following:
+
+/A1/user-name1/analysis.R \cr
+/A1/user-name2/analysis.R \cr
+/A1/user-name3/analysis.R \cr
+...
+
+The evaluation reports are place in a sub-folder, named \code{results}.
 }

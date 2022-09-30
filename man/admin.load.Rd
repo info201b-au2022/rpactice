@@ -10,7 +10,7 @@ admin.load(dir)
 \item{dir}{a directory}
 }
 \description{
-Intended for teaching assistants and instructors only, \code{admin.load()}
+Intended for instructors only, \code{admin.load()}
 is used to load practice sets. All practice sets that are found in the
 the directory, \code{dir}, are loaded into the package. (Default practice
 sets are automatically added. These defaults are installed when the
