@@ -18,6 +18,7 @@ admin <- function() {
   cat("admin.grade()                   Select a directory (dir) and grade all work.\n")
   cat("admin.grade_fn(fn)              Grade work in directory or grade single file.\n")
   cat("admin.grade_ui_file()           Select a file and grade it.\n")
+  cat("admin.grade_repos(fn)           Grade a set of repos (fn/user-id/analysis.R\n")
   cat("admin.load(dir)                 Load practice sets from the directory.\n")
   cat("admin.ls()                      List installed practice sets.\n")
   cat("admin.prompts(short, show_a)    List the practice prompts and expected results\n")
@@ -27,7 +28,8 @@ admin <- function() {
   cat("Examples:\n")
   cat("admin.check(\"~/Documents/_Code2/rpractice/inst/extdata/<fname>\")\n")
   cat('admin.load("/Users/dhendry/Documents/_Teaching/_Code/markup/A2")\n')
-  cat('admin.grade_fn("/Users/dhendry/Documents/_Code2/assignments/A01")')
+  cat('admin.grade_fn("/Users/dhendry/Documents/_Code2/assignments/A01")\n')
+  cat('admin.grade_repos("/Users/dhendry/Documents/_Code2/assignments/A01-repos")')
 }
 
 #' List installed practice sets
@@ -206,7 +208,7 @@ admin.grade_fn <- function(filename) {
 
   results_dir <- paste0(dir, "/", cResultsDir)
   if (dir.exists(results_dir)) {
-    unlink(results_dir)
+    unlink(results_dir, recursive=TRUE)
   }
   dir.create(results_dir)
 
@@ -247,7 +249,7 @@ admin.grade_fn <- function(filename) {
     t <- sprintf(
       "%-20s %-20s %-15s %-15s",
       file_names[k],
-      paste0(result$user_name, "(", result$uwnetid, ")"),
+      paste0(result$learner_name, "(", result$learner_email, ")"),
       paste0(
         result$num_correct, " of ",
         (result$num_incorrect + result$num_correct)
@@ -260,7 +262,7 @@ admin.grade_fn <- function(filename) {
       "<a href=\"./%s\">%-20s</a> %-20s %-15s %-15s",
       ps_feedback_fn,
       ps_feedback_fn,
-      paste0(result$user_name, "(", result$uwnetid, ")"),
+      paste0(result$learner_name, "(", result$learner_email, ")"),
       paste0(
         result$num_correct, " of ",
         (result$num_incorrect + result$num_correct)
@@ -301,6 +303,143 @@ admin.grade_fn <- function(filename) {
 
   cat("See graded work in:\n   ", index_fn, "\n", sep = "")
 }
+
+#
+
+
+#' Evaluate a directory of practice sets that are structured as 
+#' follows: 
+#'     /A1/user-name1/analysis.R
+#'     /A1/user-name2/analysis.R
+#'     /A1/user-name3/analysis.R
+#'
+#' This reports are placed within a sub-folder, named `results`.
+#'
+#' @param filename a directory (topmost assignment directory)
+#'
+#' @export
+
+admin.grade_repos <- function(filename) {
+  cResultsDir <- "results"
+  cCodefn <- "analysis.R"
+  
+  if (!file.exists(filename)) {
+    stop(paste0("Directory does not exist.\n", dir, ""), sep = "")
+  }
+  
+  if (!dir.exists(filename)) {
+    stop(paste0("Directory does not exist.\n", dir, ""), sep = "")
+  }
+  
+  # Check if results directory exists; if so, delete
+  dir <- filename
+  results_dir <- paste0(dir, "/", cResultsDir)
+  if (dir.exists(results_dir)) {
+    print("deleting")
+    unlink(results_dir, recursive=TRUE)
+  }
+  
+  print(results_dir)
+  
+  file_list <- list.dirs(filename, full.names = TRUE, recursive=FALSE)
+  file_list <- paste0(file_list,"/",cCodefn)
+  file_names <- list.files(filename, full.names = FALSE, recursive=FALSE)
+  
+  # Create the results directory
+  dir.create(results_dir)
+  
+  cat("\014admin.grade_repos()\n") # Clear screen
+  cat(
+    "Student work: ", filename, "\n",
+    "Summary:\n",
+    sep = ""
+  )
+  
+  out <- ""
+  
+  t <- sprintf("%-40s %-40s %-15s %-15s", "Filename", "Name", "Summary", "Wrong Answers (internal ids)\n")
+  cat("        ", t, sep = "")
+  out <- paste0(out, "     ", t)
+  
+  for (k in 1:length(file_list)) {
+    
+    # Get the learners code from a file
+    code_v <- readLines(file_list[k])
+    code_string <- paste0(code_v, collapse = "\n")
+    
+    # Check the answers and get the results
+    result <- check_answers(code_v)
+    t <- format_grading(result)
+    
+   # Write grading results
+   # ps_feedback_fn <- str_replace(file_names[k], ".R", ".html")
+    ps_feedback_fn <- paste0(file_names[k],".html")
+    ps_feedback_fn_abs <- paste0(dir, "/results/", ps_feedback_fn)
+    fileConn <- file(ps_feedback_fn_abs, "w")
+    writeLines(t, fileConn)
+    close(fileConn)
+    
+    # Collect some basic feedback
+    wrongs <- paste0(result$incorrect_v, collapse = " ")
+    
+    t <- sprintf(
+      "%-40s %-40s %-15s %-15s",
+      paste0(file_names[k],"/",cCodefn),
+      paste0(result$learner_name, "(", result$learner_email, ")"),
+      paste0(
+        result$num_correct, " of ",
+        (result$num_incorrect + result$num_correct)
+      ),
+      wrongs
+    )
+    cat("[", k, "]\t", t, "\n", sep = "")
+    
+    t_out <- sprintf(
+      "<a href=\"./%s\">%-20s</a> %-20s %-15s %-15s",
+      ps_feedback_fn,
+      ps_feedback_fn,
+      paste0(result$learner_name, "(", result$learner_email, ")"),
+      paste0(
+        result$num_correct, " of ",
+        (result$num_incorrect + result$num_correct)
+      ),
+      wrongs
+    )
+    
+    
+    out <- paste0(out, "[", k, "]  ", t_out, "\n", sep = "")
+  }
+  
+  # Build output for an index.html file
+  out <- paste0(
+    "<!DOCTYPE html>\n",
+    "<html>\n",
+    "<head></head>\n",
+    "<body>\n",
+    "<pre>\n",
+    paste0(
+      "admin.grade()\n",
+      "Date:        ", date(), "\n",
+      "Assignments: ", dir, "\n",
+      "Results:     ", results_dir, "\n"
+    ),
+    "</pre>\n",
+    "<pre>\n",
+    out,
+    "</pre>\n",
+    "</body>\n",
+    "</html>"
+  )
+  
+  # Save index.html file
+  index_fn <- paste0(dir, "/", cResultsDir, "/", "index.html")
+  fileConn <- file(index_fn, "w")
+  writeLines(out, fileConn)
+  close(fileConn)
+  
+  cat("See graded work in:\n   ", index_fn, "\n", sep = "")
+}
+
 
 #' Grade all files in a folder
 #'

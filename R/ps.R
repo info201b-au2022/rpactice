@@ -4,7 +4,7 @@
 ## Global variables ----
 pinfo201.globals <- new.env()
 
-# This data structure holds the currently practice sets
+# This data structure holds the installed and current practice sets
 pinfo201.globals$gPRACTICE_SET_ID <- 1
 pinfo201.globals$gPRACTICE_SETS <- c()
 
@@ -149,7 +149,7 @@ ps_get_current <- function() {
   return(ps)
 }
 
-# Return the short ID of the currently active practrice set
+# Return the short ID of the currently active practice set
 ps_get_short <- function() {
   ps <- ps_get_current()
   return(ps$ps_short)
