@@ -12,16 +12,16 @@
 admin <- function() {
   cat("\014") # Clear screen
   cat(crayon::red("Function\t\t       "), crayon::red("Purpose"), "\n")
-  cat("admin()                         List the current admin functions.\n")
-  cat("clear()                         TODO: Clear all practice sets.\n")
+  cat("admin()                         List the admin functions.\n")
+  cat("admin.clear()                   TODO: Clear all practice sets.\n")
   cat("admin.grade()                   Select a directory (dir) and grade all work.\n")
+  cat("admin.grade_file()              Select a file and grade it.\n")
   cat("admin.grade_fn(fn)              Grade work in directory or grade single file.\n")
-  cat("admin.grade_ui_file()           Select a file and grade it.\n")
-  cat("admin.grade_repos(fn)           Grade a set of repos (fn/learner-dir*/analysis.R)")
+  cat("admin.grade_repos(fn)           Grade a set of repos (fn/learner-dir/analysis.R)\n")
   cat("admin.load(dir)                 Load practice sets from the directory.\n")
   cat("admin.ls()                      List installed practice sets.\n")
-  cat("admin.prompts(short, show_a)    List the practice prompts and expected results\n")
-  cat("                                   show_a (T|F) show answers!\n")
+  cat("admin.prompts(short, show_a)    List the practice prompts\n")
+  cat("                                   show_a (TRUE|FALSE) show answers!\n")
   cat("admin.run(short)                Execute the code in a practice set - and check if the code works.\n")
   cat("---\n")
   cat("Use ?function() to get help")
@@ -176,13 +176,57 @@ admin.run <- function(short) {
   }
 }
 
+
+#' Grade all files in a folder
+#'
+#' Intended for instructors, this function allows you to select a folder and
+#' grade all files within this folder.
+#'
+#' @export
+admin.grade <- function() {
+  t <- rstudioapi::selectDirectory(
+    caption = "Select a Directory of Files to Grade",
+    label = "Select",
+    path = paste0(getActiveProject(), "/inst/extdata")
+  )
+
+  if (is.null(t)) {
+    return(FALSE)
+  } else {
+    return(admin.grade_fn(t))
+  }
+}
+
+#' Grade a single file
+#'
+#' Intended instructors only, this function allows you to select a single file
+#' and grade it.
+#'
+#' @export
+admin.grade_file <- function() {
+  t <- rstudioapi::selectFile(
+    caption = "Select an Answer File to Grade",
+    label = "Select",
+    filter = "R Files (*.R)",
+    path = paste0(getActiveProject(), "/inst/extdata/answers")
+  )
+
+  if (is.null(t)) {
+    return(FALSE)
+  } else {
+    return(admin.grade_fn(t))
+  }
+}
+
 #' Evaluate a directory of practice sets
 #'
-#' Intended for instructors only, \code{admin.grade()},
-#' this function will grade all of the practice sets within a directory.
+#' Intended for instructors only, \code{admin.grade_fn()},
+#' grades practice sets. 
 #' 
-#' Each R file in the directory (*.R) will be evaluated. The evaluation 
-#' reports are place in a sub-folder, named `results`.
+#' If the `filename` is a directory, then each R file in the directory
+#' (*.R) will be evaluated. The evaluation reports are place in a 
+#' sub-folder, named `results`. If the `filename` is an R file just 
+#' that file is evaluated.
 #'
 #' @param filename either a directory for a particular file
 #'
@@ -192,7 +236,7 @@ admin.grade_fn <- function(filename) {
   if (!file.exists(filename)) {
     stop(paste0("Directory does not exist.\n", dir, ""), sep = "")
   }
-
+  
   file_list <- c()
   file_names <- c()
   dir <- ""
@@ -205,13 +249,13 @@ admin.grade_fn <- function(filename) {
     file_names <- append(file_names, basename(filename))
     dir <- dirname(filename)
   }
-
+  
   results_dir <- paste0(dir, "/", cResultsDir)
   if (dir.exists(results_dir)) {
     unlink(results_dir, recursive=TRUE)
   }
   dir.create(results_dir)
-
+  
   cat("\014admin.grade()\n") # Clear screen
   cat(
     "Directory: ", dir, "\n",
@@ -219,33 +263,33 @@ admin.grade_fn <- function(filename) {
     "Summary:\n",
     sep = ""
   )
-
+  
   out <- ""
-
+  
   t <- sprintf("%-20s %-20s %-15s %-15s", "Filename", "Name", "Summary", "Wrong Answers (internal ids)\n")
   cat("        ", t, sep = "")
   out <- paste0(out, "     ", t)
-
+  
   for (k in 1:length(file_list)) {
-
+    
     # Get the learners code from a file
     code_v <- readLines(file_list[k])
     code_string <- paste0(code_v, collapse = "\n")
-
+    
     # Check the answers and get the results
     result <- check_answers(code_v)
     t <- format_grading(result)
-
+    
     # Write grading results
     ps_feedback_fn <- str_replace(file_names[k], ".R", ".html")
     ps_feedback_fn_abs <- paste0(dir, "/results/", ps_feedback_fn)
     fileConn <- file(ps_feedback_fn_abs, "w")
     writeLines(t, fileConn)
     close(fileConn)
-
+    
     # Collect some basic feedback
     wrongs <- paste0(result$incorrect_v, collapse = " ")
-
+    
     t <- sprintf(
       "%-20s %-20s %-15s %-15s",
       file_names[k],
@@ -257,7 +301,7 @@ admin.grade_fn <- function(filename) {
       wrongs
     )
     cat("[", k, "]\t", t, "\n", sep = "")
-
+    
     t_out <- sprintf(
       "<a href=\"./%s\">%-20s</a> %-20s %-15s %-15s",
       ps_feedback_fn,
@@ -269,11 +313,11 @@ admin.grade_fn <- function(filename) {
       ),
       wrongs
     )
-
-
+    
+    
     out <- paste0(out, "[", k, "]  ", t_out, "\n", sep = "")
   }
-
+  
   # Build output for an index.html file
   out <- paste0(
     "<!DOCTYPE html>\n",
@@ -294,13 +338,13 @@ admin.grade_fn <- function(filename) {
     "</body>\n",
     "</html>"
   )
-
+  
   # Save index.html file
   index_fn <- paste0(dir, "/", cResultsDir, "/", "index.html")
   fileConn <- file(index_fn, "w")
   writeLines(out, fileConn)
   close(fileConn)
-
+  
   cat("See graded work in:\n   ", index_fn, "\n", sep = "")
 }
 
@@ -376,8 +420,8 @@ admin.grade_repos <- function(filename) {
     result <- check_answers(code_v)
     t <- format_grading(result)
     
-   # Write grading results
-   # ps_feedback_fn <- str_replace(file_names[k], ".R", ".html")
+    # Write grading results
+    # ps_feedback_fn <- str_replace(file_names[k], ".R", ".html")
     ps_feedback_fn <- paste0(file_names[k],".html")
     ps_feedback_fn_abs <- paste0(dir, "/results/", ps_feedback_fn)
     fileConn <- file(ps_feedback_fn_abs, "w")
@@ -443,48 +487,6 @@ admin.grade_repos <- function(filename) {
   close(fileConn)
   
   cat("See graded work in:\n   ", index_fn, "\n", sep = "")
-}
-
-
-#' Grade all files in a folder
-#'
-#' Intended for instructors, this function allows
-#' you to select a folder and grade all files within this folder.
-#'
-#' @export
-admin.grade <- function() {
-  t <- rstudioapi::selectDirectory(
-    caption = "Select a Directory of Files to Grade",
-    label = "Select",
-    path = paste0(getActiveProject(), "/inst/extdata")
-  )
-
-  if (is.null(t)) {
-    return(FALSE)
-  } else {
-    return(admin.grade_fn(t))
-  }
-}
-
-#' Grade a single file
-#'
-#' Intended instructors only, this function allows
-#' you to select a single file and grade it.
-#'
-#' @export
-admin.grade_ui_file <- function() {
-  t <- rstudioapi::selectFile(
-    caption = "Select an Answer File to Grade",
-    label = "Select",
-    filter = "R Files (*.R)",
-    path = paste0(getActiveProject(), "/inst/extdata/answers")
-  )
-
-  if (is.null(t)) {
-    return(FALSE)
-  } else {
-    return(admin.grade_fn(t))
-  }
 }
 
 #' Show the practice set prompts

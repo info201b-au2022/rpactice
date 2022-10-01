@@ -7,6 +7,6 @@
 admin.grade()
 }
 \description{
-Intended for instructors, this function allows
-you to select a folder and grade all files within this folder.
+Intended for instructors, this function allows you to select a folder and
+grade all files within this folder.
 }

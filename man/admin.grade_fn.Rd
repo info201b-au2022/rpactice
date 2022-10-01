@@ -10,10 +10,12 @@ admin.grade_fn(filename)
 \item{filename}{either a directory for a particular file}
 }
 \description{
-Intended for instructors only, \code{admin.grade()},
-this function will grade all of the practice sets within a directory.
+Intended for instructors only, \code{admin.grade_fn()},
+grades practice sets.
 }
 \details{
-Each R file in the directory (*.R) will be evaluated. The evaluation
-reports are place in a sub-folder, named \code{results}.
+If the \code{filename} is a directory, then each R file in the directory
+(*.R) will be evaluated. The evaluation reports are place in a
+sub-folder, named \code{results}. If the \code{filename} is an R file just
+that file is evaluated.
 }
