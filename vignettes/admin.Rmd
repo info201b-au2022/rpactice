@@ -38,11 +38,11 @@ admin.run(short)                Execute the code in a practice set - and check i
 The basic grading workflow is as follows: 
 
 ## 1. Preparation
-The completed practice sets that are to be graded need to saved into a folder. Two basic organizations are supported. 
-At the time of writing, I'm not sure which structure will be most effective.
+The completed assignments to be graded need to saved into a folder. Two basic organizations are supported. 
+At the time of writing (Sept 30, 2022), I'm not sure which structure will be most effective.
 
 **Organization 1: Flat file structure.** With this file organization, each 
-practice set to be graded (e.g., `analysis.R`) is given a unique name and all 
+assignment file (e.g., `analysis.R`) is given a unique name and all 
 files are stored in a common directory. 
 ```
 ~/grading/A2/user_id1.R
@@ -53,13 +53,13 @@ With this workflow, you would go to Canvas. Then, for each student in your lab s
 their GitHub repository and copy and save their `analysis.R` file into `~/grading/A1/`.
 
 **Organization 2: GitHub repo structure.** With this file structure, the entire GitHub Repo is cloned 
-or downloaded from GitHub. It is assumed that the file to be graded is named `analysis.R`. 
+from GitHub. Here, it is assumed that the file to be graded is named `analysis.R`. 
 ```
 ~/grading/A1/git_hub_user1/analysis.R
 ~/grading/A1/git_hub_user2/analysis.R
 ...
 ```
-There would, of course, be other files within each `git_hub-user*` directory which would 
+There would, of course, be other files within each `git_hub-user` directory which would 
 also be cloned. (I don't think it is possible to clone a single file.)
 
 Organization 2 can be created by executing a sequence of `git clone` commands. For example, 
@@ -80,7 +80,18 @@ clone commands for each of the GitHub user IDs, and 3) and then execute the bash
 Once step #1 is completed and the files are saved on your computer, running the auto-grader
 is straightforward.
 
-If all of your files are in one directory (Organization 1), run this command: 
+The first step is to load the assignment markup file, which contains the answers. Let's
+assume that the answers are located in this location: 
+```
+~/grading/markup/A2/answers.R
+```
+The `admin.load()` command will load all answer files from the directory:
+```
+admin.load("~/grading/markup/A2")
+```
+
+Now, you are ready to run the auto-grader. If all of your files are in one 
+directory (Organization 1), run this command: 
 ```
 admin_grade_fn("~/grading/A1")
 ```
@@ -96,10 +107,10 @@ Running `admin.grade_repos("~/grading/A1/")` will generate the following termina
 admin.grade_repos()
 Student work: ~/grading/A01
 Summary:
-        Filename                                 Name                                     Summary         Wrong Answers (internal ids)
-[1]	user-1/analysis.R                        Student ONE(user-1)                          13 of 13                       
-[2]	user-2/analysis.R                        Student TWO(user-2)                          0 of 13         1 2 3 4 5 6 7 8 9 10 12 13 14
-[3]	user-3/analysis.R                        Student THREE(user-3)                        7 of 13         1 3 5 7 9 10   
+        Filename                     Name               Summary    Wrong Answers
+[1]	user-1/analysis.R                Bill (user-1)      13 of 13                       
+[2]	user-2/analysis.R                Sally (user-2)      0 of 13   1 2 3 4 5 6 7 8 9 10 12 13 14
+[3]	user-3/analysis.R                Evan (user-3)       7 of 13   1 3 5 7 9 10   
 See graded work in:
    ~/grading/A01/results/index.html
 ```
@@ -107,9 +118,15 @@ See graded work in:
 In this example, the assignments of three students have been graded. Reports on each 
 of the assignments are found in the `results` directory. 
 
+You can also grade a single file, as with these examples:
+```
+admin_grade_fn("~/grading/A1/user-1.R")
+admin_grade_fn("~/grading/A1/user-3/analysis.R")
+```
+
 ## 3. Reviewing 
 The reports show which prompts were correct and incorrect, and the learners' code. These reports should 
-allow you move through the assignments quite efficiently and to grade the work in Canvas. 
+allow you to move through the assignments quite efficiently and to grade the work in Canvas. 
 
 ## Creating and Testing Practice Sets
 TBD
