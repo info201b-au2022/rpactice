@@ -1339,7 +1339,7 @@ format_practice_script <- function(show_answers = FALSE) {
     "#   ", str_replace_all(ps$ps_descr, "\n", "\n#   "), "\n", "",
 
     # Basic practice set information
-    "\n# Practice set info ---- \n",
+    "\n# Set-up info ---- \n",
     "practice.begin(\"", ps$ps_short,
     "\", learner=\"[your name]\"",
     ", email=\"[your e-mail]\")",

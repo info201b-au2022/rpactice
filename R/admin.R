@@ -574,21 +574,22 @@ admin.check <- function(filename, silient = FALSE, detailed = FALSE) {
 #' @param dir a directory
 #' @export
 #'
-admin.load <- function(dir) {
-  if (!dir.exists(dir)) {
+admin.load <- function(filename) {
+  file_list <- c()
+  if (file.exists(filename)) {
+    if (dir.exists(filename)) {
+      file_list <- list.files(dir, pattern = "*.R", full.names = TRUE)
+    } else {
+      file_list <- append(file_list, filename)
+    }
+  } else {
     message(paste0("Directory does not exist.\n", dir, ""), sep = "")
     return(TRUE)
   }
 
-  file_list <- c()
-  file_names <- c()
-
-  file_list <- list.files(dir, pattern = "*.R", full.names = TRUE)
-  file_names <- list.files(dir, pattern = "*.R")
-
   cat("\014admin.load_ps()\n") # Clear screen
   cat(
-    "Directory: ", dir, "\n",
+    "Location: ", filename, "\n",
     "Summary:\n",
     sep = ""
   )
@@ -599,6 +600,6 @@ admin.load <- function(dir) {
     ps$ps_filename <- file_list[k]
     ps <- check_ps(ps)
     ps_add(ps)
-    cat("Added: ", ps$ps_short, "(\"", file_list[k], "\").\n", sep="")
+    cat("Added: ", ps$ps_short, "(\"", file_list[k], "\").\n", sep = "")
   }
 }

@@ -16,12 +16,13 @@ knitr::opts_chunk$set(
 
 # Summary 
 The `rpactice` package provides a set of administrative functions for creating practice sets and for
-auto-grading.
+auto-grading. These are intended for instructors and teaching assistents or anyone who would 
+like to create a practice set of an assignment. 
 
 The current administration functions for creating practice sets and for auto-grading are:
 
 ```
-Function		                    Purpose 
+Function                        Purpose 
 admin()                         List the admin functions.
 admin.grade()                   Select a directory (dir) and grade all work.
 admin.grade_file()              Select a file and grade it.
@@ -87,17 +88,20 @@ assume that the answers are located in this location:
 ```
 The `admin.load()` command will load all answer files from the directory:
 ```
+library("rpractice")
 admin.load("~/grading/markup/A2")
 ```
 
 Now, you are ready to run the auto-grader. If all of your files are in one 
 directory (Organization 1), run this command: 
 ```
+library("rpractice")
 admin_grade_fn("~/grading/A1")
 ```
 
 If you have cloned repositories (Organization 2), run this command: 
 ```
+library("rpractice")
 admin.grade_repos("~/grading/A1/")
 ```
 
@@ -116,10 +120,12 @@ See graded work in:
 ```
 </font>
 In this example, the assignments of three students have been graded. Reports on each 
-of the assignments are found in the `results` directory. 
+of the assignments are found in the `results` directory. The `results` directory and 
+reports are created by the grading process.
 
 You can also grade a single file, as with these examples:
 ```
+library("rpractice")
 admin_grade_fn("~/grading/A1/user-1.R")
 admin_grade_fn("~/grading/A1/user-3/analysis.R")
 ```
